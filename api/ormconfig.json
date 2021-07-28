@@ -1,0 +1,10 @@
+{
+    "type": "postgres",
+    "host": "localhost",
+    "port": 5432,
+    "username": "linkedin",
+    "password": "tedi2021",
+    "database": "linkedin",
+    "entities": ["dist/**/*.entity{.ts,.js}"],
+    "synchronize": true
+}
