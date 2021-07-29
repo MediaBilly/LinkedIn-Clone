@@ -1,4 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import * as bcrypt from 'bcrypt';
+import { Exclude } from "class-transformer";
 
 export enum UserRole {
     ADMIN = 'admin',
@@ -22,7 +24,8 @@ export class User {
     @Column()
     phone: string;
 
-    @Column({select: false})
+    @Exclude({ toPlainOnly: true })
+    @Column()
     password: string;
 
     @Column({

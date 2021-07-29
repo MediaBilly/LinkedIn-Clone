@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -12,10 +12,7 @@ export class UsersService {
     async create(createUserDto: CreateUserDto): Promise<User> {
         const newUser = this.usersRepository.create(createUserDto);
         newUser.password = await bcrypt.hash(newUser.password, parseInt(process.env.PASSWORD_HASH_ROUNDS));
-        return await this.usersRepository.save(newUser).catch((exception) => {
-            const msg = exception.detail;
-            throw new BadRequestException('A user with email ' +  msg.split('=')[1].replace('(','').replace(')',''));
-        });
+        return await this.usersRepository.save(newUser);
     }
 
     findAll(): Promise<User[]> {
@@ -26,7 +23,7 @@ export class UsersService {
         return this.usersRepository.findOne(id);
     }
 
-    findOneByEmail(email: string): Promise<User> {
+    findOneByEmail(email: string): Promise<User | undefined> {
         return this.usersRepository.findOne({where: {email: email}});
     }
 }
