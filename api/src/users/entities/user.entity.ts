@@ -1,10 +1,9 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-import * as bcrypt from 'bcrypt';
 import { Exclude } from "class-transformer";
 
 export enum UserRole {
-    ADMIN = 'admin',
-    PROFESSIONAL = 'professional'
+    ADMIN = 'a',
+    PROFESSIONAL = 'p'
 }
 
 @Entity()
