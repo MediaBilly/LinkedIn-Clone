@@ -1,14 +1,20 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
-import { User } from './entities/user.entity';
+import { User, UserRole } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { FriendRequest } from './entities/friend-request.entity';
 
 @Injectable()
 export class UsersService {
-    constructor(@InjectRepository(User) private usersRepository: Repository<User>) {}
+    constructor(
+        @InjectRepository(User) private usersRepository: Repository<User>,
+        @InjectRepository(FriendRequest) private friendRequestsRepository: Repository<FriendRequest> 
+    ) {}
+
+    // Basic Functionality
 
     async create(createUserDto: CreateUserDto): Promise<User> {
         const newUser = this.usersRepository.create(createUserDto);
@@ -20,7 +26,7 @@ export class UsersService {
         return this.usersRepository.find();
     }
 
-    findOne(id: string): Promise<User> {
+    findOne(id: number): Promise<User> {
         return this.usersRepository.findOneOrFail(id);
     }
 
@@ -45,5 +51,57 @@ export class UsersService {
 
     delete(id: number) {
         return this.usersRepository.delete(id);
+    }
+
+    // Friend Requests
+    
+    async getSentFriendRequests(senderId: number) {
+        const user: User = await this.usersRepository.findOneOrFail(senderId,{ relations: ['sentFriendRequests'] });
+        return user.sentFriendRequests;
+    }
+
+    async getReceivedFriendRequests(receiverId: number) {
+        const user: User = await this.usersRepository.findOneOrFail(receiverId,{ relations: ['receivedFriendRequests'] });
+        return user.receivedFriendRequests;
+    }
+
+    async sendFriendRequest(sender: User, receiverId: number) {
+        // Check if receiver is the same
+        if (sender.id === receiverId) {
+            throw new BadRequestException("You can't send a friend request to yourself!");
+        }
+        // Check if it already exists
+        const requestQ = this.friendRequestsRepository.createQueryBuilder('req')
+                        .where('req.senderId = :sender',{ sender: sender.id })
+                        .andWhere('req.receiverId = :receiver', { receiver: receiverId })
+                        .orWhere('req.senderId = :sender2',{ sender2: receiverId })
+                        .andWhere('req.receiverId = :receiver2', { receiver2: sender.id });
+        const request = await requestQ.getOne();
+        if (request) {
+            throw new ConflictException();
+        }
+        const receiver: User = await this.findOne(receiverId);
+        const newRequest = this.friendRequestsRepository.create();
+        newRequest.sender = sender;
+        newRequest.receiver = receiver;
+        return await this.friendRequestsRepository.save(newRequest);
+    }
+
+    async cancelFriendRequest(id: number, canceler: User) {
+        const request = await this.friendRequestsRepository.findOneOrFail(id);
+        if (request.sender.id === canceler.id || canceler.role === UserRole.ADMIN) {
+            return this.friendRequestsRepository.delete(id);
+        } else {
+            throw new UnauthorizedException();
+        }
+    }
+
+    async declineFriendRequest(id: number, decliner: User) {
+        const request = await this.friendRequestsRepository.findOneOrFail(id);
+        if (request.receiver.id === decliner.id || decliner.role === UserRole.ADMIN) {
+            return this.friendRequestsRepository.delete(id);
+        } else {
+            throw new UnauthorizedException();
+        }
     }
 }

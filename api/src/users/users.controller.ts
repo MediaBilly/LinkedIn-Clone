@@ -13,6 +13,8 @@ import { UsersService } from './users.service';
 export class UsersController {
     constructor(private readonly usersService : UsersService) {}
 
+    // Basic Functionality
+
     @Post()
     create(@Body() createUserDto: CreateUserDto) {
         return this.usersService.create(createUserDto);
@@ -27,7 +29,7 @@ export class UsersController {
     @UseGuards(JwtAuthGuard)
     @Get(':id')
     findOne(@Param('id') id: string) {
-        return this.usersService.findOne(id);
+        return this.usersService.findOne(+id);
     }
 
     @UseGuards(JwtAuthGuard)
@@ -43,7 +45,7 @@ export class UsersController {
     }
 
     @UseGuards(JwtAuthGuard)
-    @Patch('changepassword')
+    @Patch('change-password')
     async changeMyPassword(@Request() req, @Body() changePasswordDto: ChangePasswordDto) {
         const passOk = await this.usersService.checkPassword(req.user, changePasswordDto.oldPassword);
         if (passOk) {
@@ -54,7 +56,7 @@ export class UsersController {
     }
 
     @UseGuards(JwtAuthGuard, OnlyAdminsGuard)
-    @Patch('changepassword/:id')
+    @Patch('change-password/:id')
     async changePassword(@Param('id') id: string, @Body() changePasswordDto: ChangePasswordAdminDto) {
         return this.usersService.changePassword(+id,changePasswordDto.newPassword);
     }
@@ -69,5 +71,37 @@ export class UsersController {
     @Delete(':id')
     delete(@Param('id') id: string) {
         return this.usersService.delete(+id);
+    }
+
+    // Friend Requests
+
+    @UseGuards(JwtAuthGuard)
+    @Get('friend-requests/sent')
+    getSentFriendRequests(@Request() req) {
+        return this.usersService.getSentFriendRequests(req.user);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('friend-requests/received')
+    getReceivedFriendRequests(@Request() req) {
+        return this.usersService.getReceivedFriendRequests(req.user);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post('friend-requests/send/:receiver')
+    sendFriendRequest(@Request() req, @Param('receiver') receiver: string) {
+        return this.usersService.sendFriendRequest(req.user,+receiver);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Delete('friend-requests/cancel/:id')
+    cancelFriendRequest(@Request() req, @Param('id') id: string) {
+        return this.usersService.cancelFriendRequest(+id, req.user);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post('friend-requests/decline/:id')
+    declineFriendRequest(@Request() req, @Param('id') id: string) {
+        return this.usersService.declineFriendRequest(+id, req.user);
     }
 }
