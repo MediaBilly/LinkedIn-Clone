@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, UseGuards, UseInterceptors, Request, Delete, ForbiddenException, Patch } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, UseGuards, UseInterceptors, Request, Delete, ForbiddenException, Patch, Req } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { ChangePasswordAdminDto } from './dto/change-password-admin.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
@@ -100,8 +100,28 @@ export class UsersController {
     }
 
     @UseGuards(JwtAuthGuard)
+    @Post('friend-requests/accept/:id')
+    acceptFriendRequest(@Request() req, @Param('id') id: string) {
+        return this.usersService.acceptFriendRequest(+id, req.user);
+    }
+
+    @UseGuards(JwtAuthGuard)
     @Post('friend-requests/decline/:id')
     declineFriendRequest(@Request() req, @Param('id') id: string) {
         return this.usersService.declineFriendRequest(+id, req.user);
+    }
+
+    // Friendships
+
+    @UseGuards(JwtAuthGuard)
+    @Get('friends/:id')
+    getFriends(@Param('id') id: string) {
+        return this.usersService.getFriends(+id);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Delete('friends/:id')
+    removeFriend(@Request() req, @Param('id') id: string) {
+        return this.usersService.removeFriend(req.user.id, +id);
     }
 }

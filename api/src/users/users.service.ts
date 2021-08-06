@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -6,12 +6,14 @@ import { User, UserRole } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FriendRequest } from './entities/friend-request.entity';
+import { Friendship } from './entities/friendship.entity';
 
 @Injectable()
 export class UsersService {
     constructor(
         @InjectRepository(User) private usersRepository: Repository<User>,
-        @InjectRepository(FriendRequest) private friendRequestsRepository: Repository<FriendRequest> 
+        @InjectRepository(FriendRequest) private friendRequestsRepository: Repository<FriendRequest>,
+        @InjectRepository(Friendship) private friendshipsRepository: Repository<Friendship>
     ) {}
 
     // Basic Functionality
@@ -80,6 +82,11 @@ export class UsersService {
         if (request) {
             throw new ConflictException();
         }
+        // Check if they are already friends
+        const friendship = await this.getFriendship(sender.id, receiverId);
+        if (friendship) {
+            throw new ConflictException();
+        }
         const receiver: User = await this.findOne(receiverId);
         const newRequest = this.friendRequestsRepository.create();
         newRequest.sender = sender;
@@ -96,6 +103,16 @@ export class UsersService {
         }
     }
 
+    async acceptFriendRequest(id: number, accepter: User) {
+        const request = await this.friendRequestsRepository.findOneOrFail(id);
+        if (request.receiver.id === accepter.id || accepter.role === UserRole.ADMIN) {
+            this.friendRequestsRepository.delete(request.id);
+            return this.newFriendship(request.sender.id, request.receiver.id);
+        } else {
+            throw new UnauthorizedException();
+        }
+    }
+
     async declineFriendRequest(id: number, decliner: User) {
         const request = await this.friendRequestsRepository.findOneOrFail(id);
         if (request.receiver.id === decliner.id || decliner.role === UserRole.ADMIN) {
@@ -103,5 +120,42 @@ export class UsersService {
         } else {
             throw new UnauthorizedException();
         }
+    }
+
+    // Friendships
+
+    newFriendship(user1Id: number, user2Id: number) {
+        const user1Promise: Promise<User> = this.usersRepository.findOneOrFail(user1Id);
+        const user2Promise : Promise<User> = this.usersRepository.findOneOrFail(user2Id);
+        Promise.all([user1Promise, user2Promise]).then(([user1, user2]) => {
+            const newFriendship = this.friendshipsRepository.create();
+            newFriendship.user1 = user1;
+            newFriendship.user2 = user2;
+            this.friendshipsRepository.save(newFriendship);
+        });
+    }
+
+    async getFriends(uid: number) {
+        return this.usersRepository.query(`SELECT * FROM "user" "U" WHERE "U"."id" <> $1 AND EXISTS 
+                                            (SELECT * FROM "friendship" "F" WHERE 
+                                                ("F"."user1Id" = $1 AND "F"."user2Id" = "U"."id") OR ("F"."user2Id" = $1 AND "F"."user1Id" = "U"."id")
+                                            );`, [uid]);
+    }
+
+    async getFriendship(uid: number, withId: number) {
+        return await this.friendshipsRepository.createQueryBuilder('F')
+                                .where('F.user1Id = :uid', { uid: uid })
+                                .andWhere('F.user2Id = :withId', { withId: withId })
+                                .orWhere('F.user1Id = :uid2', { uid2: withId })
+                                .andWhere('F.user2Id = :withId2', { withId2: uid })
+                                .getOne();
+    }
+
+    async removeFriend(user1Id: number, user2Id: number) {
+        const friendship = await this.getFriendship(user1Id, user2Id);
+        if (!friendship) {
+            throw new NotFoundException('Not yet friends.');
+        }
+        return this.friendshipsRepository.remove(friendship);
     }
 }

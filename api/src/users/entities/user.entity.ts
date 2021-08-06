@@ -1,6 +1,7 @@
 import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Exclude } from "class-transformer";
 import { FriendRequest } from "./friend-request.entity";
+import { Friendship } from "./friendship.entity";
 
 export enum UserRole {
     ADMIN = 'a',
@@ -40,4 +41,14 @@ export class User {
 
     @OneToMany(() => FriendRequest, friendRequest => friendRequest.receiver)
     receivedFriendRequests: FriendRequest[];
+
+    // @ManyToMany(() => User, user => user.friends)
+    // @JoinTable()
+    // friends: User[];
+
+    @OneToMany(() => Friendship, friendship => friendship.user1)
+    friendsAdded: Friendship[];
+
+    @OneToMany(() => Friendship, friendship => friendship.user2)
+    friendsAccepted: Friendship[];
 }
