@@ -37,7 +37,7 @@ export class UsersService {
     }
 
     update(id: number, updateUserDto: UpdateUserDto) {
-        return this.usersRepository.update(+id, updateUserDto);
+        return this.usersRepository.update(id, updateUserDto);
     }
 
     checkPassword(user: User, pass: string) {
@@ -56,6 +56,10 @@ export class UsersService {
     }
 
     // Friend Requests
+
+    getFrinedRequest(id: number) {
+        return this.friendRequestsRepository.findOneOrFail(id);
+    }
     
     async getSentFriendRequests(senderId: number) {
         const user: User = await this.usersRepository.findOneOrFail(senderId,{ relations: ['sentFriendRequests'] });
@@ -94,32 +98,18 @@ export class UsersService {
         return await this.friendRequestsRepository.save(newRequest);
     }
 
-    async cancelFriendRequest(id: number, canceler: User) {
-        const request = await this.friendRequestsRepository.findOneOrFail(id);
-        if (request.sender.id === canceler.id || canceler.role === UserRole.ADMIN) {
-            return this.friendRequestsRepository.delete(id);
-        } else {
-            throw new UnauthorizedException();
-        }
+    async cancelFriendRequest(id: number) {
+        return this.friendRequestsRepository.delete(id);
     }
 
-    async acceptFriendRequest(id: number, accepter: User) {
+    async acceptFriendRequest(id: number) {
         const request = await this.friendRequestsRepository.findOneOrFail(id);
-        if (request.receiver.id === accepter.id || accepter.role === UserRole.ADMIN) {
-            this.friendRequestsRepository.delete(request.id);
-            return this.newFriendship(request.sender.id, request.receiver.id);
-        } else {
-            throw new UnauthorizedException();
-        }
+        this.friendRequestsRepository.delete(request.id);
+        return this.newFriendship(request.sender.id, request.receiver.id);
     }
 
-    async declineFriendRequest(id: number, decliner: User) {
-        const request = await this.friendRequestsRepository.findOneOrFail(id);
-        if (request.receiver.id === decliner.id || decliner.role === UserRole.ADMIN) {
-            return this.friendRequestsRepository.delete(id);
-        } else {
-            throw new UnauthorizedException();
-        }
+    async declineFriendRequest(id: number) {
+        return this.friendRequestsRepository.delete(id);
     }
 
     // Friendships

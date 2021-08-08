@@ -2,6 +2,7 @@ import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColum
 import { Exclude } from "class-transformer";
 import { FriendRequest } from "./friend-request.entity";
 import { Friendship } from "./friendship.entity";
+import { Article } from "src/articles/entities/article.entity";
 
 export enum UserRole {
     ADMIN = 'a',
@@ -51,4 +52,7 @@ export class User {
 
     @OneToMany(() => Friendship, friendship => friendship.user2)
     friendsAccepted: Friendship[];
+
+    @OneToMany(() => Article, article => article.publisher)
+    articles: Article[];
 }

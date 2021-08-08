@@ -4,6 +4,8 @@ import { ChangePasswordAdminDto } from './dto/change-password-admin.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { FriendRequestSameReceiverGuard } from './guards/friend-request-same-receiver.guard';
+import { FriendRequestSameSenderGuard } from './guards/friend-request-same-sender.guard';
 import { OnlyAdminsGuard } from './guards/only-admins.guard';
 import { HidePasswordInterceptor } from './interceptors/hide-password.interceptor';
 import { UsersService } from './users.service';
@@ -93,22 +95,22 @@ export class UsersController {
         return this.usersService.sendFriendRequest(req.user,+receiver);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, FriendRequestSameSenderGuard)
     @Delete('friend-requests/cancel/:id')
     cancelFriendRequest(@Request() req, @Param('id') id: string) {
-        return this.usersService.cancelFriendRequest(+id, req.user);
+        return this.usersService.cancelFriendRequest(+id);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, FriendRequestSameReceiverGuard)
     @Post('friend-requests/accept/:id')
     acceptFriendRequest(@Request() req, @Param('id') id: string) {
-        return this.usersService.acceptFriendRequest(+id, req.user);
+        return this.usersService.acceptFriendRequest(+id);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, FriendRequestSameReceiverGuard)
     @Post('friend-requests/decline/:id')
     declineFriendRequest(@Request() req, @Param('id') id: string) {
-        return this.usersService.declineFriendRequest(+id, req.user);
+        return this.usersService.declineFriendRequest(+id);
     }
 
     // Friendships
