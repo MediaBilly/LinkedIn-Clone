@@ -32,8 +32,9 @@ export class UsersService {
         return this.usersRepository.findOneOrFail(id);
     }
 
-    findOneByEmail(email: string): Promise<User | undefined> {
-        return this.usersRepository.findOneOrFail({where: {email: email}});
+    // Find potential logged in user (only query that returns password hash!)
+    findLoginUser(email: string): Promise<User | undefined> {
+        return this.usersRepository.findOneOrFail({where: {email: email}, select: ['id', 'password']});
     }
 
     update(id: number, updateUserDto: UpdateUserDto) {
@@ -41,7 +42,7 @@ export class UsersService {
     }
 
     checkPassword(user: User, pass: string) {
-        return bcrypt.compare(pass,user.password)
+        return bcrypt.compare(pass,user.password);
     }
 
     async changePassword(id: number, newPassword: string) {
@@ -117,11 +118,11 @@ export class UsersService {
     newFriendship(user1Id: number, user2Id: number) {
         const user1Promise: Promise<User> = this.usersRepository.findOneOrFail(user1Id);
         const user2Promise : Promise<User> = this.usersRepository.findOneOrFail(user2Id);
-        Promise.all([user1Promise, user2Promise]).then(([user1, user2]) => {
+        return Promise.all([user1Promise, user2Promise]).then(([user1, user2]) => {
             const newFriendship = this.friendshipsRepository.create();
             newFriendship.user1 = user1;
             newFriendship.user2 = user2;
-            this.friendshipsRepository.save(newFriendship);
+            return this.friendshipsRepository.save(newFriendship);
         });
     }
 

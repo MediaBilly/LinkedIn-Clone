@@ -1,5 +1,7 @@
 import { User } from "src/users/entities/user.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { ArticleComment } from "./article-comment.entity";
+import { ArticleReaction } from "./article-reaction.entity";
 
 @Entity()
 export class Article {
@@ -9,9 +11,15 @@ export class Article {
     @Column()
     text: string;
 
-    @Column({ type: "timestamp", nullable: false, default: () => 'CURRENT_TIMESTAMP' })
-    published_at: string;
+    @CreateDateColumn()
+    published_at: Date;
 
     @ManyToOne(() => User, user => user.articles, { eager: true })
     publisher: User;
+
+    @OneToMany(() => ArticleReaction, reaction => reaction.article, { eager: true })
+    reactions: ArticleReaction[];
+
+    @OneToMany(() => ArticleComment, comment => comment.article, { eager: true })
+    comments: ArticleComment[];
 }

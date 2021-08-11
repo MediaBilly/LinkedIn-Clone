@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./user.entity";
 
 @Entity()
@@ -12,6 +12,6 @@ export class FriendRequest {
     @ManyToOne(() => User, user => user.receivedFriendRequests, { eager: true })
     receiver: User;
 
-    @Column({ type: "timestamp", nullable: false, default: () => 'CURRENT_TIMESTAMP' })
-    sentAt: string;
+    @CreateDateColumn()
+    sentAt: Date;
 }

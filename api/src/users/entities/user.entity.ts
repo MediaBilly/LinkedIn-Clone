@@ -3,6 +3,8 @@ import { Exclude } from "class-transformer";
 import { FriendRequest } from "./friend-request.entity";
 import { Friendship } from "./friendship.entity";
 import { Article } from "src/articles/entities/article.entity";
+import { ArticleReaction } from "src/articles/entities/article-reaction.entity";
+import { ArticleComment } from "src/articles/entities/article-comment.entity";
 
 export enum UserRole {
     ADMIN = 'a',
@@ -26,8 +28,8 @@ export class User {
     @Column()
     phone: string;
 
-    @Exclude({ toPlainOnly: true })
-    @Column()
+    @Column({ select: false })
+    @Exclude()
     password: string;
 
     @Column({
@@ -55,4 +57,10 @@ export class User {
 
     @OneToMany(() => Article, article => article.publisher)
     articles: Article[];
+
+    @OneToMany(() => ArticleReaction, articleReaction => articleReaction.reactor)
+    articleReactions: ArticleReaction[];
+
+    @OneToMany(() => ArticleComment, articleComment => articleComment.commenter)
+    articleComments: ArticleComment[];
 }
