@@ -23,8 +23,10 @@ export class AuthService {
     // Serialize jwt
     async login(user: User) {
         const payload = { sub: user.id };
+        const loggedInUser: User = await this.usersService.findOne(payload.sub);
         return {
             access_token: this.jwtService.sign(payload),
+            user: loggedInUser
         }
     }
 }
