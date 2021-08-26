@@ -39,15 +39,14 @@ export class User {
     })
     role: UserRole;
 
+    @Column({ nullable: true, default: null })
+    profilePicName: string;
+
     @OneToMany(() => FriendRequest, friendRequest => friendRequest.sender)
     sentFriendRequests: FriendRequest[];
 
     @OneToMany(() => FriendRequest, friendRequest => friendRequest.receiver)
     receivedFriendRequests: FriendRequest[];
-
-    // @ManyToMany(() => User, user => user.friends)
-    // @JoinTable()
-    // friends: User[];
 
     @OneToMany(() => Friendship, friendship => friendship.user1)
     friendsAdded: Friendship[];

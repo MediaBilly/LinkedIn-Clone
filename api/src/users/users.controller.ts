@@ -1,12 +1,13 @@
-import { Body, Controller, Get, Param, Post, Put, UseGuards, UseInterceptors, Request, Delete, ForbiddenException, Patch, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, UseGuards, UseInterceptors, Request, Delete, ForbiddenException, Patch, UploadedFile, Res, NotFoundException, BadRequestException } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { ChangePasswordAdminDto } from './dto/change-password-admin.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FriendRequestSameReceiverGuard } from './guards/friend-request-same-receiver.guard';
 import { FriendRequestSameSenderGuard } from './guards/friend-request-same-sender.guard';
 import { OnlyAdminsGuard } from './guards/only-admins.guard';
+import { getProfilePicLocation, profilePicOptions } from './helpers/profile-pic-storage';
 import { HidePasswordInterceptor } from './interceptors/hide-password.interceptor';
 import { UsersService } from './users.service';
 
@@ -16,11 +17,6 @@ export class UsersController {
     constructor(private readonly usersService : UsersService) {}
 
     // Basic Functionality
-
-    @Post()
-    create(@Body() createUserDto: CreateUserDto) {
-        return this.usersService.create(createUserDto);
-    }
 
     @UseGuards(JwtAuthGuard, OnlyAdminsGuard)
     @Get()
@@ -73,6 +69,34 @@ export class UsersController {
     @Delete(':id')
     delete(@Param('id') id: string) {
         return this.usersService.delete(+id);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get(':id/profile-pic')
+    async getProfilePic(@Param('id') id: string, @Res() res) {
+        const user = await this.usersService.findOne(+id);
+        if (user.profilePicName) {
+            return res.sendFile(getProfilePicLocation(user.profilePicName));
+        } else {
+            throw new NotFoundException();
+        }
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post('profile-pic')
+    @UseInterceptors(FileInterceptor('pic', profilePicOptions))
+    changeProfilePic(@UploadedFile() pic: Express.Multer.File, @Request() req) {
+        if (pic) {
+            return this.usersService.changeProfilePic(+req.user.id, pic.filename);
+        } else {
+            throw new BadRequestException("Incorrect image type.");
+        }
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Delete('profile-pic/delete') 
+    deleteProfilePic(@Request() req) {
+        return this.usersService.deleteProfilePic(+req.user.id);
     }
 
     // Friend Requests

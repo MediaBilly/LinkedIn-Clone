@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../_services/auth.service';
+import { TokenStorageService } from '../_services/token-storage.service';
 
 @Component({
   selector: 'app-register',
@@ -18,7 +19,7 @@ export class RegisterComponent implements OnInit {
   isSignUpFailed = false;
   errorMessage = '';
 
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, private tokenService: TokenStorageService) { }
 
   ngOnInit(): void {
   }
@@ -31,6 +32,8 @@ export class RegisterComponent implements OnInit {
         console.log(data);
         this.isSuccessful = true;
         this.isSignUpFailed = false;
+        this.tokenService.saveToken(data.access_token);
+        this.gotoHomePage();
       },
       err => {
         this.errorMessage = err.message;
@@ -39,4 +42,7 @@ export class RegisterComponent implements OnInit {
     );
   }
 
+  gotoHomePage(): void {
+    window.location.replace('');
+  }
 }

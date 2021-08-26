@@ -2,11 +2,13 @@ import { BadRequestException, ConflictException, Injectable, NotFoundException, 
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
-import { User, UserRole } from './entities/user.entity';
+import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FriendRequest } from './entities/friend-request.entity';
 import { Friendship } from './entities/friendship.entity';
+import { unlinkSync } from 'fs';
+import { checkImageType, getProfilePicLocation } from './helpers/profile-pic-storage';
 
 @Injectable()
 export class UsersService {
@@ -34,7 +36,7 @@ export class UsersService {
 
     // Find potential logged in user (only query that returns password hash!)
     findLoginUser(email: string): Promise<User | undefined> {
-        return this.usersRepository.findOneOrFail({where: {email: email}, select: ['id', 'password']});
+        return this.usersRepository.createQueryBuilder('user').addSelect('user.password').where('user.email = :email', { email: email }).getOneOrFail();
     }
 
     update(id: number, updateUserDto: UpdateUserDto) {
@@ -54,6 +56,30 @@ export class UsersService {
 
     delete(id: number) {
         return this.usersRepository.delete(id);
+    }
+
+    async changeProfilePic(uid: number, picName: string) {
+        const ok = await checkImageType(picName);
+        if (!ok) {
+            unlinkSync(getProfilePicLocation(picName));
+            throw new BadRequestException("File content does not match extension.");
+        }
+        const user = await this.findOne(uid);
+        if (user.profilePicName) {
+            unlinkSync(getProfilePicLocation(user.profilePicName));
+        }
+        user.profilePicName = picName;
+        return this.usersRepository.save(user);
+    }
+
+    deleteProfilePic(uid: number) {
+        return this.findOne(uid).then((user) => {
+            if (user.profilePicName) {
+                unlinkSync(getProfilePicLocation(user.profilePicName));
+                user.profilePicName = null;
+            }
+            return this.usersRepository.save(user);
+        })
     }
 
     // Friend Requests

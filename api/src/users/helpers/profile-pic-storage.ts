@@ -10,7 +10,7 @@ const validExtensions: string[] = ['.jpeg', '.jpg', '.png'];
 
 const validMimeTypes: string[] = ['image/png', 'image/jpeg', 'image/jpg'];
 
-export const profilePicStorage = {
+export const profilePicOptions = {
     storage: diskStorage({
         destination: profilePicsRoot,
         filename: (req, file, callback) => {
@@ -26,7 +26,11 @@ export const profilePicStorage = {
 }
 
 export const checkImageType = (imgName) : Promise<boolean> => {
-    return fromFile(join(process.cwd(), profilePicsRoot, imgName)).then((fileInfo) => {
+    return fromFile(getProfilePicLocation(imgName)).then((fileInfo) => {
         return fileInfo && validMimeTypes.includes(fileInfo.mime);
     });
+}
+
+export const getProfilePicLocation = (picName?: string): string => {
+    return picName ? join(process.cwd(), profilePicsRoot, picName) : join(process.cwd(), profilePicsRoot);
 }
