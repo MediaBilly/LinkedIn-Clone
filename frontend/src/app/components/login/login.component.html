@@ -1,0 +1,35 @@
+<div class="text-center">
+  <form class="form-signin" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <img class="mb-4" src="https://play-lh.googleusercontent.com/kMofEFLjobZy_bCuaiDogzBcUT-dz3BBbOrIEjJ-hqOabjK8ieuevGe6wlTD15QzOqw" alt="" width="72" height="72">
+    <h1 class="h3 mb-3 fw-normal">Sign in</h1>
+
+    <div class="form-group">
+      <input type="email" id="email" formControlName="email" class="form-control" placeholder="Email address" required>
+      <div *ngIf="email && email.invalid && (email.dirty || email.touched)" class="alert alert-danger">
+        <div *ngIf="email.errors?.required">
+          Email is required.
+        </div>
+        <div *ngIf="email.errors?.email">
+          Please enter a valid email address.
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <input type="password" id="password" formControlName="password" class="form-control" placeholder="Password" required>
+      <div *ngIf="password && password.invalid && (password.dirty || password.touched)" class="alert alert-danger">
+        <div *ngIf="password.errors?.required">
+          Password is required.
+        </div>
+      </div>
+    </div>
+
+    <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
+
+    <div *ngIf="errorMessage" class="alert alert-danger">
+      {{ errorMessage }}
+    </div>
+
+    <p class="mt-5 mb-3 text-muted">&copy; 2021</p>
+  </form>
+</div>

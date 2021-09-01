@@ -12,7 +12,7 @@ export class QueryFailedErrorExceptionFilter implements ExceptionFilter {
             case PG_UNIQUE_VIOLATION:
                 const key = exception.detail.split('=')[0].replace('(','').replace(')','').split(' ')[1];
                 const value = exception.detail.split('=')[1].replace('(','').replace(')','');
-                return response.status(HttpStatus.BAD_REQUEST).json({ message: { error: 'Bad Request', message: key + ' ' + value } });
+                return response.status(HttpStatus.CONFLICT).json({ message: { error: 'Conflict', message: key + ' ' + value } });
             default: 
                 return response.status(HttpStatus.BAD_REQUEST).json({ message: { error: 'Bad Request', message: exception.message } });
         }
