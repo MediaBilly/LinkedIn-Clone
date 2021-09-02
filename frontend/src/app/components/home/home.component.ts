@@ -14,7 +14,7 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.isLoggedIn = !!this.tokenStorageService.getToken();
+    this.isLoggedIn = this.tokenStorageService.loggedIn();
     this.content = this.isLoggedIn ? 'HOME PAGE UNDER CONSTRUCTION' : 'Welcome Page';
   }
 

@@ -1,19 +1,21 @@
 <div class="container" *ngIf="currentUser; else loggedOut">
-    <header class="jumbotron">
-      <h3>
-        <strong>{{ currentUser.firstname }} {{ currentUser.lastname }}</strong>
-      </h3>
-    </header>
-    <p>
-      <strong>Email:</strong>
-      {{ currentUser.email }}
-    </p>
-    <p>
-      <strong>Phone:</strong>
-      {{ currentUser.phone }}
-    </p>
-  </div>
+  <header class="jumbotron">
+    <img *ngIf="currentUser.profilePicName" src="http://localhost:3000/images/profile_pics/{{ currentUser.profilePicName }}" class="img-thumbnail" width="300" height="300">
+    <img *ngIf="!currentUser.profilePicName" src="assets/profile_pic_placeholder.png" class="img-thumbnail" width="300" height="300">
+    <h3>
+      <strong>{{ currentUser.firstname }} {{ currentUser.lastname }}</strong>
+    </h3>
+  </header>
+  <p>
+    <strong>Email:</strong>
+    {{ currentUser.email }}
+  </p>
+  <p>
+    <strong>Phone:</strong>
+    {{ currentUser.phone }}
+  </p>
+</div>
   
-  <ng-template #loggedOut>
-    Please login.
-  </ng-template>
+<ng-template #loggedOut>
+  Please login.
+</ng-template>

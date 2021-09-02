@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-navbar',
@@ -8,11 +9,17 @@ import { TokenStorageService } from 'src/app/services/token-storage.service';
 })
 export class NavbarComponent implements OnInit {
   isLoggedIn = false;
+  currentUser: any;
 
-  constructor(private tokenStorageService: TokenStorageService) { }
+  constructor(private tokenStorageService: TokenStorageService, private usersService: UserService) { }
 
   ngOnInit(): void {
-    this.isLoggedIn = !!this.tokenStorageService.getToken();
+    this.isLoggedIn = this.tokenStorageService.loggedIn();
+    if (this.isLoggedIn) {
+      this.usersService.getUserProfile().subscribe(user => {
+        this.currentUser = user;
+      });
+    }
   }
 
   logout() {

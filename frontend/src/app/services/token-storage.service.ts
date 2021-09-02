@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 const TOKEN_KEY = 'auth-token';
 
@@ -7,7 +8,7 @@ const TOKEN_KEY = 'auth-token';
 })
 export class TokenStorageService {
 
-  constructor() { }
+  constructor(private jwtHelper: JwtHelperService) { }
 
   signOut(): void {
     window.sessionStorage.clear();
@@ -20,5 +21,13 @@ export class TokenStorageService {
 
   public getToken(): string | null {
     return window.sessionStorage.getItem(TOKEN_KEY);
+  }
+
+  public loggedIn(): boolean {
+    const token = this.getToken();
+    if (!token) {
+      return false;
+    }
+    return !this.jwtHelper.isTokenExpired(token);
   }
 }

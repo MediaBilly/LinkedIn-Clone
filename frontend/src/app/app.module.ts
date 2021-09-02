@@ -8,8 +8,8 @@ import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { HomeComponent } from './components/home/home.component';
 import { ProfileComponent } from './components/profile/profile.component';
-import { authInterceptorProviders } from './helpers/auth.interceptor';
 import { NavbarComponent } from './components/navbar/navbar.component';
+import { JwtModule } from '@auth0/angular-jwt';
 
 @NgModule({
   declarations: [
@@ -25,9 +25,16 @@ import { NavbarComponent } from './components/navbar/navbar.component';
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: () => {
+          return sessionStorage.getItem('auth-token');
+        },
+        allowedDomains: ['localhost:3000']
+      }
+    })
   ],
-  providers: [authInterceptorProviders],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
