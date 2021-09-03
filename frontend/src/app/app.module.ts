@@ -10,6 +10,9 @@ import { HomeComponent } from './components/home/home.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { JwtModule } from '@auth0/angular-jwt';
+import { MessagingComponent } from './components/messaging/messaging.component';
+import { NetworkComponent } from './components/network/network.component';
+import { NotificationsComponent } from './components/notifications/notifications.component';
 
 @NgModule({
   declarations: [
@@ -19,6 +22,9 @@ import { JwtModule } from '@auth0/angular-jwt';
     HomeComponent,
     ProfileComponent,
     NavbarComponent,
+    MessagingComponent,
+    NetworkComponent,
+    NotificationsComponent,
   ],
   imports: [
     BrowserModule,
