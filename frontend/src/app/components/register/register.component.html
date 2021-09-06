@@ -3,40 +3,40 @@
     <img class="mb-4" src="https://play-lh.googleusercontent.com/kMofEFLjobZy_bCuaiDogzBcUT-dz3BBbOrIEjJ-hqOabjK8ieuevGe6wlTD15QzOqw" alt="" width="72" height="72">
     <h1 class="h3 mb-3 fw-normal">Sign up</h1>
 
-    <input type="firstname" id="firstname" formControlName="firstname" class="form-control" placeholder="First Name" required>
-    <div *ngIf="firstname && firstname.invalid && (firstname.dirty || firstname.touched)" class="alert alert-danger">
-      <div *ngIf="firstname.errors?.required">
+    <div class="form-group">
+      <input type="text" id="firstname" formControlName="firstname" [ngClass]="{'form-control': true, 'is-invalid': fieldIsInvalid('firstname')}" placeholder="First Name" aria-describedby="registerFnameFeedback" required>
+      <div *ngIf="fieldHasError('firstname','required')" id="registerFnameFeedback" class="invalid-feedback">
         First Name is required.
       </div>
     </div>
 
-    <input type="lastname" id="lastname" formControlName="lastname" class="form-control" placeholder="Last Name" required>
-    <div *ngIf="lastname && lastname.invalid && (lastname.dirty || lastname.touched)" class="alert alert-danger">
-      <div *ngIf="lastname.errors?.required">
+    <div class="form-group">
+      <input type="text" id="lastname" formControlName="lastname" [ngClass]="{'form-control': true, 'is-invalid': fieldIsInvalid('lastname')}" placeholder="Last Name" aria-describedby="registerLnameFeedback" required>
+      <div *ngIf="fieldHasError('lastname','required')" id="registerLnameFeedback" class="invalid-feedback">
         Last Name is required.
       </div>
     </div>
 
-    <input type="phone" id="phone" formControlName="phone" class="form-control" placeholder="Phone" required>
-    <div *ngIf="phone && phone.invalid && (phone.dirty || phone.touched)" class="alert alert-danger">
-      <div *ngIf="phone.errors?.required">
+    <div class="form-group">
+      <input type="tel" id="phone" formControlName="phone" [ngClass]="{'form-control': true, 'is-invalid': fieldIsInvalid('phone')}" placeholder="Phone" aria-describedby="registerPhoneFeedback" required>
+      <div *ngIf="fieldHasError('phone','required')" id="registerPhoneFeedback" class="invalid-feedback">
         Phone is required.
       </div>
     </div>
 
-    <input type="email" id="email" formControlName="email" class="form-control" placeholder="Email address" required>
-    <div *ngIf="email && email.invalid && (email.dirty || email.touched)" class="alert alert-danger">
-      <div *ngIf="email.errors?.required">
+    <div class="form-group">
+      <input type="email" id="email" formControlName="email" [ngClass]="{'form-control': true, 'is-invalid': fieldIsInvalid('email')}" placeholder="Email address" aria-describedby="registerEmailFeedback" required>
+      <div *ngIf="fieldHasError('email','required')" id="registerEmailFeedback" class="invalid-feedback">
         Email is required.
       </div>
-      <div *ngIf="email.errors?.email">
+      <div *ngIf="fieldHasError('email','email')" id="registerEmailFeedback" class="invalid-feedback">
         Please enter a valid email address.
       </div>
     </div>
 
-    <input type="password" id="password" formControlName="password" class="form-control" placeholder="Password" required>
-    <div *ngIf="password && password.invalid && (password.dirty || password.touched)" class="alert alert-danger">
-      <div *ngIf="password.errors?.required">
+    <div class="form-group">
+      <input type="password" id="password" formControlName="password" [ngClass]="{'form-control': true, 'is-invalid': fieldIsInvalid('password')}" placeholder="Password" aria-describedby="registerPasswordFeedback" required>
+      <div *ngIf="fieldHasError('password','required')" id="registerPasswordFeedback" class="invalid-feedback">
         Password is required.
       </div>
     </div>

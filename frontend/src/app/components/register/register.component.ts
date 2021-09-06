@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { NewUser } from 'src/app/models/newUser.model';
 import { AuthService } from '../../services/auth.service';
 import { TokenStorageService } from '../../services/token-storage.service';
 
@@ -10,6 +11,7 @@ import { TokenStorageService } from '../../services/token-storage.service';
 })
 export class RegisterComponent implements OnInit {
   errorMessage = '';
+  registerFromInvalid = false;
 
   newUserForm = this.fb.group({
     firstname: ['', Validators.required],
@@ -19,16 +21,6 @@ export class RegisterComponent implements OnInit {
     password: ['', Validators.required]
   });
 
-  get firstname() { return this.newUserForm.get('firstname'); }
-
-  get lastname() { return this.newUserForm.get('lastname'); }
-
-  get email() { return this.newUserForm.get('email'); }
-
-  get phone() { return this.newUserForm.get('phone'); }
-
-  get password() { return this.newUserForm.get('password'); }
-
   constructor(private authService: AuthService, private tokenService: TokenStorageService, private fb: FormBuilder) { }
 
   ngOnInit(): void {
@@ -36,9 +28,10 @@ export class RegisterComponent implements OnInit {
 
   onSubmit(): void {
     if (this.newUserForm.valid) {
-      const { firstname, lastname, email, phone, password } = this.newUserForm.value;
+      this.registerFromInvalid = false;
+      const newUser: NewUser = this.newUserForm.value;
 
-      this.authService.register(firstname, lastname, email, phone, password).subscribe(
+      this.authService.register(newUser).subscribe(
         data => {
           this.tokenService.saveToken(data.access_token);
           this.gotoHomePage();
@@ -51,7 +44,17 @@ export class RegisterComponent implements OnInit {
           }
         }
       );
+    } else {
+      this.registerFromInvalid = true;
     }
+  }
+
+  public fieldIsInvalid = (field: string) => {
+    return this.registerFromInvalid && this.newUserForm.controls[field].invalid;
+  }
+
+  public fieldHasError = (field: string, error: string) => {
+    return this.newUserForm.controls[field].hasError(error);
   }
 
   gotoHomePage(): void {

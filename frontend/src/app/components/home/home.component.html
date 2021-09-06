@@ -1,10 +1,9 @@
-<div *ngIf="isLoggedIn" class="gedf-wrapper">
+<div *ngIf="currentUser; else loggedOut" class="gedf-wrapper">
     <div class="row">
         <div class="col-md-3">
             <div class="card text-center">
                 <div class="card-body">
-                    <img *ngIf="currentUser.profilePicName" src="http://localhost:3000/images/profile_pics/{{ currentUser.profilePicName }}" alt="mdo" width="80" height="80" class="bi d-block mx-auto mb-1 rounded-circle">
-                    <img *ngIf="!currentUser.profilePicName" src="assets/profile_pic_placeholder.png" alt="mdo" width="80" height="80" class="bi d-block mx-auto mb-1 rounded-circle">
+                    <img src="{{ profilePicPath }}" alt="mdo" width="80" height="80" class="bi d-block mx-auto mb-1 rounded-circle">
                     <div class="h5">{{ currentUser.firstname }} {{ currentUser.lastname }}</div>
                     <div class="h7">Developer of web applications, JavaScript, PHP, Java, Python, Ruby, Java, Node.js,
                         etc.
@@ -15,7 +14,6 @@
                         <div class="h6 text-muted">Connections</div>
                         <div class="h5">5.2342</div>
                     </li>
-
                 </ul>
             </div>
         </div>
@@ -261,6 +259,11 @@
       </div>
   </div>
 </div>
-<div *ngIf="!isLoggedIn">
-    Welcome Page!
-</div>
+<ng-template #loggedOut>
+    <div class="hero hero--with-form">
+        <h1 class="hero__headline hero__headline--basic">
+          Welcome to your professional community
+        </h1>
+        <img class="hero__illustration--desktop flip-rtl lazy-loaded" alt="Welcome to your professional community" src="https://static-exp1.licdn.com/sc/h/dxf91zhqd2z6b0bwg85ktm5s4">
+    </div>
+</ng-template>

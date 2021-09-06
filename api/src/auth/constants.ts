@@ -1,3 +1,3 @@
 export const jwtConstants = {
-    secret: 'tedi2021',
+    secret: 'XZEKcMp!V.?P8CxU#PL#jK).d<P[}-gg',
 }

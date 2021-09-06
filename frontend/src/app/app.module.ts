@@ -13,6 +13,7 @@ import { JwtModule } from '@auth0/angular-jwt';
 import { MessagingComponent } from './components/messaging/messaging.component';
 import { NetworkComponent } from './components/network/network.component';
 import { NotificationsComponent } from './components/notifications/notifications.component';
+import { SettingsComponent } from './components/settings/settings.component';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { NotificationsComponent } from './components/notifications/notifications
     MessagingComponent,
     NetworkComponent,
     NotificationsComponent,
+    SettingsComponent,
   ],
   imports: [
     BrowserModule,

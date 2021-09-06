@@ -1,0 +1,104 @@
+<div class="light-style flex-grow-1 container-p-y">
+    <div class="card overflow-hidden">
+        <div class="row no-gutters row-bordered row-border-light">
+            <div class="col-md-3 pt-0">
+                <div class="list-group list-group-flush account-settings-links" role="tablist">
+                    <a class="list-group-item list-group-item-action active" id="account-general-list" data-bs-toggle="list" href="#account-general" role="tab" aria-controls="account-general">General</a>
+                    <a class="list-group-item list-group-item-action" id="account-change-password-list" data-bs-toggle="list" href="#account-change-password" role="tab" aria-controls="account-change-password">Change password</a>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <div class="tab-content">
+                    <div class="tab-pane fade active show" id="account-general" role="tabpanel" aria-labelledby="account-general-list">
+                        <div class="card-body">
+                            <form [formGroup]="updateUserForm" (ngSubmit)="onUserUpdate()">
+                                <div class="form-group">
+                                    <label class="form-label">First Name</label>
+                                    <input type="text" id="firstname" formControlName="firstname" [ngClass]="{'form-control': true, 'is-invalid': updateUserFieldIsInvalid('firstname')}" aria-describedby="fnameFeedback">
+                                    <div *ngIf="updateUserFieldHasError('firstname','required')" id="fnameFeedback" class="invalid-feedback">
+                                        First Name is required.
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Last Name</label>
+                                    <input type="text" id="lastname" formControlName="lastname" [ngClass]="{'form-control': true, 'is-invalid': updateUserFieldIsInvalid('lastname')}" aria-describedby="lnameFeedback">
+                                    <div *ngIf="updateUserFieldHasError('lastname','required')" id="lnameFeedback" class="invalid-feedback">
+                                        Last Name is required.
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">E-mail</label>
+                                    <input type="email" id="email" formControlName="email" [ngClass]="{'form-control': true, 'is-invalid': updateUserFieldIsInvalid('email')}" aria-describedby="emailFeedback">
+                                    <div *ngIf="updateUserFieldHasError('email','required')" id="emailFeedback" class="invalid-feedback">
+                                        Email is required.
+                                    </div>
+                                    <div *ngIf="updateUserFieldHasError('email','email')" id="emailFeedback" class="invalid-feedback">
+                                        Please enter a valid email address.
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Phone</label>
+                                    <input type="tel" id="phone" formControlName="phone" [ngClass]="{'form-control': true, 'is-invalid': updateUserFieldIsInvalid('phone')}" aria-describedby="phoneFeedback">
+                                    <div *ngIf="updateUserFieldHasError('phone','required')" id="phoneFeedback" class="invalid-feedback">
+                                        Phone is required.
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary">Save changes</button>
+                                </div>
+                            </form>
+                            <div *ngIf="successfullyUpdatedUser" class="alert alert-success">
+                                User updated successfully.
+                            </div>
+                            <div *ngIf="updateUserError" class="alert alert-danger">
+                                {{ updateUserError }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="account-change-password" role="tabpanel" aria-labelledby="account-change-password-list">
+                        <div class="card-body pb-2">
+                            <form [formGroup]="changePasswordForm" (ngSubmit)="onPasswordChange()">
+                                <div class="form-group">
+                                    <label class="form-label">Current password</label>
+                                    <input type="password" id="oldPassword" formControlName="oldPassword" [ngClass]="{'form-control': true, 'is-invalid': changePasswordFieldIsInvalid('oldPassword')}" aria-describedby="oldPasswordFeedback">
+                                    <div *ngIf="changePasswordFieldHasError('oldPassword','required')" id="oldPasswordFeedback" class="invalid-feedback">
+                                        Current password is required.
+                                    </div>
+                                </div>
+    
+                                <div class="form-group">
+                                    <label class="form-label">New password</label>
+                                    <input type="password" id="newPassword" formControlName="newPassword" [ngClass]="{'form-control': true, 'is-invalid': changePasswordFieldIsInvalid('newPassword')}" aria-describedby="newPasswordFeedback">
+                                    <div *ngIf="changePasswordFieldHasError('newPassword','required')" id="newPasswordFeedback" class="invalid-feedback">
+                                        New password is required.
+                                    </div>
+                                </div>
+    
+                                <div class="form-group">
+                                    <label class="form-label">Repeat new password</label>
+                                    <input type="password" id="repeatPassword" formControlName="repeatPassword" [ngClass]="{'form-control': true, 'is-invalid': changePasswordFieldIsInvalid('repeatPassword')}" aria-describedby="repeatPasswordFeedback">
+                                    <div *ngIf="changePasswordFieldHasError('repeatPassword','required')" id="repeatPasswordFeedback" class="invalid-feedback">
+                                        Repeat new password is required.
+                                    </div>
+                                </div>
+    
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </div>
+                            </form>
+                            <div *ngIf="changePasswordFormInvalid && changePasswordForm.errors?.passwordsDoNotMatch" class="alert alert-danger">
+                                Passwords do not match.
+                            </div>
+                            <div *ngIf="successfullyChangedPassword" class="alert alert-success">
+                                Password changed successfully.
+                            </div>
+                            <div *ngIf="changePasswordError" class="alert alert-danger">
+                                {{ changePasswordError }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

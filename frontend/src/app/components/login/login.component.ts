@@ -9,7 +9,7 @@ import { TokenStorageService } from '../../services/token-storage.service';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  isLoginFailed = false;
+  loginFormInvalid = false;
   errorMessage = '';
 
   loginForm = this.fb.group({
@@ -22,22 +22,17 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  get email() { return this.loginForm.get('email'); }
-
-  get password() { return this.loginForm.get('password'); }
-
   onSubmit(): void {
     if (this.loginForm.valid) {
+      this.loginFormInvalid = false;
       const { email, password } = this.loginForm.value;
 
       this.authService.login(email, password).subscribe(
         data => {
           this.tokenStorage.saveToken(data.access_token);
-          this.isLoginFailed = false;
           this.gotoHomePage();
         },
         err => {
-          this.isLoginFailed = true;
           if (err.status === 401) {
             this.errorMessage = "Wrong password."
           } else if (err.status === 404) {
@@ -47,7 +42,17 @@ export class LoginComponent implements OnInit {
           }
         }
       );
+    } else {
+      this.loginFormInvalid = true;
     }
+  }
+
+  public fieldIsInvalid = (field: string) => {
+    return this.loginFormInvalid && this.loginForm.controls[field].invalid;
+  }
+
+  public fieldHasError = (field: string, error: string) => {
+    return this.loginForm.controls[field].hasError(error);
   }
 
   gotoHomePage(): void {

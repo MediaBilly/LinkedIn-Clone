@@ -15,13 +15,13 @@
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <form class="d-flex justify-content-start" *ngIf="isLoggedIn">
+    <form class="d-flex justify-content-start" *ngIf="currentUser">
       <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
       <button class="btn btn-outline-primary" type="submit">Search</button>
     </form>
 
     <div class=" d-flex justify-content-end collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ml-auto" *ngIf="isLoggedIn">
+      <ul class="navbar-nav ml-auto" *ngIf="currentUser">
         <li class="nav-item">
           <a href="#" class="nav-link" routerLink="">
             <svg class="bi d-block mx-auto mb-1" height="24" width="24">
@@ -65,19 +65,18 @@
         </li>
         <li class="nav-item dropdown">
           <a href="#" class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
-            <img *ngIf="currentUser.profilePicName" src="http://localhost:3000/images/profile_pics/{{ currentUser.profilePicName }}" alt="mdo" width="24" height="24" class="bi d-block mx-auto mb-1 rounded-circle">
-            <img *ngIf="!currentUser.profilePicName" src="assets/profile_pic_placeholder.png" alt="mdo" width="24" height="24" class="bi d-block mx-auto mb-1 rounded-circle">
+            <img src="{{ profilePicPath }}" alt="mdo" width="24" height="24" class="bi d-block mx-auto mb-1 rounded-circle">
             Me
           </a>
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
             <li><a class="dropdown-item" routerLink="profile">Profile</a></li>
-            <li><a class="dropdown-item" href="#" routerLink="">Settings</a></li>
+            <li><a class="dropdown-item" routerLink="settings">Settings</a></li>
             <li><a class="dropdown-item" href="#" (click)="logout()">LogOut</a></li>
           </ul>
         </li>
       </ul>
       
-      <ul class="navbar-nav ml-auto" *ngIf="!isLoggedIn">
+      <ul class="navbar-nav ml-auto" *ngIf="!currentUser">
         <li class="nav-item">
           <a href="/login" class="nav-link" routerLink="login">Sign In</a>
         </li>

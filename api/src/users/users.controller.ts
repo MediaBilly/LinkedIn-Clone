@@ -45,9 +45,10 @@ export class UsersController {
     @UseGuards(JwtAuthGuard)
     @Patch('change-password')
     async changeMyPassword(@Request() req, @Body() changePasswordDto: ChangePasswordDto) {
-        const passOk = await this.usersService.checkPassword(req.user, changePasswordDto.oldPassword);
+        const userWithPassword = await this.usersService.findLoginUser(req.user.email);
+        const passOk = await this.usersService.checkPassword(userWithPassword, changePasswordDto.oldPassword);
         if (passOk) {
-            return this.usersService.changePassword(+req.user.id,changePasswordDto.newPassword);
+            return this.usersService.changePassword(userWithPassword.id,changePasswordDto.newPassword);
         } else {
             throw new ForbiddenException("Wrong Password!");
         }

@@ -7,6 +7,7 @@ import { NetworkComponent } from './components/network/network.component';
 import { NotificationsComponent } from './components/notifications/notifications.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { RegisterComponent } from './components/register/register.component';
+import { SettingsComponent } from './components/settings/settings.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -15,7 +16,8 @@ const routes: Routes = [
   { path: 'profile', component: ProfileComponent },
   { path: 'messaging', component: MessagingComponent },
   { path: 'network', component: NetworkComponent },
-  { path: 'notifications', component: NotificationsComponent }
+  { path: 'notifications', component: NotificationsComponent },
+  { path: 'settings', component: SettingsComponent }
 ];
 
 @NgModule({
