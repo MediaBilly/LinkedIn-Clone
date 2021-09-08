@@ -12,6 +12,7 @@ export class HomeComponent implements OnInit {
   isLoggedIn = false;
   currentUser?: User;
   profilePicPath?: string;
+  totalConnections = 0;
 
   constructor(private tokenStorageService: TokenStorageService, private usersService: UserService) { 
   }
@@ -26,6 +27,9 @@ export class HomeComponent implements OnInit {
       this.usersService.getUserProfile().subscribe(user => {
         this.currentUser = user;
         this.profilePicPath = this.usersService.getProfilePicPath(user);
+        this.usersService.getFriends().subscribe(friends => {
+          this.totalConnections = friends.length;
+        })
       });
     } 
   }

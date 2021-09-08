@@ -14,6 +14,8 @@ import { MessagingComponent } from './components/messaging/messaging.component';
 import { NetworkComponent } from './components/network/network.component';
 import { NotificationsComponent } from './components/notifications/notifications.component';
 import { SettingsComponent } from './components/settings/settings.component';
+import { FriendRequestComponent } from './components/friend-request/friend-request.component';
+import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 
 @NgModule({
   declarations: [
@@ -27,6 +29,8 @@ import { SettingsComponent } from './components/settings/settings.component';
     NetworkComponent,
     NotificationsComponent,
     SettingsComponent,
+    FriendRequestComponent,
+    PageNotFoundComponent,
   ],
   imports: [
     BrowserModule,

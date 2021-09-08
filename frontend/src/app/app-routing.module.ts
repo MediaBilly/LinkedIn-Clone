@@ -5,6 +5,7 @@ import { LoginComponent } from './components/login/login.component';
 import { MessagingComponent } from './components/messaging/messaging.component';
 import { NetworkComponent } from './components/network/network.component';
 import { NotificationsComponent } from './components/notifications/notifications.component';
+import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { RegisterComponent } from './components/register/register.component';
 import { SettingsComponent } from './components/settings/settings.component';
@@ -17,7 +18,9 @@ const routes: Routes = [
   { path: 'messaging', component: MessagingComponent },
   { path: 'network', component: NetworkComponent },
   { path: 'notifications', component: NotificationsComponent },
-  { path: 'settings', component: SettingsComponent }
+  { path: 'settings', component: SettingsComponent },
+  { path: 'user/:id', component: ProfileComponent },
+  { path: '**', pathMatch: 'full', component: PageNotFoundComponent }
 ];
 
 @NgModule({

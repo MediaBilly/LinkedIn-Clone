@@ -13,11 +13,14 @@ export class NavbarComponent implements OnInit {
   currentUser?: User;
   profilePicPath?: string;
 
+  notificationsCount = 0;
+
   constructor(private tokenStorageService: TokenStorageService, private usersService: UserService) { }
 
   ngOnInit(): void {
     this.isLoggedIn = this.tokenStorageService.loggedIn();
     this.getUser();
+    this.getBadgeCounts();
   }
 
   getUser() {
@@ -25,6 +28,14 @@ export class NavbarComponent implements OnInit {
       this.usersService.getUserProfile().subscribe(user => {
         this.currentUser = user;
         this.profilePicPath = this.usersService.getProfilePicPath(user);
+      });
+    }
+  }
+
+  getBadgeCounts(): void {
+    if (this.isLoggedIn) {
+      this.usersService.getReceivedFriendRequests().subscribe(requests => {
+        this.notificationsCount+=requests.length;
       });
     }
   }

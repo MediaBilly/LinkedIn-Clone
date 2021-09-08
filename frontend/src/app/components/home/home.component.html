@@ -1,6 +1,6 @@
 <div *ngIf="currentUser; else loggedOut" class="gedf-wrapper">
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-2">
             <div class="card text-center">
                 <div class="card-body">
                     <img src="{{ profilePicPath }}" alt="mdo" width="80" height="80" class="bi d-block mx-auto mb-1 rounded-circle">
@@ -11,13 +11,13 @@
                 </div>
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item">
-                        <div class="h6 text-muted">Connections</div>
-                        <div class="h5">5.2342</div>
+                        <a routerLink="network" class="h6 text-muted">Connections</a>
+                        <div class="h5">{{ totalConnections }}</div>
                     </li>
                 </ul>
             </div>
         </div>
-        <div class="col-md-6 gedf-main">
+        <div class="col-md-10 gedf-main">
 
           <!--- \\\\\\\Post-->
           <div class="card gedf-card">
@@ -229,35 +229,9 @@
                   <a href="#" class="card-link"><i class="fa fa-comment"></i> Comment</a>
                   <a href="#" class="card-link"><i class="fa fa-mail-forward"></i> Share</a>
               </div>
-          </div>
-          <!-- Post /////-->
-
-
-
+            </div>
         </div>
-      <div class="col-md-3">
-          <div class="card gedf-card">
-              <div class="card-body">
-                  <h5 class="card-title">Card title</h5>
-                  <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the
-                      card's content.</p>
-                  <a href="#" class="card-link">Card link</a>
-                  <a href="#" class="card-link">Another link</a>
-              </div>
-          </div>
-          <div class="card gedf-card">
-                <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the
-                        card's content.</p>
-                    <a href="#" class="card-link">Card link</a>
-                    <a href="#" class="card-link">Another link</a>
-                  </div>
-              </div>
-      </div>
-  </div>
+    </div>
 </div>
 <ng-template #loggedOut>
     <div class="hero hero--with-form">

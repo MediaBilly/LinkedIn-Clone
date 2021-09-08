@@ -122,24 +122,31 @@ export class UsersController {
 
     @UseGuards(JwtAuthGuard, FriendRequestSameSenderGuard)
     @Delete('friend-requests/cancel/:id')
-    cancelFriendRequest(@Request() req, @Param('id') id: string) {
+    cancelFriendRequest(@Param('id') id: string) {
         return this.usersService.cancelFriendRequest(+id);
     }
 
     @UseGuards(JwtAuthGuard, FriendRequestSameReceiverGuard)
     @Post('friend-requests/accept/:id')
-    acceptFriendRequest(@Request() req, @Param('id') id: string) {
+    acceptFriendRequest(@Param('id') id: string) {
         return this.usersService.acceptFriendRequest(+id);
     }
 
     @UseGuards(JwtAuthGuard, FriendRequestSameReceiverGuard)
     @Post('friend-requests/decline/:id')
-    declineFriendRequest(@Request() req, @Param('id') id: string) {
+    declineFriendRequest(@Param('id') id: string) {
         return this.usersService.declineFriendRequest(+id);
     }
 
     // Friendships
 
+    @UseGuards(JwtAuthGuard)
+    @Get('friends/mine')
+    getMyFriends(@Request() req) {
+        return this.usersService.getFriends(+req.user.id);
+    }
+
+    // TODO: show friend list only if request user is friends with the user specified
     @UseGuards(JwtAuthGuard)
     @Get('friends/:id')
     getFriends(@Param('id') id: string) {

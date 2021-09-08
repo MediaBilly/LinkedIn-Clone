@@ -1,21 +1,54 @@
-<div class="container" *ngIf="currentUser; else loggedOut">
-  <header class="jumbotron">
-    <img *ngIf="currentUser.profilePicName" src="http://localhost:3000/images/profile_pics/{{ currentUser.profilePicName }}" class="img-thumbnail" width="300" height="300">
-    <img *ngIf="!currentUser.profilePicName" src="assets/profile_pic_placeholder.png" class="img-thumbnail" width="300" height="300">
-    <h3>
-      <strong>{{ currentUser.firstname }} {{ currentUser.lastname }}</strong>
-    </h3>
-  </header>
-  <p>
-    <strong>Email:</strong>
-    {{ currentUser.email }}
-  </p>
-  <p>
-    <strong>Phone:</strong>
-    {{ currentUser.phone }}
-  </p>
+<div class="container" *ngIf="isLoggedIn; else loggedOut">
+  <div *ngIf="requestUser; else profileNotFound">
+    <header class="jumbotron">
+      <img src="{{ profilePicPath }}" class="img-thumbnail" width="300" height="300">
+      <h3>
+        <strong>{{ requestUser.firstname }} {{ requestUser.lastname }}</strong>
+      </h3>
+    </header>
+    <p>
+      <strong>id:</strong>
+      {{ requestUser.id }}
+    </p>
+    <p>
+      <strong>Email:</strong>
+      {{ requestUser.email }}
+    </p>
+    <p>
+      <strong>Phone:</strong>
+      {{ requestUser.phone }}
+    </p>
+    <div *ngIf="!isMe">
+      <div *ngIf="receivedRequest; else case2">
+        You have a friend request from this user.<br>
+        <button type="button" class="btn btn-primary" (click)="acceptRequest()">Accept</button>
+        <button type="button" class="btn btn-danger" (click)="declineRequest()">Decline</button>
+      </div>
+    </div>
+  </div>
 </div>
-  
+
+<ng-template #case2>
+  <div *ngIf="sentRequest; else case3">
+    <button type="button" class="btn btn-danger" (click)="cancelFriendRequest()">Cancel connection request</button>
+  </div>
+</ng-template>
+
+<ng-template #case3>
+  <div *ngIf="areFriends; else case4">
+    <button type="button" class="btn btn-primary">Message</button>
+    <button type="button" class="btn btn-danger" (click)="removeFriend()">Remove Connection</button>
+  </div>
+</ng-template>
+
+<ng-template #case4>
+  <button type="button" class="btn btn-primary" (click)="sendRequest()">Connect</button>
+</ng-template>
+
+<ng-template #profileNotFound>
+  This profile is not available.
+</ng-template>
+
 <ng-template #loggedOut>
   Please login.
 </ng-template>

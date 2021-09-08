@@ -1,0 +1,20 @@
+<div *ngIf="request" class="friend-request">
+    <div class="row">
+        <div class="col-sm-1">
+            <img [src]="profilePicPath" alt="user" class="profile-photo-lg">
+        </div>
+        <div class="col-sm-9">
+            <h5><a routerLink="/user/{{ request.sender.id }}" class="profile-link">{{ request.sender.firstname }} {{ request.sender.lastname }}</a></h5>
+            <p>Software Engineer</p>
+        </div>
+        <div class="col-sm-2">
+            <div *ngIf="!accepted && !declined" class="d-grid gap-2 d-md-flex">
+                <button class="btn btn-primary" type="button" (click)="accept()">Accept</button>
+                <button class="btn btn-danger" type="button" (click)="decline()">Decline</button>
+            </div>
+            <div *ngIf="accepted">
+                <button class="btn btn-primary" type="button">Message</button>
+            </div>
+        </div>
+    </div>
+</div>

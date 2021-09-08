@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -9,13 +9,15 @@ import { FriendRequest } from './entities/friend-request.entity';
 import { Friendship } from './entities/friendship.entity';
 import { unlinkSync } from 'fs';
 import { checkImageType, getProfilePicLocation } from './helpers/profile-pic-storage';
+import { Notification, NotificationType } from './entities/notification.entity';
 
 @Injectable()
 export class UsersService {
     constructor(
         @InjectRepository(User) private usersRepository: Repository<User>,
         @InjectRepository(FriendRequest) private friendRequestsRepository: Repository<FriendRequest>,
-        @InjectRepository(Friendship) private friendshipsRepository: Repository<Friendship>
+        @InjectRepository(Friendship) private friendshipsRepository: Repository<Friendship>,
+        @InjectRepository(Notification) private notificationsRepository: Repository<Notification>
     ) {}
 
     // Basic Functionality
@@ -174,5 +176,15 @@ export class UsersService {
             throw new NotFoundException('Not yet friends.');
         }
         return this.friendshipsRepository.remove(friendship);
+    }
+
+    // Notifications
+
+    sendNotification(receiver: User, type: NotificationType, referer: number): Promise<Notification> {
+        const notification = this.notificationsRepository.create();
+        notification.receiver = receiver;
+        notification.type = type;
+        notification.referer = referer;
+        return this.notificationsRepository.save(notification);
     }
 }

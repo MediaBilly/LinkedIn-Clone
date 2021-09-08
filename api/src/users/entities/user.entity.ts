@@ -5,6 +5,7 @@ import { Friendship } from "./friendship.entity";
 import { Article } from "src/articles/entities/article.entity";
 import { ArticleReaction } from "src/articles/entities/article-reaction.entity";
 import { ArticleComment } from "src/articles/entities/article-comment.entity";
+import { Notification } from "./notification.entity";
 
 export enum UserRole {
     ADMIN = 'a',
@@ -62,4 +63,7 @@ export class User {
 
     @OneToMany(() => ArticleComment, articleComment => articleComment.commenter)
     articleComments: ArticleComment[];
+
+    @OneToMany(() => Notification, notification => notification.receiver)
+    notifications: Notification[];
 }
