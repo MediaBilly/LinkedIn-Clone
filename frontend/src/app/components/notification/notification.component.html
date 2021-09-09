@@ -1,0 +1,13 @@
+<div *ngIf="notification" class="notification">
+    <div class="row">
+        <div class="col-sm-1">
+            <img class="notification-photo" [src]="imgPath" alt="">
+        </div>
+        <div class="col-sm-9">
+            <a routerLink="{{ link }}">{{ text }}</a>
+        </div>
+        <div class="col-sm-2">
+            {{ notification.receivedAt | dateAgo }}
+        </div>
+    </div>
+</div>

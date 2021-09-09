@@ -150,6 +150,7 @@ export class UsersService {
             const newFriendship = this.friendshipsRepository.create();
             newFriendship.user1 = user1;
             newFriendship.user2 = user2;
+            this.sendNotification(user1, NotificationType.ACCEPTED_FRIEND_REQUEST, user2.id);
             return this.friendshipsRepository.save(newFriendship);
         });
     }
@@ -180,11 +181,25 @@ export class UsersService {
 
     // Notifications
 
+    getUserNotifications(uid: number) {
+        return this.notificationsRepository.createQueryBuilder('N').where('N.receiverId = :uid', { uid: uid }).getMany();
+    }
+
+    getNotification(id: number): Promise<Notification> {
+        return this.notificationsRepository.findOneOrFail(id);
+    }
+
     sendNotification(receiver: User, type: NotificationType, referer: number): Promise<Notification> {
         const notification = this.notificationsRepository.create();
         notification.receiver = receiver;
         notification.type = type;
         notification.referer = referer;
         return this.notificationsRepository.save(notification);
+    }
+
+    async readNotification(id: number) {
+        const notification = await this.getNotification(id);
+        notification.read = true;
+        return await this.notificationsRepository.save(notification);
     }
 }

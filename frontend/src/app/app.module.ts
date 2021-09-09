@@ -16,6 +16,8 @@ import { NotificationsComponent } from './components/notifications/notifications
 import { SettingsComponent } from './components/settings/settings.component';
 import { FriendRequestComponent } from './components/friend-request/friend-request.component';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
+import { NotificationComponent } from './components/notification/notification.component';
+import { DateAgoPipe } from './pipes/date-ago.pipe';
 
 @NgModule({
   declarations: [
@@ -31,6 +33,8 @@ import { PageNotFoundComponent } from './components/page-not-found/page-not-foun
     SettingsComponent,
     FriendRequestComponent,
     PageNotFoundComponent,
+    NotificationComponent,
+    DateAgoPipe,
   ],
   imports: [
     BrowserModule,

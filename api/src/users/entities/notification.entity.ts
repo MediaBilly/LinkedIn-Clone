@@ -23,7 +23,7 @@ export class Notification {
     @CreateDateColumn()
     receivedAt: Date;
 
-    @ManyToOne(() => User, user => user.notifications)
+    @ManyToOne(() => User, user => user.notifications, { eager: true })
     receiver: User;
 
     // Entity id that the notification refers to (eg other User, Article, Comment etc)

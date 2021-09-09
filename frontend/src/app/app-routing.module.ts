@@ -17,6 +17,7 @@ const routes: Routes = [
   { path: 'profile', component: ProfileComponent },
   { path: 'messaging', component: MessagingComponent },
   { path: 'network', component: NetworkComponent },
+  { path: 'connections/:id', component: NetworkComponent },
   { path: 'notifications', component: NotificationsComponent },
   { path: 'settings', component: SettingsComponent },
   { path: 'user/:id', component: ProfileComponent },

@@ -35,7 +35,10 @@ export class NavbarComponent implements OnInit {
   getBadgeCounts(): void {
     if (this.isLoggedIn) {
       this.usersService.getReceivedFriendRequests().subscribe(requests => {
-        this.notificationsCount+=requests.length;
+        this.notificationsCount += requests.length;
+      });
+      this.usersService.getNotifications().subscribe(notifications => {
+        this.notificationsCount += notifications.filter(n => n.read === false).length;
       });
     }
   }

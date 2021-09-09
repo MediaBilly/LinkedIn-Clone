@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { FriendRequest } from '../models/friendRequest.model';
+import { Notification } from '../models/notification.model';
 import { UpdateUser } from '../models/updateUser.model';
 import { User } from '../models/user.model';
 
@@ -16,9 +17,9 @@ export class UserService {
 
   // Basic Functionality
 
-  getUserProfile(uid?: string): Observable<User> {
+  getUserProfile(uid?: number): Observable<User> {
     if (uid) {
-      return this.httpClient.get<User>(API_URL + 'users/' + uid, { responseType: 'json' });
+      return this.httpClient.get<User>(API_URL + 'users/' + uid.toString(), { responseType: 'json' });
     } else {
       return this.httpClient.get<User>(API_URL + 'profile/', { responseType: 'json' });
     }
@@ -68,11 +69,21 @@ export class UserService {
 
   // Friendships
 
-  getFriends(): Observable<User[]> {
-    return this.httpClient.get<User[]>(API_URL + 'users/friends/mine', { responseType: 'json' });
+  getFriends(uid?: number): Observable<User[]> {
+    return this.httpClient.get<User[]>(API_URL + 'users/friends/' + (uid ? uid?.toString() : 'mine'), { responseType: 'json' });
   }
 
   removeFriend(fid: number): Observable<any> {
     return this.httpClient.delete(API_URL + 'users/friends/' + fid.toString(), { responseType: 'json' });
+  }
+
+  // Notifications
+
+  getNotifications(): Observable<Notification[]> {
+    return this.httpClient.get<Notification[]>(API_URL + 'users/notifications/all', { responseType: 'json' });
+  }
+
+  readNotification(id: number): Observable<any> {
+    return this.httpClient.post(API_URL + 'users/notifications/read/' + id.toString(), {}, { responseType: 'json' });
   }
 }

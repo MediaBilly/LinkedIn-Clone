@@ -18,6 +18,9 @@
       <strong>Phone:</strong>
       {{ requestUser.phone }}
     </p>
+    <p *ngIf="friends">
+      <a routerLink="/connections/{{ requestUser.id }}">{{ friends.length }} connections</a>
+    </p>
     <div *ngIf="!isMe">
       <div *ngIf="receivedRequest; else case2">
         You have a friend request from this user.<br>

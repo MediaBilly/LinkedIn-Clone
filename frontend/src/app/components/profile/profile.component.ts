@@ -26,6 +26,9 @@ export class ProfileComponent implements OnInit {
   sentRequest?: FriendRequest | null;
   receivedRequest?: FriendRequest | null;
 
+  // Other data
+  friends?: User[];
+
   constructor(private route: ActivatedRoute, private tokenService: TokenStorageService, private usersService: UserService) { }
 
   ngOnInit(): void {
@@ -43,7 +46,7 @@ export class ProfileComponent implements OnInit {
         }
       });
       if (id) {
-        this.usersService.getUserProfile(id).subscribe(user => {
+        this.usersService.getUserProfile(Number(id)).subscribe(user => {
           this.setRequestUser(user);
         });
       }
@@ -53,6 +56,9 @@ export class ProfileComponent implements OnInit {
   setRequestUser(reqUser: User): void {
     this.requestUser = reqUser;
     this.profilePicPath = this.usersService.getProfilePicPath(reqUser);
+    this.usersService.getFriends(reqUser.id).subscribe(friends => {
+      this.friends = friends;
+    });
     this.setAttributes();
   }
 

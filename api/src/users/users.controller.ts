@@ -6,7 +6,9 @@ import { ChangePasswordDto } from './dto/change-password.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FriendRequestSameReceiverGuard } from './guards/friend-request-same-receiver.guard';
 import { FriendRequestSameSenderGuard } from './guards/friend-request-same-sender.guard';
+import { NotificationReceiverGuard } from './guards/notification-receiver.guard';
 import { OnlyAdminsGuard } from './guards/only-admins.guard';
+import { OnlyFriendsGuard } from './guards/only-friends.guard';
 import { getProfilePicLocation, profilePicOptions } from './helpers/profile-pic-storage';
 import { HidePasswordInterceptor } from './interceptors/hide-password.interceptor';
 import { UsersService } from './users.service';
@@ -146,8 +148,7 @@ export class UsersController {
         return this.usersService.getFriends(+req.user.id);
     }
 
-    // TODO: show friend list only if request user is friends with the user specified
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, OnlyFriendsGuard)
     @Get('friends/:id')
     getFriends(@Param('id') id: string) {
         return this.usersService.getFriends(+id);
@@ -157,5 +158,19 @@ export class UsersController {
     @Delete('friends/:id')
     removeFriend(@Request() req, @Param('id') id: string) {
         return this.usersService.removeFriend(req.user.id, +id);
+    }
+
+    // Notifications
+
+    @UseGuards(JwtAuthGuard)
+    @Get('notifications/all')
+    getNotifications(@Request() req) {
+        return this.usersService.getUserNotifications(+req.user.id);
+    }
+
+    @UseGuards(JwtAuthGuard, NotificationReceiverGuard)
+    @Post('notifications/read/:id')
+    readNotification(@Param('id') id: string) {
+        return this.usersService.readNotification(+id);
     }
 }
