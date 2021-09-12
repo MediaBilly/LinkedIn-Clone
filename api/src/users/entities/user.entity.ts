@@ -6,6 +6,9 @@ import { Article } from "src/articles/entities/article.entity";
 import { ArticleReaction } from "src/articles/entities/article-reaction.entity";
 import { ArticleComment } from "src/articles/entities/article-comment.entity";
 import { Notification } from "./notification.entity";
+import { Skill } from "./skill.entity";
+import { Education } from "./education.entity";
+import { Experience } from "./experience.entity";
 
 export enum UserRole {
     ADMIN = 'a',
@@ -66,4 +69,14 @@ export class User {
 
     @OneToMany(() => Notification, notification => notification.receiver)
     notifications: Notification[];
+
+    @ManyToMany(() => Skill, skill => skill.users)
+    @JoinTable()
+    skills: Skill[];
+
+    @OneToMany(() => Education, education => education.user)
+    educations: Education[];
+
+    @OneToMany(() => Experience, experience => experience.user)
+    experiences: Experience[];
 }

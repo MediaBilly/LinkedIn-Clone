@@ -18,6 +18,7 @@ import { FriendRequestComponent } from './components/friend-request/friend-reque
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { NotificationComponent } from './components/notification/notification.component';
 import { DateAgoPipe } from './pipes/date-ago.pipe';
+import { ArticleComponent } from './components/article/article.component';
 
 @NgModule({
   declarations: [
@@ -35,6 +36,7 @@ import { DateAgoPipe } from './pipes/date-ago.pipe';
     PageNotFoundComponent,
     NotificationComponent,
     DateAgoPipe,
+    ArticleComponent,
   ],
   imports: [
     BrowserModule,
@@ -45,7 +47,7 @@ import { DateAgoPipe } from './pipes/date-ago.pipe';
     JwtModule.forRoot({
       config: {
         tokenGetter: () => {
-          return sessionStorage.getItem('auth-token');
+          return localStorage.getItem('auth-token');
         },
         allowedDomains: ['localhost:3000']
       }

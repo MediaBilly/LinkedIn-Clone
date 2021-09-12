@@ -11,16 +11,16 @@ export class TokenStorageService {
   constructor(private jwtHelper: JwtHelperService) { }
 
   signOut(): void {
-    window.sessionStorage.clear();
+    window.localStorage.clear();
   }
 
   public saveToken(token: string): void {
-    window.sessionStorage.removeItem(TOKEN_KEY);
-    window.sessionStorage.setItem(TOKEN_KEY, token);
+    window.localStorage.removeItem(TOKEN_KEY);
+    window.localStorage.setItem(TOKEN_KEY, token);
   }
 
   public getToken(): string | null {
-    return window.sessionStorage.getItem(TOKEN_KEY);
+    return window.localStorage.getItem(TOKEN_KEY);
   }
 
   public loggedIn(): boolean {
@@ -29,5 +29,14 @@ export class TokenStorageService {
       return false;
     }
     return !this.jwtHelper.isTokenExpired(token);
+  }
+
+  public getMyId(): number | null {
+    if (this.loggedIn()) {
+      const tokenData = this.jwtHelper.decodeToken();
+      return tokenData.sub;
+    } else {
+      return null;
+    }
   }
 }

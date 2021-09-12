@@ -1,0 +1,38 @@
+<div *ngIf="article" class="card gedf-card">
+    <div class="card-body">
+        <div class="d-flex flex-row bd-highlight mb-1">
+            <div class="p-1 bd-highlight">
+                <img class="rounded-circle" width="50" height="50" [src]="publisherPicPath" alt="">
+            </div>
+            <div class="p-1 bd-highlight">
+                <a class="link-dark h6 mb-2" routerLink="/user/{{ article.publisher.id }}">{{ article.publisher.firstname }} {{ article.publisher.lastname }}</a>
+                <div class="text-muted h7 mb-2">{{ article.published_at | dateAgo }}</div>
+            </div>
+            <div class="ms-auto p-2 bd-highlight">
+                <a href="#" class="link-dark">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
+                        <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+        <p class="card-text">
+            {{ article.text }}
+        </p>
+        <ul class="list-inline">
+            <li *ngIf="article.reactions.length > 0" class="list-inline-item">
+                <img src="/assets/emojis/like.svg" alt="like">
+                <img src="/assets/emojis/love.svg" alt="love">
+                <img src="/assets/emojis/support.svg" alt="support">
+                <span aria-hidden="true" class="text-muted h7 reaction-details">{{ article.reactions.length }}</span>
+            </li>
+            <li *ngIf="article.comments.length > 0" class="list-inline-item">
+                <span aria-hidden="true" class="text-muted h7">36 comments</span>
+            </li>
+        </ul>
+        <hr>
+        <a *ngIf="!myReaction" (click)="addReaction()" class="btn card-link article-reaction-off"><i class="far fa-thumbs-up"></i> Like</a>
+        <a *ngIf="myReaction" (click)="removeReaction()" class="btn card-link article-reaction-on"><i class="fas fa-thumbs-up"></i> Like</a>
+        <a class="btn card-link article-reaction-off"><i class="far fa-comment"></i> Comment</a>
+    </div>
+</div>

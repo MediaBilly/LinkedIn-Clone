@@ -10,6 +10,8 @@ import { Friendship } from './entities/friendship.entity';
 import { unlinkSync } from 'fs';
 import { checkImageType, getProfilePicLocation } from './helpers/profile-pic-storage';
 import { Notification, NotificationType } from './entities/notification.entity';
+import { Skill } from './entities/skill.entity';
+import { existsQuery } from 'src/helpers/existsQuery';
 
 @Injectable()
 export class UsersService {
@@ -156,10 +158,9 @@ export class UsersService {
     }
 
     async getFriends(uid: number) {
-        return this.usersRepository.query(`SELECT * FROM "user" "U" WHERE "U"."id" <> $1 AND EXISTS 
-                                            (SELECT * FROM "friendship" "F" WHERE 
-                                                ("F"."user1Id" = $1 AND "F"."user2Id" = "U"."id") OR ("F"."user2Id" = $1 AND "F"."user1Id" = "U"."id")
-                                            );`, [uid]);
+        return this.usersRepository.createQueryBuilder('U').where('U.id <> :uid', { uid: uid })
+        .andWhere(existsQuery(this.friendshipsRepository.createQueryBuilder('F').where('F.user1Id = :uid', { uid: uid }).andWhere('F.user2Id = U.id')
+        .orWhere('F.user2Id = :uid', { uid: uid }).andWhere('F.user1Id = U.id'))).getMany();
     }
 
     async getFriendship(uid: number, withId: number) {
@@ -201,5 +202,19 @@ export class UsersService {
         const notification = await this.getNotification(id);
         notification.read = true;
         return await this.notificationsRepository.save(notification);
+    }
+
+    // Skills
+
+    async getSkills(uid: number) {
+        const user = await this.usersRepository.findOneOrFail(uid, { relations: ['skills'] });
+        return user.skills;
+    }
+
+    addSkills(uid: number, newSkills: Skill[]) {
+        return this.usersRepository.findOneOrFail(uid, { relations: ['skills'] }).then((user) => {
+            user.skills.concat(newSkills);
+            return this.usersRepository.save(user);
+        });
     }
 }

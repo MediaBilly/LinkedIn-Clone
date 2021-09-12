@@ -34,6 +34,12 @@ export class ArticlesController {
     }
 
     @UseGuards(JwtAuthGuard)
+    @Get('homepage')
+    getHomepageArticles(@Request() req) {
+        return this.articlesService.getFriendsArticles(+req.user.id);
+    }
+
+    @UseGuards(JwtAuthGuard)
     @Get(':id')
     findOne(@Param('id') id: string) {
         return this.articlesService.findOne(+id);

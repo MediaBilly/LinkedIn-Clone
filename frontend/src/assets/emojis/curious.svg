@@ -1,0 +1,31 @@
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" id="maybe-consumption-small" data-supported-dps="16x16">
+  <defs>
+    <mask id="reactions-maybe-consumption-small-a" x="2.5" y="2.5" width="11" height="11" maskUnits="userSpaceOnUse">
+      <path d="M8 13.5A5.5 5.5 0 1113.5 8 5.51 5.51 0 018 13.5" fill="#fff" fill-rule="evenodd"/>
+    </mask>
+    <mask id="reactions-maybe-consumption-small-b" x="2.18" y="2.5" width="11.32" height="12.34" maskUnits="userSpaceOnUse">
+      <g>
+        <path d="M8 13.5A5.5 5.5 0 1113.5 8 5.51 5.51 0 018 13.5" fill="#fff" fill-rule="evenodd"/>
+      </g>
+    </mask>
+  </defs>
+  <g>
+    <path d="M8 0a8 8 0 018 8 8 8 0 01-8 8 8 8 0 01-8-8 8 8 0 018-8z" fill="none"/>
+    <path d="M8 1a7 7 0 017 7 7 7 0 01-7 7 7 7 0 01-7-7 7 7 0 017-7z" fill="#deb8dc" fill-rule="evenodd"/>
+    <path d="M8 3h0a5 5 0 015 5h0a5 5 0 01-5 5h0a5 5 0 01-5-5h0a5 5 0 015-5z" fill="#f9f0f8" stroke="#523951" fill-rule="evenodd"/>
+    <g mask="url(#reactions-maybe-consumption-small-a)">
+      <path d="M6.4 6.35a.65.65 0 10.65.65.65.65 0 00-.65-.65" fill="#523951" stroke="#523951" stroke-width=".1" fill-rule="evenodd"/>
+    </g>
+    <g mask="url(#reactions-maybe-consumption-small-a)">
+      <path d="M9.63 7a.65.65 0 10.65.65.66.66 0 00-.65-.65" fill="#523951" stroke="#523951" stroke-width=".1" fill-rule="evenodd"/>
+    </g>
+    <g fill="none" stroke="#523951" stroke-linecap="round" stroke-linejoin="round" stroke-width=".9" mask="url(#reactions-maybe-consumption-small-a)">
+      <path d="M5.75 5a1.07 1.07 0 01.66-.28 1.08 1.08 0 01.7.15M9.24 5.81a1.08 1.08 0 01.71 0 1 1 0 01.59.38"/>
+    </g>
+    <g mask="url(#reactions-maybe-consumption-small-b)">
+      <path d="M8.11 10a.53.53 0 01.42.1.57.57 0 01.22.38.61.61 0 01-.45.66l-1.4.24a.42.42 0 01.34.09.47.47 0 01.18.31.5.5 0 01-.35.56.52.52 0 01.24.35.52.52 0 01-.31.55.46.46 0 01.1.34.5.5 0 01-.43.46H6.5c-.42.09-.84.17-1.27.22a8.87 8.87 0 01-1.45-.12 1 1 0 01-.7-.65c-.32-.69-.49-2-.1-2.36a1.29 1.29 0 00.5-.72C3.67 10 3.86 9.46 4 9s.21-.63.48-.74a.56.56 0 01.68.34 2.47 2.47 0 010 .9 2 2 0 000 1z" fill="none" stroke="#523951" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.152"/>
+      <path d="M4.78 10.55L8.11 10a.53.53 0 01.42.1.57.57 0 01.22.38.61.61 0 01-.45.66l-1.4.24a.42.42 0 01.34.09.47.47 0 01.18.31.5.5 0 01-.35.56.52.52 0 01.24.35.52.52 0 01-.31.55.46.46 0 01.1.34.5.5 0 01-.43.46H6.5c-.42.09-.84.17-1.27.22a8.87 8.87 0 01-1.45-.12 1 1 0 01-.7-.65c-.32-.69-.49-2-.1-2.36a1.29 1.29 0 00.5-.72C3.67 10 3.86 9.46 4 9s.21-.63.48-.74a.56.56 0 01.68.34 2.47 2.47 0 010 .9 2 2 0 000 1" fill="#f9f0f8"/>
+      <path d="M8.11 10a.53.53 0 01.42.1.57.57 0 01.22.38.61.61 0 01-.45.66l-1.4.24a.42.42 0 01.34.09.47.47 0 01.18.31.5.5 0 01-.35.56.52.52 0 01.24.35.52.52 0 01-.31.55.46.46 0 01.1.34.5.5 0 01-.43.46H6.5c-.42.09-.84.17-1.27.22a8.87 8.87 0 01-1.45-.12 1 1 0 01-.7-.65c-.32-.69-.49-2-.1-2.36a1.29 1.29 0 00.5-.72C3.67 10 3.86 9.46 4 9s.21-.63.48-.74a.56.56 0 01.68.34 2.47 2.47 0 010 .9 2 2 0 000 1z" fill="none" stroke="#523951" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5"/>
+    </g>
+  </g>
+</svg>

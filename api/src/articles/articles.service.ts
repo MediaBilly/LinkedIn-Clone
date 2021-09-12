@@ -1,8 +1,10 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { existsQuery } from 'src/helpers/existsQuery';
+import { Friendship } from 'src/users/entities/friendship.entity';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { AddArticleCommentDto } from './dto/add-article-comment.dto';
 import { AddArticleReactionDto } from './dto/add-article-reaction.dto';
 import { CreateArticleDto } from './dto/create-article.dto';
@@ -19,6 +21,7 @@ export class ArticlesService {
         @InjectRepository(Article) private articlesRepository: Repository<Article>,
         @InjectRepository(ArticleReaction) private articleReactionsRepository: Repository<ArticleReaction>,
         @InjectRepository(ArticleComment) private articleCommentsRepository: Repository<ArticleComment>,
+        @InjectRepository(Friendship) private friendshipRepository: Repository<Friendship>,
         private usersService: UsersService
     ) {}
 
@@ -32,7 +35,7 @@ export class ArticlesService {
     }
 
     findAll(): Promise<Article[]> {
-        return this.articlesRepository.find();
+        return this.articlesRepository.find({ order: { published_at: 'DESC' } });
     }
 
     findOne(id: number): Promise<Article> {
@@ -41,6 +44,14 @@ export class ArticlesService {
 
     findWithPublisher(pubId: number): Promise<Article[]> {
         return this.articlesRepository.createQueryBuilder('A').where('A.publisherId = :pubId',{ pubId: pubId }).getMany();
+    }
+
+    async getFriendsArticles(uid: number): Promise<Article[]> {
+        const friendIds = (await this.usersService.getFriends(uid)).map(f => f.id);
+        friendIds.push(uid);
+        return this.articlesRepository.find({ where: { publisher: { id: In(friendIds) } }, order: { published_at: 'DESC' } });
+        // return this.articlesRepository.createQueryBuilder('A').leftJoinAndSelect('A.publisher','publisher').leftJoinAndSelect('A.reactions','reaction').leftJoinAndSelect('A.comments','comment').where('A.publisherId = :uid', { uid: uid })
+        // .orWhere(existsQuery(this.friendshipRepository.createQueryBuilder('F').where('F.user1Id = A.publiserId').andWhere('F.user2Id = :uid', { uid: uid }).orWhere('F.user2Id = A.publisherId').andWhere('F.user1Id = :uid', { uid: uid }))).getMany();
     }
 
     update(id: number, updateArticleDto: UpdateArticleDto) {
