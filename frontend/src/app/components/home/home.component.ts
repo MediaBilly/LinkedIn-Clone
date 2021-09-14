@@ -57,6 +57,8 @@ export class HomeComponent implements OnInit {
       this.newArticleFormInvalid = false;
       const text = this.newArticleForm.get('text')?.value;
       this.articlesService.createArticle(text).subscribe(article => {
+        article.reactions = [];
+        article.comments = [];
         this.articles?.unshift(article);
       });
       this.newArticleForm.reset();

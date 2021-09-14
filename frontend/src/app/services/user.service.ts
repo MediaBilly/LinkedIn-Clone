@@ -1,10 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { FriendRequest } from '../models/friendRequest.model';
 import { Notification } from '../models/notification.model';
 import { UpdateUser } from '../models/updateUser.model';
 import { User } from '../models/user.model';
+import { shareReplay, tap } from 'rxjs/operators/';
 
 const API_URL = 'http://localhost:3000/';
 
@@ -12,6 +13,7 @@ const API_URL = 'http://localhost:3000/';
   providedIn: 'root'
 })
 export class UserService {
+  currentUser$: Observable<User> | null = null;
 
   constructor(private httpClient: HttpClient) { }
 
@@ -21,7 +23,12 @@ export class UserService {
     if (uid) {
       return this.httpClient.get<User>(API_URL + 'users/' + uid.toString(), { responseType: 'json' });
     } else {
-      return this.httpClient.get<User>(API_URL + 'profile/', { responseType: 'json' });
+      if (!this.currentUser$) {
+        this.currentUser$ = this.httpClient.get<User>(API_URL + 'profile/', { responseType: 'json' }).pipe(
+          shareReplay()
+        );
+      }
+      return this.currentUser$;
     }
   }
 
@@ -34,6 +41,7 @@ export class UserService {
   }
 
   updateUser(updatedUser: UpdateUser): Observable<any> {
+    this.currentUser$ = null;
     return this.httpClient.put(API_URL + 'users', updatedUser, { responseType: 'json' });
   }
 

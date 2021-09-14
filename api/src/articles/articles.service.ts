@@ -2,6 +2,7 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { existsQuery } from 'src/helpers/existsQuery';
 import { Friendship } from 'src/users/entities/friendship.entity';
+import { NotificationType } from 'src/users/entities/notification.entity';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { In, Repository } from 'typeorm';
@@ -80,6 +81,9 @@ export class ArticlesService {
             const reaction = this.articleReactionsRepository.create(addArticleReactionDto);
             reaction.article = article;
             reaction.reactor = reactor;
+            if (reactor.id !== article.publisher.id) {
+                this.usersService.sendNotification(article.publisher, NotificationType.ARTICLE_REACTION, reactor, reaction.id);
+            }
             return this.articleReactionsRepository.save(reaction);
         });
     }
@@ -101,10 +105,13 @@ export class ArticlesService {
     addArticleComment(articleId: number, commenterId: number, addArticleCommentDto: AddArticleCommentDto): Promise<ArticleComment> {
         const articlePromise: Promise<Article> = this.findOne(articleId);
         const commenterPromise: Promise<User> = this.usersService.findOne(commenterId);
-        return Promise.all([articlePromise, commenterPromise]).then(([article, reactor]) => {
+        return Promise.all([articlePromise, commenterPromise]).then(([article, commenter]) => {
             const comment = this.articleCommentsRepository.create(addArticleCommentDto);
             comment.article = article;
-            comment.commenter = reactor;
+            comment.commenter = commenter;
+            if (commenter.id !== article.publisher.id) {
+                this.usersService.sendNotification(article.publisher, NotificationType.ARTICLE_COMMENT, commenter, comment.id);
+            }
             return this.articleCommentsRepository.save(comment);
         });
     }

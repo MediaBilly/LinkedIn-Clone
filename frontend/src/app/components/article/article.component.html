@@ -8,31 +8,87 @@
                 <a class="link-dark h6 mb-2" routerLink="/user/{{ article.publisher.id }}">{{ article.publisher.firstname }} {{ article.publisher.lastname }}</a>
                 <div class="text-muted h7 mb-2">{{ article.published_at | dateAgo }}</div>
             </div>
-            <div class="ms-auto p-2 bd-highlight">
-                <a href="#" class="link-dark">
+            <div class="ms-auto p-2 bd-highlight dropdown">
+                <a href="#" class="link-dark dropdown-toggle" id="articleDropdownMenuLink" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
                         <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/>
                     </svg>
                 </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="articleDropdownMenuLink">
+                    <li><a class="dropdown-item" href="#">Delete</a></li>
+                </ul>
             </div>
         </div>
         <p class="card-text">
             {{ article.text }}
         </p>
-        <ul class="list-inline">
-            <li *ngIf="article.reactions.length > 0" class="list-inline-item">
-                <img src="/assets/emojis/like.svg" alt="like">
-                <img src="/assets/emojis/love.svg" alt="love">
-                <img src="/assets/emojis/support.svg" alt="support">
-                <span aria-hidden="true" class="text-muted h7 reaction-details">{{ article.reactions.length }}</span>
-            </li>
-            <li *ngIf="article.comments.length > 0" class="list-inline-item">
-                <span aria-hidden="true" class="text-muted h7">36 comments</span>
-            </li>
-        </ul>
+        <nav class="article-numbers" aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li *ngIf="article.reactions.length > 0" class="breadcrumb-item">
+                    <img *ngFor="let r of top3Reactions" src="/assets/emojis/{{r.type}}.svg" alt="like">
+                    <span aria-hidden="true" class="text-muted h7">{{ article.reactions.length }}</span>
+                </li>
+                <li *ngIf="article.comments.length > 0" class="breadcrumb-item">
+                    <span aria-hidden="true" class="text-muted h7">{{ article.comments.length }} comments</span>
+                </li>
+            </ol>
+        </nav>          
         <hr>
-        <a *ngIf="!myReaction" (click)="addReaction()" class="btn card-link article-reaction-off"><i class="far fa-thumbs-up"></i> Like</a>
-        <a *ngIf="myReaction" (click)="removeReaction()" class="btn card-link article-reaction-on"><i class="fas fa-thumbs-up"></i> Like</a>
-        <a class="btn card-link article-reaction-off"><i class="far fa-comment"></i> Comment</a>
+        <div class="d-flex flex-row bd-highlight mb-2">
+            <div class="bd-highlight">
+                <a *ngIf="!myReaction" (click)="addReaction()" class="btn article-reaction-off"><i class="far fa-thumbs-up"></i> Like</a>
+                <a *ngIf="myReaction" (click)="removeReaction()" class="btn article-reaction-on"><i class="fas fa-thumbs-up"></i> Like</a>
+            </div>
+            <div class="bd-highlight">
+                <a class="btn article-reaction-off" (click)="showComments()"><i class="far fa-comment"></i> Comment</a>
+            </div>
+        </div>
+        <div *ngIf="commentsOn">
+            <div class="d-flex flex-row bd-highlight mb-2">
+                <div class="p-2 bd-highlight">
+                    <img class="rounded-circle" width="40" height="40" [src]="myPicPath" alt="">
+                </div>
+                <div class="p-2 flex-grow-1 bd-highlight">
+                    <input id="newComment" class="form-control" type="text" [formControl]="newComment" (keydown.enter)="addComment()" placeholder="Add a comment...">
+                </div>
+            </div>
+            <div *ngFor="let comment of commentsSorted">
+                <div class="d-flex flex-row bd-highlight">
+                    <div class="p-2 bd-highlight">
+                        <img class="rounded-circle" width="40" height="40" [src]="getCommenterImgPath(comment.commenter)" alt="">
+                    </div>
+                    <div class="p-2 flex-grow-1 bd-highlight">
+                        <div class="card text-dark bg-light">
+                            <div class="card-body p-2">
+                                <div class="d-flex flex-row bd-highlight">
+                                    <div class="flex-grow-1 bd-highlight">
+                                        <h6 class="card-title">
+                                            <a class="link-dark h6" routerLink="/user/{{ comment.commenter.id }}">
+                                                {{ comment.commenter.firstname }} {{ comment.commenter.lastname }}
+                                            </a>
+                                        </h6>
+                                    </div>
+                                    <div class="bd-highlight">
+                                        <div class="text-muted h7">{{ comment.commented_at | dateAgo }}</div>
+                                    </div>
+                                    <div class="bd-highlight">
+                                        <a href="#" class="link-dark">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
+                                                <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/>
+                                            </svg>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="d-flex flex-row bd-highlight mb-1">
+                                    <div class="flex-grow-1 bd-highlight">
+                                        <p class="card-text">{{ comment.text }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

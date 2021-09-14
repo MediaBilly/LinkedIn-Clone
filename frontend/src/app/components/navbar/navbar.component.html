@@ -15,9 +15,15 @@
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <form class="d-flex justify-content-start" *ngIf="currentUser">
-      <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-      <button class="btn btn-outline-primary" type="submit">Search</button>
+    <form class="d-flex justify-content-start card card-sm" *ngIf="currentUser">
+      <div class="card-body row no-gutters align-items-center mx-0 p-0">
+        <div class="col-sm-2">
+          <i class="fas fa-search h6 text-secondary"></i>
+        </div>
+        <div class="col-sm-10 px-0">
+          <input class="form-control form-control-borderless px-1" type="search" placeholder="Search">
+        </div>
+      </div>
     </form>
 
     <div class=" d-flex justify-content-end collapse navbar-collapse" id="navbarNav">

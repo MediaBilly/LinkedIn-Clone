@@ -17,14 +17,24 @@ export class NotificationComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.notification) {
-      if (this.notification.type == NotificationType.ACCEPTED_FRIEND_REQUEST && this.notification.referer) {
-        this.userService.getUserProfile(this.notification.referer).subscribe(refererUser => {
-          this.imgPath = this.userService.getProfilePicPath(refererUser);
-          this.text = refererUser.firstname + ' ' + refererUser.lastname + ' accepted your connection request.';
-          this.link = '/user/' + refererUser.id.toString();
-        });
+      if (this.notification.refererUser) {
+        this.imgPath = this.userService.getProfilePicPath(this.notification.refererUser);
+        if (this.notification.type === NotificationType.ACCEPTED_FRIEND_REQUEST) {
+          this.text = this.notification.refererUser.firstname + ' ' + this.notification.refererUser.lastname + ' accepted your connection request.';
+          this.link = '/user/' + this.notification.refererUser.id.toString();
+        }
+        if (this.notification.type === NotificationType.ARTICLE_REACTION) {
+          this.text = this.notification.refererUser.firstname + ' ' + this.notification.refererUser.lastname + ' reacted to your article.';
+          this.link = '/user/' + this.notification.refererUser.id.toString();
+        }
+        if (this.notification.type === NotificationType.ARTICLE_COMMENT) {
+          this.text = this.notification.refererUser.firstname + ' ' + this.notification.refererUser.lastname + ' commented on your article.';
+          this.link = '/user/' + this.notification.refererUser.id.toString();
+        }
       }
-      this.read();
+      if (!this.notification.read) {
+        this.read();
+      }
     }
   }
 

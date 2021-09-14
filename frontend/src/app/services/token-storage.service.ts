@@ -30,13 +30,4 @@ export class TokenStorageService {
     }
     return !this.jwtHelper.isTokenExpired(token);
   }
-
-  public getMyId(): number | null {
-    if (this.loggedIn()) {
-      const tokenData = this.jwtHelper.decodeToken();
-      return tokenData.sub;
-    } else {
-      return null;
-    }
-  }
 }

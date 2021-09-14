@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Article } from '../models/article.model';
+import { ArticleComment } from '../models/articleComment.model';
 import { ArticleReaction, ReactionType } from '../models/articleReaction.model';
 
 const API_URL = 'http://localhost:3000/';
@@ -31,5 +32,11 @@ export class ArticlesService {
 
   removeReaction(id: number): Observable<any> {
     return this.httpClient.delete(API_URL + 'articles/reactions/' + id.toString(), { responseType: 'json' });
+  }
+
+  // Comments
+
+  addArticleComment(id: number, text: string): Observable<ArticleComment> {
+    return this.httpClient.post<ArticleComment>(API_URL + 'articles/' + id.toString() + '/comment', { text: text }, { responseType: 'json' });
   }
 }

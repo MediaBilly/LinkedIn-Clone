@@ -25,15 +25,6 @@ a {
     color: blue;
 }
 
-.reaction-details {
-    margin-left: 4px;
-}
-
-li.list-inline-item::after {
-    content: "\00b7";
-    font-size: 1.2rem;
-    color: var(--color-text-low-emphasis);
-    
-    display: inline;
-    margin-left: 4px;
+.article-numbers {
+    --bs-breadcrumb-divider: '\00b7';
 }

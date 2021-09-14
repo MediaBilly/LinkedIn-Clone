@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./user.entity";
 
 export enum NotificationType {
@@ -26,9 +26,13 @@ export class Notification {
     @ManyToOne(() => User, user => user.notifications, { eager: true, onDelete: 'CASCADE' })
     receiver: User;
 
-    // Entity id that the notification refers to (eg other User, Article, Comment etc)
+    // User that the notification refers to 
+    @ManyToOne(() => User, { nullable: true, onDelete: 'SET NULL', eager: true })
+    refererUser: User;
+
+    // Entity id that the notification refers to (eg other Article, Comment etc)
     @Column({ default: 0 })
-    referer: number;
+    refererEntity: number;
 
     @Column({ default: false })
     read: boolean;
