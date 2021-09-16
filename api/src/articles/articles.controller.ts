@@ -1,4 +1,5 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Request, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { ArticlesService } from './articles.service';
 import { AddArticleCommentDto } from './dto/add-article-comment.dto';
@@ -10,6 +11,7 @@ import { UpdateArticleDto } from './dto/update-article.dto';
 import { IsArticleCommenterGuard } from './guards/is-article-commenter.guard';
 import { IsArticleCreatorGuard } from './guards/is-article-creator.guard';
 import { IsArticleReactorGuard } from './guards/is-article-reactor.guard';
+import { articleMediaOptions } from './helpers/article-media-storage';
 
 @Controller('articles')
 export class ArticlesController {
@@ -19,8 +21,12 @@ export class ArticlesController {
 
     @UseGuards(JwtAuthGuard)
     @Post()
-    create(@Request() req, @Body() createArticleDto: CreateArticleDto) {
-        return this.articlesService.create(createArticleDto,req.user.id);
+    @UseInterceptors(FileFieldsInterceptor([
+        { name: 'image' },
+        { name: 'video' }
+    ], articleMediaOptions))
+    create(@Request() req, @Body() createArticleDto: CreateArticleDto, @UploadedFiles() files: { image?: Express.Multer.File[], video?: Express.Multer.File[] }) {
+        return this.articlesService.create(createArticleDto,req.user.id, files);
     }
 
     @UseGuards(JwtAuthGuard)

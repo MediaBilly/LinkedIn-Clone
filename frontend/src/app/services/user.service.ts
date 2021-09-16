@@ -49,6 +49,12 @@ export class UserService {
     return this.httpClient.patch(API_URL + 'users/change-password', { oldPassword: oldPassword, newPassword: newPassword });
   }
 
+  changeProfilePic(newPic: File): Observable<User> {
+    const formData = new FormData();
+    formData.append('pic', newPic);
+    return this.httpClient.post<User>(API_URL + 'users/profile-pic', formData);
+  }
+
   // Friend requests
 
   getSentFriendRequests(): Observable<FriendRequest[]> {

@@ -75,17 +75,6 @@ export class UsersController {
     }
 
     @UseGuards(JwtAuthGuard)
-    @Get(':id/profile-pic')
-    async getProfilePic(@Param('id') id: string, @Res() res) {
-        const user = await this.usersService.findOne(+id);
-        if (user.profilePicName) {
-            return res.sendFile(getProfilePicLocation(user.profilePicName));
-        } else {
-            throw new NotFoundException();
-        }
-    }
-
-    @UseGuards(JwtAuthGuard)
     @Post('profile-pic')
     @UseInterceptors(FileInterceptor('pic', profilePicOptions))
     changeProfilePic(@UploadedFile() pic: Express.Multer.File, @Request() req) {

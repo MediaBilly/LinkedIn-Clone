@@ -18,10 +18,16 @@ export class HomeComponent implements OnInit {
   totalConnections = 0;
   articles?: Article[];
 
+  // New article form
+
   newArticleForm = new FormGroup({
-    text: new FormControl('', Validators.required)
+    text: new FormControl('', Validators.required),
+    image: new FormControl(''),
+    video: new FormControl('')
   });
   newArticleFormInvalid = false;
+  articleImages: File[] = [];
+  articleVideos: File[] = [];
 
   constructor(private tokenStorageService: TokenStorageService, private usersService: UserService, private articlesService: ArticlesService) { 
   }
@@ -52,11 +58,21 @@ export class HomeComponent implements OnInit {
     }
   }
 
+  onImageFileChange(event: any): void {
+    this.articleImages = event.target.files;
+    console.log(this.articleImages);
+  }
+
+  onVideoFileChange(event: any): void {
+    this.articleVideos = event.target.files;
+    console.log(this.articleVideos);
+  }
+
   createArticle(): void {
     if (this.newArticleForm.valid) {
       this.newArticleFormInvalid = false;
       const text = this.newArticleForm.get('text')?.value;
-      this.articlesService.createArticle(text).subscribe(article => {
+      this.articlesService.createArticle(text, this.articleImages, this.articleVideos).subscribe(article => {
         article.reactions = [];
         article.comments = [];
         this.articles?.unshift(article);

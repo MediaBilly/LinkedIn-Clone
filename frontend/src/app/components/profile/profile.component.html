@@ -1,7 +1,17 @@
 <div class="container" *ngIf="isLoggedIn; else loggedOut">
   <div *ngIf="requestUser; else profileNotFound">
     <header class="jumbotron">
-      <img src="{{ profilePicPath }}" class="img-thumbnail" width="300" height="300">
+      <div *ngIf="isMe" class="profile-pic">
+        <label class="-label" for="file">
+          <span class="fas fa-camera"></span>
+          <span>Change Image</span>
+        </label>
+        <input id="file" class="file-input" type="file" (change)="profilePicUpload($event)" accept="image/png, image/jpeg, image/jpg"/>
+        <img [src]="profilePicPath" id="output" width="200" />
+      </div>
+      <div *ngIf="!isMe" class="profile-pic-notme">
+        <img [src]="profilePicPath" id="output" width="200" />
+      </div>
       <h3>
         <strong>{{ requestUser.firstname }} {{ requestUser.lastname }}</strong>
       </h3>

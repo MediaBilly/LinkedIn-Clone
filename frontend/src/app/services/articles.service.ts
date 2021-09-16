@@ -20,8 +20,16 @@ export class ArticlesService {
     return this.httpClient.get<Article[]>(API_URL + 'articles/homepage', { responseType: 'json' });
   }
 
-  createArticle(text: string): Observable<Article> {
-    return this.httpClient.post<Article>(API_URL + 'articles', {text: text }, { responseType: 'json' });
+  createArticle(text: string, images: File[], videos: File[]): Observable<Article> {
+    const formData = new FormData();
+    formData.append('text', text);
+    for (let img of images) {
+      formData.append('image', img);
+    }
+    for (let vid of videos) {
+      formData.append('video', vid);
+    }
+    return this.httpClient.post<Article>(API_URL + 'articles', formData, { responseType: 'json' });
   }
 
   // Reactions
@@ -38,5 +46,27 @@ export class ArticlesService {
 
   addArticleComment(id: number, text: string): Observable<ArticleComment> {
     return this.httpClient.post<ArticleComment>(API_URL + 'articles/' + id.toString() + '/comment', { text: text }, { responseType: 'json' });
+  }
+
+  // Getters
+
+  getImagePaths(article: Article): string[] {
+    const ret: string[] = [];
+    if (article) {
+      for (let img of article.images) {
+        ret.push(API_URL + 'images/article_images/' + img.name);
+      }
+    }
+    return ret;
+  }
+
+  getVideoPaths(article: Article): string[] {
+    const ret: string[] = [];
+    if (article) {
+      for (let vid of article.videos) {
+        ret.push(API_URL + 'videos/article_videos/' + vid.name);
+      }
+    }
+    return ret;
   }
 }

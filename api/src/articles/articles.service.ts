@@ -1,7 +1,5 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { existsQuery } from 'src/helpers/existsQuery';
-import { Friendship } from 'src/users/entities/friendship.entity';
 import { NotificationType } from 'src/users/entities/notification.entity';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
@@ -13,7 +11,9 @@ import { UpdateArticleCommentDto } from './dto/update-article-comment.dto';
 import { UpdateArticleReactionDto } from './dto/update-article-reaction.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { ArticleComment } from './entities/article-comment.entity';
+import { ArticleImage } from './entities/article-image.entity';
 import { ArticleReaction } from './entities/article-reaction.entity';
+import { ArticleVideo } from './entities/article-video.entity';
 import { Article } from './entities/article.entity';
 
 @Injectable()
@@ -22,17 +22,53 @@ export class ArticlesService {
         @InjectRepository(Article) private articlesRepository: Repository<Article>,
         @InjectRepository(ArticleReaction) private articleReactionsRepository: Repository<ArticleReaction>,
         @InjectRepository(ArticleComment) private articleCommentsRepository: Repository<ArticleComment>,
-        @InjectRepository(Friendship) private friendshipRepository: Repository<Friendship>,
+        @InjectRepository(ArticleImage) private articleImagesRepository: Repository<ArticleImage>,
+        @InjectRepository(ArticleVideo) private articleVideosRepository: Repository<ArticleVideo>,
         private usersService: UsersService
     ) {}
 
     // Basic Functionality
 
-    async create(createArticleDto: CreateArticleDto, uid: number) : Promise<Article> {
+    async create(createArticleDto: CreateArticleDto, uid: number, files: { image?: Express.Multer.File[], video?: Express.Multer.File[] }) : Promise<Article> {
+        // Create the article itself
         const newArticle = this.articlesRepository.create(createArticleDto);
+
+        // Find and attach the publisher
         const publisher = await this.usersService.findOne(uid);
         newArticle.publisher = publisher;
-        return this.articlesRepository.save(newArticle);
+
+        // Create the image promises
+        const imagePromises: Promise<ArticleImage>[] = [];
+        if (files.image) {
+            for (let img of files.image) {
+                let tmpImg = this.articleImagesRepository.create({ name: img.filename });
+                imagePromises.push(this.articleImagesRepository.save(tmpImg));
+            }
+        }
+
+        // Create the video promises
+        const videoPromises: Promise<ArticleVideo>[] = [];
+        if (files.video) {
+            for (let vid of files.video) {
+                let tmpVid = this.articleVideosRepository.create({ name: vid.filename });
+                videoPromises.push(this.articleVideosRepository.save(tmpVid));
+            }   
+        }
+
+        // Resolve image promises and create a set promise
+        const imgSetPromise = Promise.all(imagePromises).then((images) => {
+            newArticle.images = images;
+        });
+
+        // Resolve video promises and create a set promise
+        const vidSetPromise = Promise.all(videoPromises).then((videos) => {
+            newArticle.videos = videos;
+        })
+
+        // Wait for set promises and save the new article
+        return Promise.all([imgSetPromise, vidSetPromise]).then(_ => {
+            return this.articlesRepository.save(newArticle);
+        });
     }
 
     findAll(): Promise<Article[]> {

@@ -28,3 +28,8 @@ a {
 .article-numbers {
     --bs-breadcrumb-divider: '\00b7';
 }
+
+.carousel-control {
+    top: 45%;
+    height: 10%;
+}

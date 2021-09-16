@@ -14,3 +14,7 @@
 .gedf-card {
     margin-bottom: 2.77rem;
 }
+
+input[type="file"] {
+    display: none;
+}

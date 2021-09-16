@@ -22,6 +22,26 @@
         <p class="card-text">
             {{ article.text }}
         </p>
+        <div id="carouselExampleControls_{{ article.id }}" class="carousel slide" data-bs-ride="carousel" data-bs-interval="false">
+            <div class="carousel-inner">
+                <div *ngFor="let imgPath of imagePaths; let i = index" [ngClass]="{ 'carousel-item': true, 'active': i == 0}">
+                    <img [src]="imgPath" class="d-block w-100" alt="img" height="500">
+                </div>
+                <div *ngFor="let vidPath of videoPaths; let i = index" [ngClass]="{ 'carousel-item': true, 'active': i == 0 && imagePaths.length == 0 }">
+                    <video class="img-fluid" height="200" controls>
+                        <source [src]="vidPath" type="video/mp4" />
+                    </video>
+                </div>
+            </div>
+            <button class="carousel-control carousel-control-prev" type="button" attr.data-bs-target="#carouselExampleControls_{{ article.id }}" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" ></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control carousel-control-next" type="button" attr.data-bs-target="#carouselExampleControls_{{ article.id }}" data-bs-slide="next">
+              <span class="carousel-control-next-icon" ></span>
+              <span class="visually-hidden">Next</span>
+            </button>
+        </div>
         <nav class="article-numbers" aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li *ngIf="article.reactions.length > 0" class="breadcrumb-item">
@@ -36,7 +56,7 @@
         <hr>
         <div class="d-flex flex-row bd-highlight mb-2">
             <div class="bd-highlight">
-                <a *ngIf="!myReaction" (click)="addReaction()" class="btn article-reaction-off"><i class="far fa-thumbs-up"></i> Like</a>
+                <a *ngIf="!myReaction" (click)="addReaction()" class="btn article-reaction-off" ><i class="far fa-thumbs-up"></i> Like</a>
                 <a *ngIf="myReaction" (click)="removeReaction()" class="btn article-reaction-on"><i class="fas fa-thumbs-up"></i> Like</a>
             </div>
             <div class="bd-highlight">

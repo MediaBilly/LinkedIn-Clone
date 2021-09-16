@@ -120,4 +120,17 @@ export class ProfileComponent implements OnInit {
     }
   }
 
+  profilePicUpload(event: any):void {
+    if (this.myUser && this.isMe) {
+      const pic: File = event.target.files[0];
+      if (pic) {
+        this.usersService.changeProfilePic(pic).subscribe(updatedUser => {
+          this.myUser = updatedUser;
+          this.requestUser = updatedUser;
+          this.profilePicPath = this.usersService.getProfilePicPath(this.myUser);
+        });
+      }
+    }
+  }
+
 }

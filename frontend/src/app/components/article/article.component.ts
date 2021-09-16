@@ -23,6 +23,8 @@ export class ArticleComponent implements OnInit {
   commentsOn = false;
   newComment = new FormControl('');
   commentsSorted?: ArticleComment[];
+  imagePaths: string[] = [];
+  videoPaths: string[] = [];
 
   constructor(private tokenStorageService: TokenStorageService, private usersService: UserService, private articlesService: ArticlesService) { }
 
@@ -37,6 +39,8 @@ export class ArticleComponent implements OnInit {
             this.myReaction = this.article.reactions.find(reaction => reaction.reactor.id === this.loggedInUser?.id);
           }
           this.updateTop3Reactions();
+          this.imagePaths = this.articlesService.getImagePaths(this.article);
+          this.videoPaths = this.articlesService.getVideoPaths(this.article);
         }
       });
       this.commentsSorted = this.article?.comments.sort((a, b) => new Date(a.commented_at).getTime() - new Date(b.commented_at).getTime());
