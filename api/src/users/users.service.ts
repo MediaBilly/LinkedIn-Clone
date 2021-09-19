@@ -7,7 +7,7 @@ import * as bcrypt from 'bcrypt';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FriendRequest } from './entities/friend-request.entity';
 import { Friendship } from './entities/friendship.entity';
-import { unlinkSync } from 'fs';
+import { existsSync, unlinkSync } from 'fs';
 import { checkImageType, getProfilePicLocation } from './helpers/profile-pic-storage';
 import { Notification, NotificationType } from './entities/notification.entity';
 import { Skill } from './entities/skill.entity';
@@ -63,7 +63,9 @@ export class UsersService {
     }
 
     delete(id: number) {
-        return this.usersRepository.delete(id);
+        return this.deleteProfilePic(id).then(_ => {
+            return this.usersRepository.delete(id);
+        });
     }
 
     async changeProfilePic(uid: number, picName: string) {
@@ -83,11 +85,18 @@ export class UsersService {
     deleteProfilePic(uid: number) {
         return this.findOne(uid).then((user) => {
             if (user.profilePicName) {
-                unlinkSync(getProfilePicLocation(user.profilePicName));
+                let loc = getProfilePicLocation(user.profilePicName);
+                if (existsSync(loc)) {
+                    unlinkSync(loc);
+                }
                 user.profilePicName = null;
+                return this.usersRepository.save(user);
+            } else {
+                return new Promise<User>((resolve, reject) => {
+                    resolve(user);
+                });
             }
-            return this.usersRepository.save(user);
-        })
+        });
     }
 
     // Friend Requests

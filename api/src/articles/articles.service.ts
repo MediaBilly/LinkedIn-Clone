@@ -1,9 +1,12 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { existsSync, unlinkSync } from 'fs';
+import { existsQuery } from 'src/helpers/existsQuery';
+import { Friendship } from 'src/users/entities/friendship.entity';
 import { NotificationType } from 'src/users/entities/notification.entity';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { AddArticleCommentDto } from './dto/add-article-comment.dto';
 import { AddArticleReactionDto } from './dto/add-article-reaction.dto';
 import { CreateArticleDto } from './dto/create-article.dto';
@@ -15,6 +18,7 @@ import { ArticleImage } from './entities/article-image.entity';
 import { ArticleReaction } from './entities/article-reaction.entity';
 import { ArticleVideo } from './entities/article-video.entity';
 import { Article } from './entities/article.entity';
+import { getImageLocation, getVideoLocation } from './helpers/article-media-storage';
 
 @Injectable()
 export class ArticlesService {
@@ -24,6 +28,7 @@ export class ArticlesService {
         @InjectRepository(ArticleComment) private articleCommentsRepository: Repository<ArticleComment>,
         @InjectRepository(ArticleImage) private articleImagesRepository: Repository<ArticleImage>,
         @InjectRepository(ArticleVideo) private articleVideosRepository: Repository<ArticleVideo>,
+        @InjectRepository(Friendship) private friendshipRepository: Repository<Friendship>,
         private usersService: UsersService
     ) {}
 
@@ -84,25 +89,50 @@ export class ArticlesService {
     }
 
     async getFriendsArticles(uid: number): Promise<Article[]> {
-        const friendIds = (await this.usersService.getFriends(uid)).map(f => f.id);
-        friendIds.push(uid);
-        return this.articlesRepository.find({ where: { publisher: { id: In(friendIds) } }, order: { published_at: 'DESC' } });
-        // return this.articlesRepository.createQueryBuilder('A').leftJoinAndSelect('A.publisher','publisher').leftJoinAndSelect('A.reactions','reaction').leftJoinAndSelect('A.comments','comment').where('A.publisherId = :uid', { uid: uid })
-        // .orWhere(existsQuery(this.friendshipRepository.createQueryBuilder('F').where('F.user1Id = A.publiserId').andWhere('F.user2Id = :uid', { uid: uid }).orWhere('F.user2Id = A.publisherId').andWhere('F.user1Id = :uid', { uid: uid }))).getMany();
+        return this.articlesRepository.createQueryBuilder('A')
+        .leftJoinAndSelect('A.publisher','publisher')
+        .leftJoinAndSelect('A.reactions','reaction')
+        .leftJoinAndSelect('A.comments','comment')
+        .leftJoinAndSelect('A.images','image')
+        .leftJoinAndSelect('A.videos','video')
+        .leftJoinAndSelect('reaction.reactor','reactor')
+        .leftJoinAndSelect('comment.commenter','commenter')
+        .where('A.publisherId = :uid', { uid: uid })
+        .orWhere(existsQuery(this.friendshipRepository.createQueryBuilder('F')
+                            .where('F.user1Id = A.publisherId')
+                            .andWhere('F.user2Id = :uid', { uid: uid })
+                            .orWhere('F.user2Id = A.publisherId')
+                            .andWhere('F.user1Id = :uid', { uid: uid })))
+        .orderBy('A.published_at','DESC').getMany();
     }
 
     update(id: number, updateArticleDto: UpdateArticleDto) {
         return this.articlesRepository.update(id, updateArticleDto);
     }
 
-    delete(id: number) {
+    async delete(id: number) {
+        const article = await this.findOne(id);
+        // Delete images
+        for (let img of article.images) {
+            let loc = getImageLocation(img.name);
+            if (existsSync(loc)) {
+                unlinkSync(loc);
+            }
+        }
+        // Delete videos
+        for (let vid of article.videos) {
+            let loc = getVideoLocation(vid.name);
+            if (existsSync(loc)) {
+                unlinkSync(loc);
+            }
+        }
         return this.articlesRepository.delete(id);
     }
 
     // Reactions
 
     findArticleReaction(id: number) {
-        return this.articleReactionsRepository.findOneOrFail(id);
+        return this.articleReactionsRepository.createQueryBuilder('R').innerJoinAndSelect('R.article','article').innerJoinAndSelect('R.reactor','reactor').where('R.id = :id', { id: id }).getOne();
     }
     
     async addArticleReaction(articleId: number, reactorId: number, addArticleReactionDto: AddArticleReactionDto): Promise<ArticleReaction> {
@@ -117,10 +147,14 @@ export class ArticlesService {
             const reaction = this.articleReactionsRepository.create(addArticleReactionDto);
             reaction.article = article;
             reaction.reactor = reactor;
-            if (reactor.id !== article.publisher.id) {
-                this.usersService.sendNotification(article.publisher, NotificationType.ARTICLE_REACTION, reactor, reaction.id);
-            }
-            return this.articleReactionsRepository.save(reaction);
+            return this.articleReactionsRepository.save(reaction).then(r => {
+                if (reactor.id !== article.publisher.id) {
+                    this.usersService.sendNotification(article.publisher, NotificationType.ARTICLE_REACTION, reactor, r.id);
+                }
+                return new Promise<ArticleReaction>((resolve, reject) => {
+                    resolve(r);
+                });
+            });
         });
     }
 
@@ -135,7 +169,7 @@ export class ArticlesService {
     // Comments
 
     findArticleComment(id: number) {
-        return this.articleCommentsRepository.findOneOrFail(id);
+        return this.articleCommentsRepository.createQueryBuilder('C').innerJoinAndSelect('C.article', 'article').innerJoinAndSelect('C.commenter', 'commenter').where('C.id = :id', { id: id }).getOne();
     }
 
     addArticleComment(articleId: number, commenterId: number, addArticleCommentDto: AddArticleCommentDto): Promise<ArticleComment> {
@@ -145,10 +179,14 @@ export class ArticlesService {
             const comment = this.articleCommentsRepository.create(addArticleCommentDto);
             comment.article = article;
             comment.commenter = commenter;
-            if (commenter.id !== article.publisher.id) {
-                this.usersService.sendNotification(article.publisher, NotificationType.ARTICLE_COMMENT, commenter, comment.id);
-            }
-            return this.articleCommentsRepository.save(comment);
+            return this.articleCommentsRepository.save(comment).then(c => {
+                if (commenter.id !== article.publisher.id) {
+                    this.usersService.sendNotification(article.publisher, NotificationType.ARTICLE_COMMENT, commenter, comment.id);
+                }
+                return new Promise<ArticleComment>((resolve, reject) => {
+                    resolve(c);
+                });
+            });
         });
     }
 

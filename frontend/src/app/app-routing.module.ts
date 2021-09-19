@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { ArticleComponent } from './components/article/article.component';
 import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
 import { MessagingComponent } from './components/messaging/messaging.component';
@@ -21,6 +22,7 @@ const routes: Routes = [
   { path: 'notifications', component: NotificationsComponent },
   { path: 'settings', component: SettingsComponent },
   { path: 'user/:id', component: ProfileComponent },
+  { path: 'article/:id', component: ArticleComponent },
   { path: '**', pathMatch: 'full', component: PageNotFoundComponent }
 ];
 

@@ -20,6 +20,10 @@ export class ArticlesService {
     return this.httpClient.get<Article[]>(API_URL + 'articles/homepage', { responseType: 'json' });
   }
 
+  getArticle(id: number): Observable<Article> {
+    return this.httpClient.get<Article>(API_URL + 'articles/' + id.toString(), { responseType: 'json' });
+  }
+
   createArticle(text: string, images: File[], videos: File[]): Observable<Article> {
     const formData = new FormData();
     formData.append('text', text);
@@ -32,7 +36,15 @@ export class ArticlesService {
     return this.httpClient.post<Article>(API_URL + 'articles', formData, { responseType: 'json' });
   }
 
+  deleteArticle(id: number): Observable<any> {
+    return this.httpClient.delete(API_URL + 'articles/' + id.toString(), { responseType: 'json' });
+  }
+
   // Reactions
+
+  getReaction(id: number): Observable<ArticleReaction> {
+    return this.httpClient.get<ArticleReaction>(API_URL + 'articles/reactions/' + id.toString(), { responseType: 'json' });
+  }
 
   reactToArticle(id: number, reactionType: ReactionType): Observable<ArticleReaction> {
     return this.httpClient.post<ArticleReaction>(API_URL + 'articles/' + id.toString() + '/react', { type: reactionType }, { responseType: 'json' });
@@ -44,8 +56,16 @@ export class ArticlesService {
 
   // Comments
 
+  getComment(id: number): Observable<ArticleComment> {
+    return this.httpClient.get<ArticleComment>(API_URL + 'articles/comments/' + id.toString(), { responseType: 'json' });
+  }
+
   addArticleComment(id: number, text: string): Observable<ArticleComment> {
     return this.httpClient.post<ArticleComment>(API_URL + 'articles/' + id.toString() + '/comment', { text: text }, { responseType: 'json' });
+  }
+
+  deleteComment(id: number): Observable<any> {
+    return this.httpClient.delete(API_URL + 'articles/comments/' + id.toString(), { responseType: 'json' });
   }
 
   // Getters

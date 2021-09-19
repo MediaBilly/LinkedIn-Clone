@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { Article } from 'src/app/models/article.model';
 import { ArticleComment } from 'src/app/models/articleComment.model';
 import { ArticleReaction, ReactionType } from 'src/app/models/articleReaction.model';
@@ -14,7 +15,8 @@ import { UserService } from 'src/app/services/user.service';
   styleUrls: ['./article.component.css']
 })
 export class ArticleComponent implements OnInit {
-  @Input() article?: Article;
+  // Article Data
+  @Input() article?: Article | null;
   publisherPicPath = '';
   myPicPath = '';
   loggedInUser?: User;
@@ -26,24 +28,44 @@ export class ArticleComponent implements OnInit {
   imagePaths: string[] = [];
   videoPaths: string[] = [];
 
-  constructor(private tokenStorageService: TokenStorageService, private usersService: UserService, private articlesService: ArticlesService) { }
+  // Parameters
+  isHomePage = false;
+  isMine = false;
+
+  constructor(private tokenStorageService: TokenStorageService, private usersService: UserService, private articlesService: ArticlesService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     if (this.tokenStorageService.loggedIn()) {
       this.usersService.getUserProfile().subscribe(user => {
         this.loggedInUser = user;
         this.myPicPath = this.usersService.getProfilePicPath(this.loggedInUser);
+        this.isHomePage = this.route.snapshot.url.length === 0;
         if (this.article) {
-          this.publisherPicPath = this.usersService.getProfilePicPath(this.article?.publisher);
-          if (this.article.reactions && this.article.reactions.length > 0) {
-            this.myReaction = this.article.reactions.find(reaction => reaction.reactor.id === this.loggedInUser?.id);
+          this.initArticleData();
+        } else {
+          const id = this.route.snapshot.paramMap.get('id');
+          if (id) {
+            this.articlesService.getArticle(+id).subscribe(a => {
+              this.article = a;
+              this.initArticleData();
+            });
           }
-          this.updateTop3Reactions();
-          this.imagePaths = this.articlesService.getImagePaths(this.article);
-          this.videoPaths = this.articlesService.getVideoPaths(this.article);
         }
       });
+    }
+  }
+
+  initArticleData(): void {
+    if (this.article) {
+      this.publisherPicPath = this.usersService.getProfilePicPath(this.article?.publisher);
+      if (this.article.reactions && this.article.reactions.length > 0) {
+        this.myReaction = this.article.reactions.find(reaction => reaction.reactor.id === this.loggedInUser?.id);
+      }
+      this.updateTop3Reactions();
+      this.imagePaths = this.articlesService.getImagePaths(this.article);
+      this.videoPaths = this.articlesService.getVideoPaths(this.article);
       this.commentsSorted = this.article?.comments.sort((a, b) => new Date(a.commented_at).getTime() - new Date(b.commented_at).getTime());
+      this.isMine = this.article.publisher.id === this.loggedInUser?.id;
     }
   }
 
@@ -61,6 +83,14 @@ export class ArticleComponent implements OnInit {
         }
       }
       this.top3Reactions = Array.from(reactionCnt.entries(), ([key, cnt]) => ({ type: key, count: cnt })).sort(r => r['count']).slice(0,3);
+    }
+  }
+
+  delete(): void {
+    if (this.article && this.isMine) {
+      this.articlesService.deleteArticle(this.article.id).subscribe(_ => {
+        this.article = null;
+      });
     }
   }
 
@@ -101,6 +131,16 @@ export class ArticleComponent implements OnInit {
         this.newComment.reset();
       });
     }
+  }
+
+  deleteComment(id: number): void {
+    this.articlesService.deleteComment(id).subscribe(_ => {
+      this.commentsSorted = this.commentsSorted?.filter(c => c.id !== id);
+    });
+  }
+
+  commentIsMine(comment: ArticleComment): boolean {
+    return comment.commenter.id === this.loggedInUser?.id;
   }
 
 }

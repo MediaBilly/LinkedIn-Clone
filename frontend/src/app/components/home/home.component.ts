@@ -28,6 +28,7 @@ export class HomeComponent implements OnInit {
   newArticleFormInvalid = false;
   articleImages: File[] = [];
   articleVideos: File[] = [];
+  articleLoading = false;
 
   constructor(private tokenStorageService: TokenStorageService, private usersService: UserService, private articlesService: ArticlesService) { 
   }
@@ -60,22 +61,23 @@ export class HomeComponent implements OnInit {
 
   onImageFileChange(event: any): void {
     this.articleImages = event.target.files;
-    console.log(this.articleImages);
   }
 
   onVideoFileChange(event: any): void {
     this.articleVideos = event.target.files;
-    console.log(this.articleVideos);
   }
 
   createArticle(): void {
     if (this.newArticleForm.valid) {
       this.newArticleFormInvalid = false;
       const text = this.newArticleForm.get('text')?.value;
+      this.articleLoading = true;
       this.articlesService.createArticle(text, this.articleImages, this.articleVideos).subscribe(article => {
         article.reactions = [];
         article.comments = [];
         this.articles?.unshift(article);
+        this.articleLoading = false;
+        this.articleImages = this.articleVideos = [];
       });
       this.newArticleForm.reset();
     } else {

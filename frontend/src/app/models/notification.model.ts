@@ -13,6 +13,6 @@ export interface Notification {
     receivedAt: Date;
     receiver: User;
     refererUser: User;
-    refererEntity: number
+    refererEntity: number;
     read: boolean;
 }

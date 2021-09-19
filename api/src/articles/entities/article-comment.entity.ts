@@ -7,10 +7,10 @@ export class ArticleComment {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => User, user => user.articleComments, { eager: true })
+    @ManyToOne(() => User, user => user.articleComments, { eager: true, onDelete: 'CASCADE' })
     commenter: User;
 
-    @ManyToOne(() => Article, article => article.comments)
+    @ManyToOne(() => Article, article => article.comments, { onDelete: 'CASCADE' })
     article: Article;
 
     @Column()

@@ -8,10 +8,10 @@ export class ArticleReaction {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => User, user => user.articleReactions, { eager: true })
+    @ManyToOne(() => User, user => user.articleReactions, { eager: true, onDelete: 'CASCADE' })
     reactor: User;
 
-    @ManyToOne(() => Article, article => article.reactions)
+    @ManyToOne(() => Article, article => article.reactions, { onDelete: 'CASCADE' })
     article: Article;
 
     @Column({

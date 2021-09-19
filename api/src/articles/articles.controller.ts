@@ -66,6 +66,12 @@ export class ArticlesController {
     // Reactions
 
     @UseGuards(JwtAuthGuard)
+    @Get('reactions/:id')
+    findReaction(@Param('id') id: string) {
+        return this.articlesService.findArticleReaction(+id);
+    }
+
+    @UseGuards(JwtAuthGuard)
     @Post(':id/react')
     addArticleReaction(@Request() req, @Param('id') id: string, @Body() addArticleReactionDto: AddArticleReactionDto) {
         return this.articlesService.addArticleReaction(+id, req.user.id, addArticleReactionDto);
@@ -84,6 +90,12 @@ export class ArticlesController {
     }
 
     // Comments
+
+    @UseGuards(JwtAuthGuard)
+    @Get('comments/:id')
+    findComment(@Param('id') id: string) {
+        return this.articlesService.findArticleComment(+id);
+    }
 
     @UseGuards(JwtAuthGuard)
     @Post(':id/comment')

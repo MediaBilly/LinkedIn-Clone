@@ -45,8 +45,25 @@
                                     <button type="submit" class="btn btn-primary">Post</button>
                                 </div>
                             </div>
+                            <div *ngIf="articleImages.length > 0">
+                                Images:
+                                <ul>
+                                    <li *ngFor="let img of articleImages">{{ img.name }}</li>
+                                </ul>
+                            </div>
+                            <div *ngIf="articleVideos.length > 0">
+                                Videos:
+                                <ul>
+                                    <li *ngFor="let vid of articleVideos">{{ vid.name }}</li>
+                                </ul>
+                            </div>
                         </form>
                     </div>
+                </div>
+            </div>
+            <div *ngIf="articleLoading" class="d-flex justify-content-center py-2">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
                 </div>
             </div>
             <div *ngFor="let article of articles">
