@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { FriendRequest } from 'src/app/models/friendRequest.model';
 import { User } from 'src/app/models/user.model';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 import { UserService } from '../../services/user.service';
+import { endMonthYearValidator } from './form-validators/end-month-year-validator.directive';
+import { startMonthYearValidator } from './form-validators/start-month-year-validator.directive';
 
 @Component({
   selector: 'app-profile',
@@ -28,6 +31,29 @@ export class ProfileComponent implements OnInit {
 
   // Other data
   friends?: User[];
+
+  // Skills
+  addSkillsForm = new FormGroup({
+    skills: new FormArray([
+      new FormControl('', Validators.required)
+    ])
+  });
+
+  // Education
+  educationForm = new FormGroup({
+    school: new FormControl('', Validators.required),
+    degree: new FormControl(''),
+    fieldOfStudy : new FormControl(''),
+    // Start date
+    startYear : new FormControl(''),
+    startMonth : new FormControl(''),
+    // End date
+    endYear : new FormControl(''),
+    endMonth : new FormControl(''),
+    grade: new FormControl(''),
+    description: new FormControl('')
+  }, { validators: [startMonthYearValidator, endMonthYearValidator] });
+  educationFormInvalid = false;
 
   constructor(private route: ActivatedRoute, private tokenService: TokenStorageService, private usersService: UserService) { }
 
@@ -130,6 +156,71 @@ export class ProfileComponent implements OnInit {
           this.profilePicPath = this.usersService.getProfilePicPath(this.myUser);
         });
       }
+    }
+  }
+
+  get newSkills() {
+    return this.addSkillsForm.get('skills') as FormArray;
+  }
+
+  addSkill() {
+    this.newSkills.push(new FormControl('', Validators.required));
+  }
+
+  resetSkillsForm(): void {
+    this.newSkills.clear();
+    this.newSkills.push(new FormControl('', Validators.required));
+    this.addSkillsForm.reset();
+  }
+
+  addNewSkills() {
+    if (this.isMe && this.addSkillsForm.valid) {
+      this.usersService.addSkills(this.addSkillsForm.value.skills).subscribe(user => {
+        this.myUser = this.requestUser = user;
+        this.resetSkillsForm();
+      });
+    }
+  }
+
+  removeSkill(id: number): void {
+    if (this.isMe) {
+      this.usersService.removeSkill(id).subscribe(user => {
+        this.myUser = this.requestUser = user;
+      });
+    }
+  }
+
+  // Generates range between [0,n)
+  counter(n: number) {
+    return new Array(n);
+  }
+
+  public educationFieldIsInvalid = (field: string) => {
+    return this.educationFormInvalid && this.educationForm.controls[field].invalid;
+  }
+
+  public educationFieldHasError = (field: string, error: string) => {
+    return this.educationForm.controls[field].hasError(error);
+  }
+
+  onEducationFormSubmit() {
+    if (this.isMe && this.educationForm.valid) {
+      this.educationFormInvalid = false;
+      this.usersService.addEducation(this.educationForm.value).subscribe(user => {
+        this.myUser = user;
+        this.requestUser = user;
+        this.educationForm.reset();
+      });
+    } else {
+      this.educationFormInvalid = true;
+    }
+  }
+
+  removeEducation(id: number) {
+    if (this.isMe) {
+      this.usersService.removeEducation(id).subscribe(user => {
+        this.myUser = this.requestUser = user;
+      });
     }
   }
 

@@ -1,6 +1,8 @@
-import { Body, Controller, Get, Param, Post, Put, UseGuards, UseInterceptors, Request, Delete, ForbiddenException, Patch, UploadedFile, Res, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, UseGuards, UseInterceptors, Request, Delete, ForbiddenException, Patch, UploadedFile, BadRequestException } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { EducationDto } from './dto/education.dto';
+import { AddSkillsDto } from './dto/add-skills.dto';
 import { ChangePasswordAdminDto } from './dto/change-password-admin.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -9,9 +11,10 @@ import { FriendRequestSameSenderGuard } from './guards/friend-request-same-sende
 import { NotificationReceiverGuard } from './guards/notification-receiver.guard';
 import { OnlyAdminsGuard } from './guards/only-admins.guard';
 import { OnlyFriendsGuard } from './guards/only-friends.guard';
-import { getProfilePicLocation, profilePicOptions } from './helpers/profile-pic-storage';
+import { profilePicOptions } from './helpers/profile-pic-storage';
 import { HidePasswordInterceptor } from './interceptors/hide-password.interceptor';
 import { UsersService } from './users.service';
+import { EducationOwnerGuard } from './guards/education-owner.guard';
 
 @UseInterceptors(HidePasswordInterceptor)
 @Controller('users')
@@ -96,13 +99,13 @@ export class UsersController {
     @UseGuards(JwtAuthGuard)
     @Get('friend-requests/sent')
     getSentFriendRequests(@Request() req) {
-        return this.usersService.getSentFriendRequests(req.user);
+        return this.usersService.getSentFriendRequests(+req.user.id);
     }
 
     @UseGuards(JwtAuthGuard)
     @Get('friend-requests/received')
     getReceivedFriendRequests(@Request() req) {
-        return this.usersService.getReceivedFriendRequests(req.user);
+        return this.usersService.getReceivedFriendRequests(+req.user.id);
     }
 
     @UseGuards(JwtAuthGuard)
@@ -161,5 +164,39 @@ export class UsersController {
     @Post('notifications/read/:id')
     readNotification(@Param('id') id: string) {
         return this.usersService.readNotification(+id);
+    }
+
+    // Skills
+
+    @UseGuards(JwtAuthGuard)
+    @Post('skills')
+    addSkills(@Request() req, @Body() addSkillsDto: AddSkillsDto) {
+        return this.usersService.addSkills(+req.user.id, addSkillsDto.skills);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Delete('skills/:id')
+    removeSkill(@Request() req, @Param('id') id: string) {
+        return this.usersService.removeSkillFromUser(+req.user.id, +id);
+    }
+
+    // Education
+
+    @UseGuards(JwtAuthGuard)
+    @Post('education')
+    addEducation(@Request() req, @Body() educationDto: EducationDto) {
+        return this.usersService.addEducation(+req.user.id, educationDto);
+    }
+
+    @UseGuards(JwtAuthGuard, EducationOwnerGuard)
+    @Put('education/:id')
+    updateEducation(@Body() educationDto: EducationDto, @Param('id') id: string) {
+        this.usersService.updateEducation(+id, educationDto);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Delete('education/:id')
+    removeEducation(@Request() req, @Param('id') id: string) {
+        return this.usersService.removeEducation(+req.user.id, +id);
     }
 }

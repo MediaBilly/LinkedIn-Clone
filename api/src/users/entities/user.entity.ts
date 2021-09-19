@@ -70,13 +70,13 @@ export class User {
     @OneToMany(() => Notification, notification => notification.receiver)
     notifications: Notification[];
 
-    @ManyToMany(() => Skill, skill => skill.users)
+    @ManyToMany(() => Skill, skill => skill.users, { eager: true })
     @JoinTable()
     skills: Skill[];
 
-    @OneToMany(() => Education, education => education.user)
+    @OneToMany(() => Education, education => education.user, { eager: true, cascade: true })
     educations: Education[];
 
-    @OneToMany(() => Experience, experience => experience.user)
+    @OneToMany(() => Experience, experience => experience.user, { eager: true, cascade: true })
     experiences: Experience[];
 }

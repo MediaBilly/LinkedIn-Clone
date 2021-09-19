@@ -29,13 +29,202 @@
       {{ requestUser.phone }}
     </p>
     <p *ngIf="friends">
-      <a routerLink="/connections/{{ requestUser.id }}">{{ friends.length }} connections</a>
+      <a style="text-decoration: none;" routerLink="/connections/{{ requestUser.id }}">{{ friends.length }} connections</a>
     </p>
     <div *ngIf="!isMe">
       <div *ngIf="receivedRequest; else case2">
         You have a friend request from this user.<br>
         <button type="button" class="btn btn-primary" (click)="acceptRequest()">Accept</button>
         <button type="button" class="btn btn-danger" (click)="declineRequest()">Decline</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        <div class="d-flex bd-highlight mb-1">
+          <div class="me-auto p-1 bd-highlight"><h5 class="card-title">Education</h5></div>
+          <div *ngIf="isMe" class="p-1 bd-highlight"><a class="btn" data-bs-toggle="modal" data-bs-target="#educationModal"><i class="fas fa-plus"></i></a></div>
+        </div>
+        
+        <ul class="list-group list-group-flush">
+          <li *ngFor="let edu of requestUser.educations" class="list-group-item">
+            <div class="d-flex bd-highlight mb-1">
+              <div class="me-auto p-1 bd-highlight">
+                <h6>{{ edu.school }}</h6>
+                <nav class="edu-info" aria-label="breadcrumb">
+                  <ol class="breadcrumb my-0">
+                    <li *ngIf="edu.degree" class="breadcrumb-item">
+                      {{ edu.degree }}
+                    </li>
+                    <li *ngIf="edu.fieldOfStudy" class="breadcrumb-item">
+                      {{ edu.fieldOfStudy }}
+                    </li>
+                    <li *ngIf="edu.grade" class="breadcrumb-item">
+                      {{ edu.grade }}
+                    </li>
+                  </ol>
+                </nav>
+                <p class="text-muted">{{ edu.startDate | date:'YYYY' }} - {{ edu.endDate | date:'YYYY' }}</p>
+                <p *ngIf="edu.description">
+                  {{ edu.description }}
+                </p>
+              </div>
+              <div class="p-1 bd-highlight">
+                <a class="btn" (click)="removeEducation(edu.id)"><i class="fas fa-times"></i></a>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div *ngIf="isMe" class="modal fade" id="educationModal" tabindex="-1" aria-labelledby="educationModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="educationModalLabel">Add Education</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form class="form-group" [formGroup]="educationForm" (ngSubmit)="onEducationFormSubmit()">
+              <div class="mb-3">
+                <label for="schoolInput" class="form-label">School*</label>
+                <input type="text" id="schoolInput" formControlName="school" [ngClass]="{'form-control': true, 'is-invalid': educationFieldIsInvalid('school')}" aria-describedby="schoolFeedback">
+                <div *ngIf="educationFieldHasError('school','required')" id="schoolFeedback" class="invalid-feedback">
+                  School is required.
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="degreeInput" class="form-label">Degree</label>
+                <input type="text" class="form-control" id="degreeInput" formControlName="degree">
+              </div>
+              <div class="mb-3">
+                <label for="fieldOfStudyInput" class="form-label">Field of study</label>
+                <input type="text" class="form-control" id="fieldOfStudyInput" formControlName="fieldOfStudy">
+              </div>
+              <div class="mb-3">
+                <label for="startMonthInput" class="form-label">Start date</label>
+                <div class="d-flex bd-highlight">
+                  <div class="flex-fill bd-highlight pe-1">
+                    <select id="startMonthInput" class="form-select" formControlName="startMonth">
+                      <option value selected>Month</option>
+                      <option value="0">January</option>
+                      <option value="1">February</option>
+                      <option value="2">March</option>
+                      <option value="3">April</option>
+                      <option value="4">May</option>
+                      <option value="5">June</option>
+                      <option value="6">July</option>
+                      <option value="7">August</option>
+                      <option value="8">September</option>
+                      <option value="9">October</option>
+                      <option value="10">November</option>
+                      <option value="11">December</option>
+                    </select>
+                  </div>
+                  <div class="flex-fill bd-highlight ps-1">
+                    <select id="startYearInput" class="form-select" formControlName="startYear" [ngClass]="{'form-control': true, 'is-invalid': educationForm.errors?.startMonthButNotYear}" aria-describedby="startYearFeedback">
+                      <option value selected>Year</option>
+                      <option *ngFor="let s of counter(101); let shift = index" value="{{ 2021 - shift }}">{{ 2021 - shift }}</option>
+                    </select>
+                    <div *ngIf="educationForm.errors?.startMonthButNotYear" id="startYearFeedback" class="invalid-feedback">
+                      Please enter a year
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="endMonthInput" class="form-label">End date</label>
+                <div class="d-flex bd-highlight">
+                  <div class="flex-fill bd-highlight pe-1">
+                    <select id="endMonthInput" class="form-select" formControlName="endMonth">
+                      <option value selected>Month</option>
+                      <option value="0">January</option>
+                      <option value="1">February</option>
+                      <option value="2">March</option>
+                      <option value="3">April</option>
+                      <option value="4">May</option>
+                      <option value="5">June</option>
+                      <option value="6">July</option>
+                      <option value="7">August</option>
+                      <option value="8">September</option>
+                      <option value="9">October</option>
+                      <option value="10">November</option>
+                      <option value="11">December</option>
+                    </select>
+                  </div>
+                  <div class="flex-fill bd-highlight ps-1">
+                    <select id="endYearInput" class="form-select" formControlName="endYear" [ngClass]="{'form-control': true, 'is-invalid': educationForm.errors?.endMonthButNotYear}" aria-describedby="endYearFeedback">
+                      <option value selected>Year</option>
+                      <option *ngFor="let s of counter(101); let shift = index" value="{{ 2031 - shift }}">{{ 2031 - shift }}</option>
+                    </select>
+                    <div *ngIf="educationForm.errors?.endMonthButNotYear" id="endYearFeedback" class="invalid-feedback">
+                      Please enter a year
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="gradeInput" class="form-label">Grade</label>
+                <input type="text" class="form-control" id="gradeInput" formControlName="grade">
+              </div>
+              <div class="mb-3">
+                <label for="descriptionInput" class="form-label">Description</label>
+                <textarea class="form-control" id="descriptionInput" rows="3" formControlName="description"></textarea>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Save</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <br>
+
+    <div class="card">
+      <div class="card-body">
+        <div class="d-flex bd-highlight mb-1">
+          <div class="me-auto p-1 bd-highlight"><h5 class="card-title">Skills</h5></div>
+          <div *ngIf="isMe" class="p-1 bd-highlight"><a class="btn" data-bs-toggle="modal" data-bs-target="#skillsModal"><i class="fas fa-plus"></i></a></div>
+        </div>
+        
+        <ul class="list-group list-group-flush">
+          <li *ngFor="let skill of requestUser.skills" class="list-group-item">
+            <div class="d-flex bd-highlight mb-1">
+              <div class="me-auto p-1 bd-highlight">{{ skill.name }}</div>
+              <div *ngIf="isMe" class="p-1 bd-highlight"><a class="btn" (click)="removeSkill(skill.id)"><i class="fas fa-times"></i></a></div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div *ngIf="isMe" class="modal fade" id="skillsModal" tabindex="-1" aria-labelledby="skillsModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="skillsModalLabel">Add Skills</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form class="form-group" [formGroup]="addSkillsForm" (ngSubmit)="addNewSkills()">
+              <div formArrayName="skills" class="mb-3">
+                <div *ngFor="let skill of newSkills.controls; let i=index">
+                  <label for="skill-{{ i }}" class="form-label">Skill:</label>
+                  <input id="skill-{{ i }}" class="form-control" type="text" [formControlName]="i">
+                </div>
+              </div>
+              <button type="button" class="btn btn-primary mb-3" (click)="addSkill()">+ Add another skill</button>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Save</button>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
     </div>
   </div>

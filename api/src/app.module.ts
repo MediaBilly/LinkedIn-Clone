@@ -8,6 +8,9 @@ import { UsersModule } from './users/users.module';
 import { ArticlesModule } from './articles/articles.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { ScheduleModule } from '@nestjs/schedule';
+import { RecommendationSystemService } from './recommendation-system/recommendation-system.service';
+import { RecommendationSystemModule } from './recommendation-system/recommendation-system.module';
 
 @Module({
   imports: [
@@ -18,9 +21,11 @@ import { join } from 'path';
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'storage'),
     }),
+    ScheduleModule.forRoot(),
     AuthModule,
     UsersModule,
-    ArticlesModule],
+    ArticlesModule,
+    RecommendationSystemModule],
   controllers: [AppController],
   providers: [AppService],
 })

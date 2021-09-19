@@ -1,11 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { FriendRequest } from '../models/friendRequest.model';
 import { Notification } from '../models/notification.model';
 import { UpdateUser } from '../models/updateUser.model';
 import { User } from '../models/user.model';
-import { shareReplay, tap } from 'rxjs/operators/';
+import { shareReplay } from 'rxjs/operators/';
 
 const API_URL = 'http://localhost:3000/';
 
@@ -99,5 +99,29 @@ export class UserService {
 
   readNotification(id: number): Observable<any> {
     return this.httpClient.post(API_URL + 'users/notifications/read/' + id.toString(), {}, { responseType: 'json' });
+  }
+
+  // Skills
+
+  addSkills(skills: string[]): Observable<User> {
+    return this.httpClient.post<User>(API_URL + 'users/skills', { skills: skills }, { responseType: 'json' });
+  }
+
+  removeSkill(id: number): Observable<User> {
+    return this.httpClient.delete<User>(API_URL + 'users/skills/' + id.toString(), { responseType: 'json' });
+  }
+
+  // Education
+
+  addEducation(eduData: any): Observable<User> {
+    const { startMonth, startYear, endMonth, endYear, ...rest } = eduData;
+    const startDate = startYear ? { startDate: new Date(startYear, startMonth ? startMonth : '0').toISOString() } : {};
+    const endDate = endYear ? { endDate: new Date(endYear, endMonth ? endMonth : '0').toISOString() } : {};
+    const formData = { ...rest, ...startDate, ...endDate };
+    return this.httpClient.post<User>(API_URL+ 'users/education', formData, { responseType: 'json' });
+  }
+
+  removeEducation(id: number): Observable<User> {
+    return this.httpClient.delete<User>(API_URL + 'users/education/' + id.toString(), { responseType: 'json' });
   }
 }

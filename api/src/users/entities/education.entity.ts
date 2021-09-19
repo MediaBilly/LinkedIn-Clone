@@ -6,7 +6,7 @@ export class Education {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => User, user => user.educations, { onDelete: 'CASCADE' })
+    @ManyToOne(() => User, user => user.educations, { onDelete: 'CASCADE', orphanedRowAction: 'delete' })
     user: User;
 
     @Column()
@@ -18,17 +18,14 @@ export class Education {
     @Column({ nullable: true })
     fieldOfStudy: string;
 
-    @Column({ type: 'date', nullable: true })
-    startDate: string;
+    @Column({ type: 'timestamp', nullable: true })
+    startDate: Date;
 
-    @Column({ type: 'date', nullable: true })
-    endDate: string;
+    @Column({ type: 'timestamp', nullable: true })
+    endDate: Date;
 
     @Column({ nullable: true })
     grade: string;
-
-    @Column({ nullable: true })
-    activitiesAndSocieties: string;
 
     @Column({ nullable: true })
     description: string;

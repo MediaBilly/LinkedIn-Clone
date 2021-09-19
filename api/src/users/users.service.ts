@@ -12,6 +12,8 @@ import { checkImageType, getProfilePicLocation } from './helpers/profile-pic-sto
 import { Notification, NotificationType } from './entities/notification.entity';
 import { Skill } from './entities/skill.entity';
 import { existsQuery } from 'src/helpers/existsQuery';
+import { EducationDto } from './dto/education.dto';
+import { Education } from './entities/education.entity';
 
 @Injectable()
 export class UsersService {
@@ -19,7 +21,9 @@ export class UsersService {
         @InjectRepository(User) private usersRepository: Repository<User>,
         @InjectRepository(FriendRequest) private friendRequestsRepository: Repository<FriendRequest>,
         @InjectRepository(Friendship) private friendshipsRepository: Repository<Friendship>,
-        @InjectRepository(Notification) private notificationsRepository: Repository<Notification>
+        @InjectRepository(Notification) private notificationsRepository: Repository<Notification>,
+        @InjectRepository(Skill) private skillsRepository: Repository<Skill>,
+        @InjectRepository(Education) private educationRepository: Repository<Education>
     ) {}
 
     // Basic Functionality
@@ -211,14 +215,56 @@ export class UsersService {
 
     // Skills
 
-    async getSkills(uid: number) {
-        const user = await this.usersRepository.findOneOrFail(uid, { relations: ['skills'] });
-        return user.skills;
+    findSkillWithName(name: string): Promise<Skill> {
+        return this.skillsRepository.findOne({ where: { name: name } });
     }
 
-    addSkills(uid: number, newSkills: Skill[]) {
-        return this.usersRepository.findOneOrFail(uid, { relations: ['skills'] }).then((user) => {
-            user.skills.concat(newSkills);
+    async addSkills(uid: number, newSkills: string[]) {
+        const user = await this.findOne(uid);
+        const newSkillPromises: Promise<Skill>[] = [];
+        for (let newSkill of newSkills) {
+            if (!user.skills.some(s => s.name === newSkill)) {
+                let skillObj = await this.findSkillWithName(newSkill);
+                if (!skillObj) {
+                    skillObj = this.skillsRepository.create({ name: newSkill });
+                    newSkillPromises.push(this.skillsRepository.save(skillObj));
+                } else {
+                    newSkillPromises.push(new Promise<Skill>((resolve, reject) => { resolve(skillObj); }));
+                }
+            }
+        }
+        return Promise.all(newSkillPromises).then(newSkillObjs => {
+            for (let skill of newSkillObjs) {
+                user.skills.push(skill);
+            }
+            return this.usersRepository.save(user);
+        });
+    }
+
+    async removeSkillFromUser(uid: number, skillId: number) {
+        const user = await this.findOne(uid);
+        user.skills.splice(user.skills.findIndex(s => s.id === skillId),1);
+        return this.usersRepository.save(user);
+    }
+
+    // Education
+
+    async addEducation(uid: number, educationDto: EducationDto) {
+        const user = await this.findOne(uid);
+        const education = this.educationRepository.create(educationDto);
+        return this.educationRepository.save(education).then(edu => {
+            user.educations.push(edu);
+            return this.usersRepository.save(user);
+        });
+    }
+
+    async updateEducation(id: number, educationDto: EducationDto) {
+        return this.educationRepository.update(id, educationDto);
+    }
+
+    removeEducation(uid: number, eduId: number) {
+        return this.findOne(uid).then(user => {
+            user.educations.splice(user.educations.findIndex(edu => edu.id === eduId), 1);
             return this.usersRepository.save(user);
         });
     }

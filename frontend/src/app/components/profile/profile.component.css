@@ -61,3 +61,11 @@
     border-radius: 100px;
     z-index: 0;
 }
+
+.edu-info {
+    --bs-breadcrumb-divider: ',';
+}
+
+.breadcrumb .breadcrumb-item {
+    padding-left: 0px;
+}
