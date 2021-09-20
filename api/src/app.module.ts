@@ -11,6 +11,8 @@ import { join } from 'path';
 import { ScheduleModule } from '@nestjs/schedule';
 import { RecommendationSystemService } from './recommendation-system/recommendation-system.service';
 import { RecommendationSystemModule } from './recommendation-system/recommendation-system.module';
+import { JobsService } from './jobs/jobs.service';
+import { JobsModule } from './jobs/jobs.module';
 
 @Module({
   imports: [
@@ -25,7 +27,8 @@ import { RecommendationSystemModule } from './recommendation-system/recommendati
     AuthModule,
     UsersModule,
     ArticlesModule,
-    RecommendationSystemModule],
+    RecommendationSystemModule,
+    JobsModule],
   controllers: [AppController],
   providers: [AppService],
 })

@@ -9,6 +9,7 @@ import { NotificationsComponent } from './components/notifications/notifications
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { RegisterComponent } from './components/register/register.component';
+import { SearchComponent } from './components/search/search.component';
 import { SettingsComponent } from './components/settings/settings.component';
 
 const routes: Routes = [
@@ -23,6 +24,7 @@ const routes: Routes = [
   { path: 'settings', component: SettingsComponent },
   { path: 'user/:id', component: ProfileComponent },
   { path: 'article/:id', component: ArticleComponent },
+  { path: 'search', component: SearchComponent },
   { path: '**', pathMatch: 'full', component: PageNotFoundComponent }
 ];
 

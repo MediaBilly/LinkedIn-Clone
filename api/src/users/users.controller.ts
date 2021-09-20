@@ -191,7 +191,7 @@ export class UsersController {
     @UseGuards(JwtAuthGuard, EducationOwnerGuard)
     @Put('education/:id')
     updateEducation(@Body() educationDto: EducationDto, @Param('id') id: string) {
-        this.usersService.updateEducation(+id, educationDto);
+        return this.usersService.updateEducation(+id, educationDto);
     }
 
     @UseGuards(JwtAuthGuard)

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { User } from 'src/app/models/user.model';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 import { UserService } from 'src/app/services/user.service';
@@ -12,6 +13,7 @@ export class NavbarComponent implements OnInit {
   isLoggedIn = false;
   currentUser?: User;
   profilePicPath?: string;
+  searchBox = new FormControl('');
 
   notificationsCount = 0;
 
@@ -40,6 +42,12 @@ export class NavbarComponent implements OnInit {
       this.usersService.getNotifications().subscribe(notifications => {
         this.notificationsCount += notifications.filter(n => n.read === false).length;
       });
+    }
+  }
+
+  search(): void {
+    if (this.searchBox.value) {
+      window.location.replace('search?q=' + this.searchBox.value);
     }
   }
 

@@ -19,6 +19,8 @@ import { PageNotFoundComponent } from './components/page-not-found/page-not-foun
 import { NotificationComponent } from './components/notification/notification.component';
 import { DateAgoPipe } from './pipes/date-ago.pipe';
 import { ArticleComponent } from './components/article/article.component';
+import { SearchComponent } from './components/search/search.component';
+import { EducationModalComponent } from './components/education-modal/education-modal.component';
 
 @NgModule({
   declarations: [
@@ -37,6 +39,8 @@ import { ArticleComponent } from './components/article/article.component';
     NotificationComponent,
     DateAgoPipe,
     ArticleComponent,
+    SearchComponent,
+    EducationModalComponent,
   ],
   imports: [
     BrowserModule,

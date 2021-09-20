@@ -21,7 +21,7 @@
           <i class="fas fa-search h6 text-secondary"></i>
         </div>
         <div class="col-sm-10 px-0">
-          <input class="form-control form-control-borderless px-1" type="search" placeholder="Search">
+          <input class="form-control form-control-borderless px-1" type="text" [formControl]="searchBox" (keydown.enter)="search()" placeholder="Search">
         </div>
       </div>
     </form>

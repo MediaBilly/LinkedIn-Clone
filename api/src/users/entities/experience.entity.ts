@@ -1,16 +1,7 @@
+import { EmploymentType } from "src/enums/employment-type.enum";
+import { Company } from "src/jobs/entities/company.entity";
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./user.entity";
-
-export enum EmploymentType {
-    FULL_TIME = 'ft',
-    PART_TIME = 'pt',
-    SELF_EMPLOYED = 'se',
-    FREELANCE = 'fl',
-    CONTRACT = 'co',
-    INTERNSHIP = 'in',
-    APPRENTICESHIP = 'ap',
-    SEASONAL = 'sl'
-}
 
 @Entity()
 export class Experience {
@@ -28,8 +19,8 @@ export class Experience {
     })
     employmentType: EmploymentType;
 
-    @Column()
-    company: string; // Placeholder (will be a foreign key to another entity)
+    @ManyToOne(() => Company, company => company.userExperiences)
+    company: Company;
 
     @Column()
     location: string;

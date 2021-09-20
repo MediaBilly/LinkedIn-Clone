@@ -121,6 +121,10 @@ export class UserService {
     return this.httpClient.post<User>(API_URL+ 'users/education', formData, { responseType: 'json' });
   }
 
+  updateEducation(id: number, eduData: any): Observable<any> {
+    return this.httpClient.put(API_URL + 'users/education/' + id.toString(), eduData, { responseType: 'json' });
+  }
+
   removeEducation(id: number): Observable<User> {
     return this.httpClient.delete<User>(API_URL + 'users/education/' + id.toString(), { responseType: 'json' });
   }

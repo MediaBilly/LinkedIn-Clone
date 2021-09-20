@@ -9,6 +9,7 @@ import { Notification } from "./notification.entity";
 import { Skill } from "./skill.entity";
 import { Education } from "./education.entity";
 import { Experience } from "./experience.entity";
+import { JobAlert } from "src/jobs/entities/job-alert.entity";
 
 export enum UserRole {
     ADMIN = 'a',
@@ -79,4 +80,13 @@ export class User {
 
     @OneToMany(() => Experience, experience => experience.user, { eager: true, cascade: true })
     experiences: Experience[];
+
+    // Job alerts that user created
+    @OneToMany(() => JobAlert, jobAlert => jobAlert.creator, { cascade: true })
+    jobAlerts: JobAlert[];
+
+    // Job alerts that the user applied to 
+    @ManyToMany(() => JobAlert, jobAlert => jobAlert.applicants)
+    @JoinTable()
+    jobApplications: JobAlert[];
 }

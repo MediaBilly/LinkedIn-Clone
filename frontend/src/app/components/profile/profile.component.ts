@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { Education } from 'src/app/models/education.model';
 import { FriendRequest } from 'src/app/models/friendRequest.model';
 import { User } from 'src/app/models/user.model';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
@@ -39,7 +40,7 @@ export class ProfileComponent implements OnInit {
     ])
   });
 
-  // Education
+  // Education form
   educationForm = new FormGroup({
     school: new FormControl('', Validators.required),
     degree: new FormControl(''),
@@ -54,6 +55,9 @@ export class ProfileComponent implements OnInit {
     description: new FormControl('')
   }, { validators: [startMonthYearValidator, endMonthYearValidator] });
   educationFormInvalid = false;
+  educationFormEditMode = false;
+  editingEducation?: Education;
+  @ViewChild('educationModal') educationModal?: ElementRef;
 
   constructor(private route: ActivatedRoute, private tokenService: TokenStorageService, private usersService: UserService) { }
 
@@ -214,6 +218,16 @@ export class ProfileComponent implements OnInit {
     } else {
       this.educationFormInvalid = true;
     }
+  }
+
+  openEducationEditor(education: Education): void {
+    this.educationFormEditMode = true;
+    this.editingEducation = education;
+    this.educationForm.setValue(education);
+  }
+
+  closeEducationEditor(): void {
+    this.educationFormEditMode = false;
   }
 
   removeEducation(id: number) {
