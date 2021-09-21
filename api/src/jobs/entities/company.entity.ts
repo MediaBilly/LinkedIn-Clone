@@ -8,7 +8,7 @@ export class Company {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    @Column({ unique: true })
     name: string;
 
     @OneToMany(() => JobAlert, jobAlert => jobAlert.company)

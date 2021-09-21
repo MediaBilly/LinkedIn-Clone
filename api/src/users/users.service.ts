@@ -14,6 +14,9 @@ import { Skill } from './entities/skill.entity';
 import { existsQuery } from 'src/helpers/existsQuery';
 import { EducationDto } from './dto/education.dto';
 import { Education } from './entities/education.entity';
+import { ExperienceDto } from './dto/experience.dto';
+import { JobsService } from 'src/jobs/jobs.service';
+import { Experience } from './entities/experience.entity';
 
 @Injectable()
 export class UsersService {
@@ -23,7 +26,9 @@ export class UsersService {
         @InjectRepository(Friendship) private friendshipsRepository: Repository<Friendship>,
         @InjectRepository(Notification) private notificationsRepository: Repository<Notification>,
         @InjectRepository(Skill) private skillsRepository: Repository<Skill>,
-        @InjectRepository(Education) private educationRepository: Repository<Education>
+        @InjectRepository(Education) private educationRepository: Repository<Education>,
+        @InjectRepository(Experience) private experienceRepository: Repository<Experience>,
+        private jobsService: JobsService
     ) {}
 
     // Basic Functionality
@@ -274,6 +279,38 @@ export class UsersService {
     removeEducation(uid: number, eduId: number) {
         return this.findOne(uid).then(user => {
             user.educations.splice(user.educations.findIndex(edu => edu.id === eduId), 1);
+            return this.usersRepository.save(user);
+        });
+    }
+
+    // Experience
+
+    async addExperience(uid: number, experienceDto: ExperienceDto) {
+        const { company, ...restExperienceData } = experienceDto;
+        const user = await this.findOne(uid);
+        let companyObj = await this.jobsService.findCompanyByName(company);
+        if (!companyObj) {
+            companyObj = await this.jobsService.addCompany(company);
+        }
+        const experience = this.experienceRepository.create({ ...restExperienceData, company: companyObj });
+        return this.experienceRepository.save(experience).then(expr => {
+            user.experiences.push(expr);
+            return this.usersRepository.save(user);
+        });
+    }
+
+    async updateExperience(id: number, experienceDto: ExperienceDto) {
+        const { company, ...restExperienceData } = experienceDto;
+        let companyObj = await this.jobsService.findCompanyByName(company);
+        if (!companyObj) {
+            companyObj = await this.jobsService.addCompany(company);
+        }
+        return this.experienceRepository.update(id, { ...restExperienceData, company: companyObj });
+    }
+
+    removeExperience(uid: number, expId: number) {
+        return this.findOne(uid).then(user => {
+            user.experiences.splice(user.experiences.findIndex(expr => expr.id === expId), 1);
             return this.usersRepository.save(user);
         });
     }

@@ -17,6 +17,7 @@ export class HomeComponent implements OnInit {
   profilePicPath?: string;
   totalConnections = 0;
   articles?: Article[];
+  headline?: string;
 
   // New article form
 
@@ -44,6 +45,7 @@ export class HomeComponent implements OnInit {
       this.usersService.getUserProfile().subscribe(user => {
         this.currentUser = user;
         this.profilePicPath = this.usersService.getProfilePicPath(user);
+        this.headline = this.usersService.getHeadline(user);
         this.usersService.getFriends().subscribe(friends => {
           this.totalConnections = friends.length;
         })

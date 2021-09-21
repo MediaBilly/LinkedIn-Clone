@@ -5,7 +5,7 @@ import { UsersService } from "../users.service";
 
 
 @Injectable()
-export class EducationOwnerGuard implements CanActivate {
+export class ExperienceOwnerGuard implements CanActivate {
     constructor(private usersService: UsersService) {}
 
     canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
@@ -21,9 +21,9 @@ export class EducationOwnerGuard implements CanActivate {
             return true;
         }
 
-        const educationId = +params.id;
+        const experienceId = +params.id;
         return this.usersService.findOne(+user.id).then(u => {
-            return u.educations.some(edu => edu.id === educationId);
+            return u.experiences.some(expr => expr.id === experienceId);
         });
     }
 }

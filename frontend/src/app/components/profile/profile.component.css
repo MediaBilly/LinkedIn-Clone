@@ -66,6 +66,10 @@
     --bs-breadcrumb-divider: ',';
 }
 
-.breadcrumb .breadcrumb-item {
+.exp-info {
+    --bs-breadcrumb-divider: '\00b7';
+}
+
+.edu-info .breadcrumb .breadcrumb-item {
     padding-left: 0px;
 }

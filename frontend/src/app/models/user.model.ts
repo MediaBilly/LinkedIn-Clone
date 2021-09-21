@@ -1,4 +1,5 @@
 import { Education } from "./education.model";
+import { Experience } from "./experience.model";
 import { Skill } from "./skill.model";
 
 export enum UserRole {
@@ -16,4 +17,5 @@ export interface User {
     profilePicName: string;
     skills: Skill[];
     educations: Education[];
+    experiences: Experience[];
 }

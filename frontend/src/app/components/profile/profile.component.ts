@@ -1,7 +1,10 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { EmploymentType } from 'src/app/enums/employment-type.enum';
 import { Education } from 'src/app/models/education.model';
+import { Experience } from 'src/app/models/experience.model';
 import { FriendRequest } from 'src/app/models/friendRequest.model';
 import { User } from 'src/app/models/user.model';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
@@ -56,10 +59,30 @@ export class ProfileComponent implements OnInit {
   }, { validators: [startMonthYearValidator, endMonthYearValidator] });
   educationFormInvalid = false;
   educationFormEditMode = false;
+  educationModalRef?: NgbModalRef;
   editingEducation?: Education;
-  @ViewChild('educationModal') educationModal?: ElementRef;
 
-  constructor(private route: ActivatedRoute, private tokenService: TokenStorageService, private usersService: UserService) { }
+  // Experience form
+  experienceForm = new FormGroup({
+    title: new FormControl('', Validators.required),
+    company: new FormControl('', Validators.required),
+    employmentType: new FormControl(''),
+    location : new FormControl(''),
+    // Start date
+    startYear : new FormControl('', Validators.required),
+    startMonth : new FormControl('', Validators.required),
+    // End date
+    endYear : new FormControl(''),
+    endMonth : new FormControl(''),
+    description: new FormControl('')
+  }, { validators: [startMonthYearValidator, endMonthYearValidator] });
+  experienceFormInvalid = false;
+  experienceFormEditMode = false;
+  experienceModalRef?: NgbModalRef;
+  editingExperience?: Experience;
+  employmentTypes = EmploymentType;
+
+  constructor(private route: ActivatedRoute, private tokenService: TokenStorageService, private usersService: UserService, private modalService: NgbModal) { }
 
   ngOnInit(): void {
     this.isLoggedIn = this.tokenService.loggedIn();
@@ -199,6 +222,8 @@ export class ProfileComponent implements OnInit {
     return new Array(n);
   }
 
+  // Education form
+
   public educationFieldIsInvalid = (field: string) => {
     return this.educationFormInvalid && this.educationForm.controls[field].invalid;
   }
@@ -210,29 +235,109 @@ export class ProfileComponent implements OnInit {
   onEducationFormSubmit() {
     if (this.isMe && this.educationForm.valid) {
       this.educationFormInvalid = false;
-      this.usersService.addEducation(this.educationForm.value).subscribe(user => {
-        this.myUser = user;
-        this.requestUser = user;
-        this.educationForm.reset();
-      });
+      if (!this.educationFormEditMode) {
+        this.usersService.addEducation(this.educationForm.value).subscribe(user => {
+          this.myUser = user;
+          this.requestUser = user;
+        });
+      } else {
+        if (this.editingEducation) {
+          this.usersService.updateEducation(this.editingEducation?.id, this.educationForm.value).subscribe();
+        }
+      }
+      this.educationModalRef?.close();
+      this.educationForm.reset();
     } else {
       this.educationFormInvalid = true;
     }
   }
 
-  openEducationEditor(education: Education): void {
-    this.educationFormEditMode = true;
-    this.editingEducation = education;
-    this.educationForm.setValue(education);
+  openNewEducationModal(modalContent: any): void {
+    this.educationForm.reset();
+    this.educationFormEditMode = false;
+    this.educationModalRef = this.modalService.open(modalContent, { ariaLabelledBy: 'educationModalLabel' });
   }
 
-  closeEducationEditor(): void {
-    this.educationFormEditMode = false;
+  openEducationEditor(education: Education, modalContent: any): void {
+    this.educationForm.reset();
+    this.educationFormEditMode = true;
+    this.editingEducation = education;
+    let { startDate, endDate, id, ...restData } = education;
+    startDate = new Date(startDate);
+    endDate = new Date(endDate);
+    this.educationForm.setValue({ ...restData, 
+      startYear: startDate.getFullYear(),
+      endYear: endDate.getFullYear(),
+      startMonth: startDate.getMonth(),
+      endMonth: endDate.getMonth() 
+    });
+    this.educationModalRef = this.modalService.open(modalContent, { ariaLabelledBy: 'educationModalLabel' });
   }
 
   removeEducation(id: number) {
     if (this.isMe) {
       this.usersService.removeEducation(id).subscribe(user => {
+        this.myUser = this.requestUser = user;
+      });
+    }
+  }
+
+  // Experience form 
+
+  public experienceFieldIsInvalid = (field: string) => {
+    return this.experienceFormInvalid && this.experienceForm.controls[field].invalid;
+  }
+
+  public experienceFieldHasError = (field: string, error: string) => {
+    return this.experienceForm.controls[field].hasError(error);
+  }
+
+  onExperienceFormSubmit() {
+    if (this.isMe && this.experienceForm.valid) {
+      this.experienceFormInvalid = false;
+      if (!this.experienceFormEditMode) {
+        this.usersService.addExperience(this.experienceForm.value).subscribe(user => {
+          this.myUser = user;
+          this.requestUser = user;
+        });
+      } else {
+        if (this.editingExperience) {
+          this.usersService.updateExperience(this.editingExperience?.id, this.experienceForm.value).subscribe();
+        }
+      }
+      this.experienceModalRef?.close();
+      this.experienceForm.reset();
+    } else {
+      this.experienceFormInvalid = true;
+    }
+  }
+
+  openNewExperienceModal(modalContent: any): void {
+    this.experienceForm.reset();
+    this.experienceFormEditMode = false;
+    this.experienceModalRef = this.modalService.open(modalContent, { ariaLabelledBy: 'experienceModalLabel' });
+  }
+
+  openExperienceEditor(experience: Experience, modalContent: any): void {
+    this.experienceForm.reset();
+    this.experienceFormEditMode = true;
+    this.editingExperience = experience;
+    let { startDate, endDate, id, company, ...restData } = experience;
+    startDate = new Date(startDate);
+    endDate = new Date(endDate);
+    this.experienceForm.setValue({ ...restData, 
+      company: company.name,
+      startYear: startDate.getFullYear(),
+      endYear: endDate.getFullYear(),
+      startMonth: startDate.getMonth(),
+      endMonth: endDate.getMonth() 
+    });
+    this.experienceModalRef = this.modalService.open(modalContent, { ariaLabelledBy: 'experienceModalLabel' });
+  }
+
+  removeExperience(id: number) {
+    if (this.isMe) {
+      this.usersService.removeExperience(id).subscribe(user => {
         this.myUser = this.requestUser = user;
       });
     }

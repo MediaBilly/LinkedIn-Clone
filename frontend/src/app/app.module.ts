@@ -20,7 +20,10 @@ import { NotificationComponent } from './components/notification/notification.co
 import { DateAgoPipe } from './pipes/date-ago.pipe';
 import { ArticleComponent } from './components/article/article.component';
 import { SearchComponent } from './components/search/search.component';
-import { EducationModalComponent } from './components/education-modal/education-modal.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { EmploymentTypeFormatterPipe } from './pipes/employment-type-formatter.pipe';
+import { ExperiencesSorterPipe } from './pipes/experiences-sorter.pipe';
+import { EducationsSorterPipe } from './pipes/educations-sorter.pipe';;
 
 @NgModule({
   declarations: [
@@ -40,7 +43,9 @@ import { EducationModalComponent } from './components/education-modal/education-
     DateAgoPipe,
     ArticleComponent,
     SearchComponent,
-    EducationModalComponent,
+    EmploymentTypeFormatterPipe,
+    ExperiencesSorterPipe,
+    EducationsSorterPipe
   ],
   imports: [
     BrowserModule,
@@ -55,8 +60,13 @@ import { EducationModalComponent } from './components/education-modal/education-
         },
         allowedDomains: ['localhost:3000']
       }
-    })
+    }),
+    NgbModule
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  providers: [
+    EducationsSorterPipe,
+    ExperiencesSorterPipe
+  ]
 })
 export class AppModule { }

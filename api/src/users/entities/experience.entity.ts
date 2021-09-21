@@ -8,8 +8,11 @@ export class Experience {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => User, user => user.experiences)
+    @ManyToOne(() => User, user => user.experiences, { onDelete: 'CASCADE', orphanedRowAction: 'delete' })
     user: User;
+
+    @Column()
+    title: string;
 
     @Column({
         type: 'enum',
@@ -19,17 +22,17 @@ export class Experience {
     })
     employmentType: EmploymentType;
 
-    @ManyToOne(() => Company, company => company.userExperiences)
+    @ManyToOne(() => Company, company => company.userExperiences, { eager: true })
     company: Company;
 
     @Column()
     location: string;
 
-    @Column({ type: 'date' })
-    startDate: string;
+    @Column({ type: 'timestamp' })
+    startDate: Date;
 
-    @Column({ type: 'date', nullable: true })
-    endDate: string;
+    @Column({ type: 'timestamp', nullable: true })
+    endDate: Date;
 
     @Column({ nullable: true })
     description: string;

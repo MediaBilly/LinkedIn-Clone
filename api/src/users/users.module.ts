@@ -8,9 +8,11 @@ import { Friendship } from './entities/friendship.entity';
 import { Notification } from './entities/notification.entity';
 import { Skill } from './entities/skill.entity';
 import { Education } from './entities/education.entity';
+import { Experience } from './entities/experience.entity';
+import { JobsModule } from 'src/jobs/jobs.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, FriendRequest, Friendship, Notification, Skill, Education])],
+  imports: [TypeOrmModule.forFeature([User, FriendRequest, Friendship, Notification, Skill, Education, Experience]), JobsModule],
   providers: [UsersService],
   exports: [UsersService, TypeOrmModule],
   controllers: [UsersController]

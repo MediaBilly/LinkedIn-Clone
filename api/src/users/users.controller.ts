@@ -15,6 +15,8 @@ import { profilePicOptions } from './helpers/profile-pic-storage';
 import { HidePasswordInterceptor } from './interceptors/hide-password.interceptor';
 import { UsersService } from './users.service';
 import { EducationOwnerGuard } from './guards/education-owner.guard';
+import { ExperienceDto } from './dto/experience.dto';
+import { ExperienceOwnerGuard } from './guards/experience-owner.guard';
 
 @UseInterceptors(HidePasswordInterceptor)
 @Controller('users')
@@ -198,5 +200,25 @@ export class UsersController {
     @Delete('education/:id')
     removeEducation(@Request() req, @Param('id') id: string) {
         return this.usersService.removeEducation(+req.user.id, +id);
+    }
+
+    // Experience
+
+    @UseGuards(JwtAuthGuard)
+    @Post('experience')
+    addExperience(@Request() req, @Body() experienceDto: ExperienceDto) {
+        return this.usersService.addExperience(+req.user.id, experienceDto);
+    }
+
+    @UseGuards(JwtAuthGuard, ExperienceOwnerGuard)
+    @Put('experience/:id')
+    updateExperience(@Body() experienceDto: ExperienceDto, @Param('id') id: string) {
+        return this.usersService.updateExperience(+id, experienceDto);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Delete('experience/:id')
+    removeExperience(@Request() req, @Param('id') id: string) {
+        return this.usersService.removeExperience(+req.user.id, +id);
     }
 }

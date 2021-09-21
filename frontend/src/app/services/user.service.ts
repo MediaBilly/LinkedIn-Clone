@@ -6,6 +6,8 @@ import { Notification } from '../models/notification.model';
 import { UpdateUser } from '../models/updateUser.model';
 import { User } from '../models/user.model';
 import { shareReplay } from 'rxjs/operators/';
+import { EducationsSorterPipe } from '../pipes/educations-sorter.pipe';
+import { ExperiencesSorterPipe } from '../pipes/experiences-sorter.pipe';
 
 const API_URL = 'http://localhost:3000/';
 
@@ -15,7 +17,7 @@ const API_URL = 'http://localhost:3000/';
 export class UserService {
   currentUser$: Observable<User> | null = null;
 
-  constructor(private httpClient: HttpClient) { }
+  constructor(private httpClient: HttpClient, private educationsSorterPipe: EducationsSorterPipe, private experiencesSorterPipe: ExperiencesSorterPipe) { }
 
   // Basic Functionality
 
@@ -53,6 +55,18 @@ export class UserService {
     const formData = new FormData();
     formData.append('pic', newPic);
     return this.httpClient.post<User>(API_URL + 'users/profile-pic', formData);
+  }
+
+  getHeadline(user: User): string {
+    if (user.experiences.length > 0) {
+      const exp0 = this.experiencesSorterPipe.transform(user.experiences)[0];
+      return exp0.title + ' @ ' + exp0.company.name;
+    } else if (user.educations.length > 0) {
+      const edu0 = this.educationsSorterPipe.transform(user.educations)[0];
+      return 'Student @ ' + edu0.school;
+    } else {
+      return '';
+    }
   }
 
   // Friend requests
@@ -113,19 +127,45 @@ export class UserService {
 
   // Education
 
-  addEducation(eduData: any): Observable<User> {
+  private preprocessEducationData(eduData: any) {
     const { startMonth, startYear, endMonth, endYear, ...rest } = eduData;
     const startDate = startYear ? { startDate: new Date(startYear, startMonth ? startMonth : '0').toISOString() } : {};
     const endDate = endYear ? { endDate: new Date(endYear, endMonth ? endMonth : '0').toISOString() } : {};
     const formData = { ...rest, ...startDate, ...endDate };
-    return this.httpClient.post<User>(API_URL+ 'users/education', formData, { responseType: 'json' });
+    return formData;
+  }
+
+  addEducation(eduData: any): Observable<User> {
+    return this.httpClient.post<User>(API_URL+ 'users/education', this.preprocessEducationData(eduData), { responseType: 'json' });
   }
 
   updateEducation(id: number, eduData: any): Observable<any> {
-    return this.httpClient.put(API_URL + 'users/education/' + id.toString(), eduData, { responseType: 'json' });
+    return this.httpClient.put(API_URL + 'users/education/' + id.toString(), this.preprocessEducationData(eduData), { responseType: 'json' });
   }
 
   removeEducation(id: number): Observable<User> {
     return this.httpClient.delete<User>(API_URL + 'users/education/' + id.toString(), { responseType: 'json' });
+  }
+
+  // Experience
+
+  private preprocessExperienceData(expData: any) {
+    const { startMonth, startYear, endMonth, endYear, ...rest } = expData;
+    const startDate = startYear ? { startDate: new Date(startYear, startMonth ? startMonth : '0').toISOString() } : {};
+    const endDate = endYear ? { endDate: new Date(endYear, endMonth ? endMonth : '0').toISOString() } : {};
+    const formData = { ...rest, ...startDate, ...endDate };
+    return formData;
+  }
+
+  addExperience(expData: any): Observable<User> {
+    return this.httpClient.post<User>(API_URL+ 'users/experience', this.preprocessExperienceData(expData), { responseType: 'json' });
+  }
+
+  updateExperience(id: number, expData: any): Observable<any> {
+    return this.httpClient.put(API_URL + 'users/experience/' + id.toString(), this.preprocessExperienceData(expData), { responseType: 'json' });
+  }
+
+  removeExperience(id: number): Observable<User> {
+    return this.httpClient.delete<User>(API_URL + 'users/experience/' + id.toString(), { responseType: 'json' });
   }
 }
