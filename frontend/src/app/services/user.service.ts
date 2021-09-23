@@ -34,7 +34,7 @@ export class UserService {
     }
   }
 
-  getProfilePicPath(user: User): string {
+  getProfilePicPath(user?: User): string {
     if (user && user.profilePicName) {
       return API_URL + '/images/profile_pics/' + user.profilePicName;
     } else {

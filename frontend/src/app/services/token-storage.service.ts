@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { AuthToken } from '../models/auth-token.model';
 
 const TOKEN_KEY = 'auth-token';
 
@@ -29,5 +30,14 @@ export class TokenStorageService {
       return false;
     }
     return !this.jwtHelper.isTokenExpired(token);
+  }
+
+  public getLoggedInId(): number {
+    const token = this.getToken();
+    if (token) {
+      return this.jwtHelper.decodeToken<AuthToken>(token).sub;
+    } else {
+      return 0;
+    }
   }
 }

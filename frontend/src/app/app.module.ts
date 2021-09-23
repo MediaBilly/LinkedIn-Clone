@@ -23,7 +23,9 @@ import { SearchComponent } from './components/search/search.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { EmploymentTypeFormatterPipe } from './pipes/employment-type-formatter.pipe';
 import { ExperiencesSorterPipe } from './pipes/experiences-sorter.pipe';
-import { EducationsSorterPipe } from './pipes/educations-sorter.pipe';;
+import { EducationsSorterPipe } from './pipes/educations-sorter.pipe';
+import { ActiveChatComponent } from './components/active-chat/active-chat.component';
+import { ChatRowComponent } from './components/chat-row/chat-row.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +47,9 @@ import { EducationsSorterPipe } from './pipes/educations-sorter.pipe';;
     SearchComponent,
     EmploymentTypeFormatterPipe,
     ExperiencesSorterPipe,
-    EducationsSorterPipe
+    EducationsSorterPipe,
+    ActiveChatComponent,
+    ChatRowComponent
   ],
   imports: [
     BrowserModule,

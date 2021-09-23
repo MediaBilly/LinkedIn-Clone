@@ -7,6 +7,7 @@ import { Education } from 'src/app/models/education.model';
 import { Experience } from 'src/app/models/experience.model';
 import { FriendRequest } from 'src/app/models/friendRequest.model';
 import { User } from 'src/app/models/user.model';
+import { ChatService } from 'src/app/services/chat.service';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 import { UserService } from '../../services/user.service';
 import { endMonthYearValidator } from './form-validators/end-month-year-validator.directive';
@@ -82,7 +83,12 @@ export class ProfileComponent implements OnInit {
   editingExperience?: Experience;
   employmentTypes = EmploymentType;
 
-  constructor(private route: ActivatedRoute, private tokenService: TokenStorageService, private usersService: UserService, private modalService: NgbModal) { }
+  constructor(private route: ActivatedRoute, 
+    private tokenService: TokenStorageService, 
+    private usersService: UserService, 
+    private modalService: NgbModal,
+    private chatService: ChatService
+  ) { }
 
   ngOnInit(): void {
     this.isLoggedIn = this.tokenService.loggedIn();
@@ -183,6 +189,26 @@ export class ProfileComponent implements OnInit {
           this.profilePicPath = this.usersService.getProfilePicPath(this.myUser);
         });
       }
+    }
+  }
+
+  message() {
+    if (this.isLoggedIn && this.requestUser && this.myUser && this.myUser.id !== this.requestUser.id) {
+      this.chatService.getChats().subscribe(chats => {
+        let chatExists = false;
+        for (let chat of chats) {
+          console.log(chat.users);
+          if (chat.users.some(u => u.id === this.requestUser?.id)) {
+            chatExists = true;
+            break;
+          }
+        }
+        console.log(chatExists);
+        if (!chatExists && this.requestUser) {
+          this.chatService.createChat(this.requestUser?.id).subscribe();
+        }
+        window.location.replace('messaging');
+      });
     }
   }
 

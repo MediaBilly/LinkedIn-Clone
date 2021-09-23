@@ -10,6 +10,8 @@ import { Skill } from "./skill.entity";
 import { Education } from "./education.entity";
 import { Experience } from "./experience.entity";
 import { JobAlert } from "src/jobs/entities/job-alert.entity";
+import { Chat } from "src/chat/entities/chat.entity";
+import { Message } from "src/chat/entities/message.entity";
 
 export enum UserRole {
     ADMIN = 'a',
@@ -89,4 +91,10 @@ export class User {
     @ManyToMany(() => JobAlert, jobAlert => jobAlert.applicants)
     @JoinTable()
     jobApplications: JobAlert[];
+
+    @ManyToMany(() => Chat, chat => chat.users)
+    chats: Chat[];
+
+    @OneToMany(() => Message, message => message.sender)
+    messages: Message[];
 }

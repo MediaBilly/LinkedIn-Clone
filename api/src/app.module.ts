@@ -13,6 +13,7 @@ import { RecommendationSystemService } from './recommendation-system/recommendat
 import { RecommendationSystemModule } from './recommendation-system/recommendation-system.module';
 import { JobsService } from './jobs/jobs.service';
 import { JobsModule } from './jobs/jobs.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -28,7 +29,8 @@ import { JobsModule } from './jobs/jobs.module';
     UsersModule,
     ArticlesModule,
     RecommendationSystemModule,
-    JobsModule],
+    JobsModule,
+    ChatModule],
   controllers: [AppController],
   providers: [AppService],
 })

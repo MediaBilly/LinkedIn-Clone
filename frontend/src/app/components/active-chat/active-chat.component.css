@@ -1,0 +1,22 @@
+
+.chat-messages {
+    display: flex;
+    flex-direction:column-reverse;
+    height: 650px;
+    overflow-y: scroll;
+}
+
+.chat-message-left,
+.chat-message-right {
+    display: flex;
+    flex-shrink: 0
+}
+
+.chat-message-left {
+    margin-right: auto
+}
+
+.chat-message-right {
+    flex-direction: row-reverse;
+    margin-left: auto
+}

@@ -387,7 +387,7 @@
 
 <ng-template #case3>
   <div *ngIf="areFriends; else case4">
-    <button type="button" class="btn btn-primary">Message</button>
+    <button type="button" class="btn btn-primary" (click)="message()">Message</button>
     <button type="button" class="btn btn-danger" (click)="removeFriend()">Remove Connection</button>
   </div>
 </ng-template>
