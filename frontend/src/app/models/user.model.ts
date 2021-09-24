@@ -3,8 +3,8 @@ import { Experience } from "./experience.model";
 import { Skill } from "./skill.model";
 
 export enum UserRole {
-    ADMIN = 'a',
-    PROFESSIONAL = 'p'
+    Admin = 'a',
+    Professional = 'p'
 }
 
 export interface User {

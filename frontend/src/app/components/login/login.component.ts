@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { User, UserRole } from 'src/app/models/user.model';
 import { AuthService } from '../../services/auth.service';
 import { TokenStorageService } from '../../services/token-storage.service';
 
@@ -30,7 +31,7 @@ export class LoginComponent implements OnInit {
       this.authService.login(email, password).subscribe(
         data => {
           this.tokenStorage.saveToken(data.access_token);
-          this.gotoHomePage();
+          this.gotoHomePage(data.user);
         },
         err => {
           if (err.status === 401) {
@@ -55,7 +56,7 @@ export class LoginComponent implements OnInit {
     return this.loginForm.controls[field].hasError(error);
   }
 
-  gotoHomePage(): void {
-    window.location.replace('');
+  gotoHomePage(loggedInUser: User): void {
+    window.location.replace(loggedInUser.role === UserRole.Admin ? '/admin': '');
   }
 }

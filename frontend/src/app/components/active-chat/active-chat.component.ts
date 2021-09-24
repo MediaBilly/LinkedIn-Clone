@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { interval, Observable, Subject, Subscription } from 'rxjs';
 import { mergeMap, startWith, takeUntil, tap } from 'rxjs/operators';
@@ -15,7 +15,7 @@ import { UserService } from 'src/app/services/user.service';
   templateUrl: './active-chat.component.html',
   styleUrls: ['./active-chat.component.css']
 })
-export class ActiveChatComponent implements OnInit {
+export class ActiveChatComponent implements OnInit, OnDestroy {
   @Input() chat?: Chat;
   chatInfo?: ChatInfo | null;
   messages?: Message[];

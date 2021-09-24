@@ -26,6 +26,9 @@ import { ExperiencesSorterPipe } from './pipes/experiences-sorter.pipe';
 import { EducationsSorterPipe } from './pipes/educations-sorter.pipe';
 import { ActiveChatComponent } from './components/active-chat/active-chat.component';
 import { ChatRowComponent } from './components/chat-row/chat-row.component';
+import { AdminPanelComponent } from './components/admin-panel/admin-panel.component';
+import { DataTablesModule } from 'angular-datatables';
+import { UserRoleFormatterPipe } from './pipes/user-role-formatter.pipe';
 
 @NgModule({
   declarations: [
@@ -49,7 +52,9 @@ import { ChatRowComponent } from './components/chat-row/chat-row.component';
     ExperiencesSorterPipe,
     EducationsSorterPipe,
     ActiveChatComponent,
-    ChatRowComponent
+    ChatRowComponent,
+    AdminPanelComponent,
+    UserRoleFormatterPipe
   ],
   imports: [
     BrowserModule,
@@ -65,7 +70,8 @@ import { ChatRowComponent } from './components/chat-row/chat-row.component';
         allowedDomains: ['localhost:3000']
       }
     }),
-    NgbModule
+    NgbModule,
+    DataTablesModule
   ],
   bootstrap: [AppComponent],
   providers: [

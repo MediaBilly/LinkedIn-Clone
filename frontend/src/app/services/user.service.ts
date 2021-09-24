@@ -168,4 +168,10 @@ export class UserService {
   removeExperience(id: number): Observable<User> {
     return this.httpClient.delete<User>(API_URL + 'users/experience/' + id.toString(), { responseType: 'json' });
   }
+
+  // Admin Stuff
+  
+  getAllUsers(): Observable<User[]> {
+    return this.httpClient.get<User[]>(API_URL + 'users', { responseType: 'json' });
+  }
 }
