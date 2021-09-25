@@ -1,3 +1,8 @@
+.connection-list {
+    max-height: 800px;
+    overflow-y: scroll;
+}
+
 .connection-row {
     padding: 10px 0;
     border-top: 1px solid #f1f2f2;

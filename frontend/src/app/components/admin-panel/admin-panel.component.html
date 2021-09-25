@@ -6,8 +6,8 @@
                 <h2>Admin Panel</h2>
             </div>
             <div class="col-sm-7">
-                <a href="#" class="btn btn-secondary">Export to JSON</a>
-                <a href="#" class="btn btn-secondary">Export to XML</a>						
+                <a (click)="exportToJSON()" class="btn btn-secondary">Export to JSON</a>
+                <a (click)="exportToXML()" class="btn btn-secondary">Export to XML</a>						
             </div>
         </div>
     </div>
@@ -25,17 +25,107 @@
         </thead>
         <tbody>
             <tr *ngFor="let user of users">
-                <td><input class="form-check-input" (click)="onUserCheckboxClick(user)" type="checkbox"></td>
+                <td><input #usercheck class="form-check-input user-check" (click)="onUserCheckboxClick(user)" type="checkbox"></td>
                 <td>{{ user.id }}</td>
                 <td><a href="/user/{{ user.id }}"><img [src]="getUserPicPath(user)" class="avatar" alt="Avatar" width="50" height="50">{{ user.firstname }} {{ user.lastname }}</a></td>                      
                 <td>{{ user.email }}</td>
                 <td>{{ user.phone }}</td>
                 <td>{{ user.role | userRoleFormatter }}</td>
                 <td>
-                    <a href="#" class="settings"><i class="fas fa-cog"></i></a>
-                    <a href="#" class="delete"><i class="fas fa-times-circle"></i></a>
+                    <a (click)="openUserModal(user, userModal)" class="btn btn-sm settings"><i class="fas fa-cog"></i></a>
+                    <a (click)="deleteUser(user.id)" class="btn btn-sm delete"><i class="fas fa-times-circle"></i></a>
                 </td>
             </tr>
         </tbody>
     </table>
+
+    <ng-template #userModal let-modal>
+        <div class="modal-header">
+          <h4 class="modal-title" id="modal-user-update">Update User</h4>
+          <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <h5>User Info</h5>
+            <form [formGroup]="updateUserForm" (ngSubmit)="onUserUpdate()">
+                <div class="form-group">
+                    <label class="form-label">First Name</label>
+                    <input type="text" id="firstname" formControlName="firstname" [ngClass]="{'form-control': true, 'is-invalid': updateUserFieldIsInvalid('firstname')}" aria-describedby="fnameFeedback">
+                    <div *ngIf="updateUserFieldHasError('firstname','required')" id="fnameFeedback" class="invalid-feedback">
+                        First Name is required.
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Last Name</label>
+                    <input type="text" id="lastname" formControlName="lastname" [ngClass]="{'form-control': true, 'is-invalid': updateUserFieldIsInvalid('lastname')}" aria-describedby="lnameFeedback">
+                    <div *ngIf="updateUserFieldHasError('lastname','required')" id="lnameFeedback" class="invalid-feedback">
+                        Last Name is required.
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">E-mail</label>
+                    <input type="email" id="email" formControlName="email" [ngClass]="{'form-control': true, 'is-invalid': updateUserFieldIsInvalid('email')}" aria-describedby="emailFeedback">
+                    <div *ngIf="updateUserFieldHasError('email','required')" id="emailFeedback" class="invalid-feedback">
+                        Email is required.
+                    </div>
+                    <div *ngIf="updateUserFieldHasError('email','email')" id="emailFeedback" class="invalid-feedback">
+                        Please enter a valid email address.
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Phone</label>
+                    <input type="tel" id="phone" formControlName="phone" [ngClass]="{'form-control': true, 'is-invalid': updateUserFieldIsInvalid('phone')}" aria-describedby="phoneFeedback">
+                    <div *ngIf="updateUserFieldHasError('phone','required')" id="phoneFeedback" class="invalid-feedback">
+                        Phone is required.
+                    </div>
+                </div>
+                <br>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+            <div *ngIf="successfullyUpdatedUser" class="alert alert-success">
+                User updated successfully.
+            </div>
+            <div *ngIf="updateUserError" class="alert alert-danger">
+                {{ updateUserError }}
+            </div>
+            <hr>
+            <h5>Change Password</h5>
+            <form [formGroup]="changePasswordForm" (ngSubmit)="onPasswordChange()">
+                <div class="form-group">
+                    <label class="form-label">New password</label>
+                    <input type="password" id="newPassword" formControlName="newPassword" [ngClass]="{'form-control': true, 'is-invalid': changePasswordFieldIsInvalid('newPassword')}" aria-describedby="newPasswordFeedback">
+                    <div *ngIf="changePasswordFieldHasError('newPassword','required')" id="newPasswordFeedback" class="invalid-feedback">
+                        New password is required.
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Repeat new password</label>
+                    <input type="password" id="repeatPassword" formControlName="repeatPassword" [ngClass]="{'form-control': true, 'is-invalid': changePasswordFieldIsInvalid('repeatPassword')}" aria-describedby="repeatPasswordFeedback">
+                    <div *ngIf="changePasswordFieldHasError('repeatPassword','required')" id="repeatPasswordFeedback" class="invalid-feedback">
+                        Repeat new password is required.
+                    </div>
+                </div>
+                <br>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+            <div *ngIf="changePasswordFormInvalid && changePasswordForm.errors?.passwordsDoNotMatch" class="alert alert-danger">
+                Passwords do not match.
+            </div>
+            <div *ngIf="successfullyChangedPassword" class="alert alert-success">
+                Password changed successfully.
+            </div>
+            <div *ngIf="changePasswordError" class="alert alert-danger">
+                {{ changePasswordError }}
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="modal.close('Close click')">Close</button>
+        </div>
+    </ng-template>
 </div>

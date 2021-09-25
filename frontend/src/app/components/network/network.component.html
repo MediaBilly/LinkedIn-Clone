@@ -1,4 +1,4 @@
-<div *ngIf="friends" class="card">
+<div *ngIf="friends" class="card connection-list">
   <div class="card-header">
     {{ friends.length }} connections
   </div>
@@ -11,7 +11,6 @@
           </div>
           <div class="col-sm-9">
             <h5><a routerLink="/user/{{ friend.id }}" class="profile-link">{{ friend.firstname }} {{ friend.lastname }}</a></h5>
-            <!-- <p>Software Engineer</p> -->
           </div>
         </div>
       </div>

@@ -97,4 +97,6 @@ export class User {
 
     @OneToMany(() => Message, message => message.sender)
     messages: Message[];
+
+    connections: User[];
 }

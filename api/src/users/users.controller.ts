@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, UseGuards, UseInterceptors, Request, Delete, ForbiddenException, Patch, UploadedFile, BadRequestException } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, UseGuards, UseInterceptors, Request, Delete, ForbiddenException, Patch, UploadedFile, BadRequestException, Response } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { EducationDto } from './dto/education.dto';
@@ -17,6 +17,7 @@ import { UsersService } from './users.service';
 import { EducationOwnerGuard } from './guards/education-owner.guard';
 import { ExperienceDto } from './dto/experience.dto';
 import { ExperienceOwnerGuard } from './guards/experience-owner.guard';
+import { ExportUsersDto } from './dto/export-users.dto';
 
 @UseInterceptors(HidePasswordInterceptor)
 @Controller('users')
@@ -29,6 +30,12 @@ export class UsersController {
     @Get()
     findAll() {
         return this.usersService.findAll();
+    }
+
+    @UseGuards(JwtAuthGuard, OnlyAdminsGuard)
+    @Post('export')
+    exportUsers(@Body() exportUsersDto: ExportUsersDto) {
+        return this.usersService.findSome(exportUsersDto.ids);
     }
 
     @UseGuards(JwtAuthGuard)

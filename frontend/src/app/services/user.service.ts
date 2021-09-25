@@ -8,6 +8,7 @@ import { User } from '../models/user.model';
 import { shareReplay } from 'rxjs/operators/';
 import { EducationsSorterPipe } from '../pipes/educations-sorter.pipe';
 import { ExperiencesSorterPipe } from '../pipes/experiences-sorter.pipe';
+import { UserExport } from '../models/user-export.model';
 
 const API_URL = 'http://localhost:3000/';
 
@@ -173,5 +174,21 @@ export class UserService {
   
   getAllUsers(): Observable<User[]> {
     return this.httpClient.get<User[]>(API_URL + 'users', { responseType: 'json' });
+  }
+
+  getSomeUsers(ids: number[]): Observable<UserExport[]> {
+    return this.httpClient.post<UserExport[]>(API_URL + 'users/export', { ids: ids }, { responseType: 'json' });
+  }
+
+  deleteUser(id: number): Observable<any> {
+    return this.httpClient.delete(API_URL + 'users/' + id.toString(), { responseType: 'json' });
+  }
+
+  changeUserPassword(uid: number, newPassword: string): Observable<any> {
+    return this.httpClient.patch(API_URL + 'users/change-password/' + uid.toString(), { newPassword: newPassword }, { responseType: 'json' });
+  }
+
+  updateUserWithId(uid: number, updatedUser: UpdateUser): Observable<any> {
+    return this.httpClient.put(API_URL + 'users/' + uid.toString(), updatedUser, { responseType: 'json' });
   }
 }

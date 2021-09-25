@@ -1,0 +1,9 @@
+.connection-requests {
+    height: 350px;
+    overflow-y: scroll;
+}
+
+.notifications-list {
+    height: 370px;
+    overflow-y: scroll;
+}

@@ -1,6 +1,6 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
@@ -17,6 +17,7 @@ import { Education } from './entities/education.entity';
 import { ExperienceDto } from './dto/experience.dto';
 import { JobsService } from 'src/jobs/jobs.service';
 import { Experience } from './entities/experience.entity';
+import { ExportUsersDto } from './dto/export-users.dto';
 
 @Injectable()
 export class UsersService {
@@ -41,6 +42,33 @@ export class UsersService {
 
     findAll(): Promise<User[]> {
         return this.usersRepository.find();
+    }
+
+    async findSome(ids: number[]): Promise<User[]> {
+        const q =  this.usersRepository.createQueryBuilder('U')
+        .whereInIds(ids)
+        .leftJoinAndSelect('U.articles','article')
+        .leftJoinAndSelect('U.jobAlerts','jobAlert')
+        .leftJoinAndSelect('U.educations','education')
+        .leftJoinAndSelect('U.experiences','experience')
+        .leftJoinAndSelect('U.articleReactions','reaction')
+        .leftJoinAndSelect('reaction.article','r_article')
+        .leftJoinAndSelect('U.articleComments','comment')
+        .leftJoinAndSelect('comment.article','c_article')
+        .leftJoinAndSelect('U.friendsAdded','addedFriend')
+        .leftJoinAndSelect('addedFriend.user2', 'connection')
+        .leftJoinAndSelect('U.friendsAccepted','acceptedFriend')
+        .leftJoinAndSelect('acceptedFriend.user1', 'connection2')
+        let result = await q.getMany();
+        result.forEach(u => {
+            let addedConnections = u.friendsAdded.map(f => f.user2);
+            let acceptedConnections = u.friendsAccepted.map(f => f.user1);
+            u.connections = Array.prototype.concat(addedConnections, acceptedConnections);
+            delete u.friendsAdded;
+            delete u.friendsAccepted;
+        });
+        return result;
+
     }
 
     findOne(id: number): Promise<User> {

@@ -203,7 +203,6 @@ export class ProfileComponent implements OnInit {
             break;
           }
         }
-        console.log(chatExists);
         if (!chatExists && this.requestUser) {
           this.chatService.createChat(this.requestUser?.id).subscribe();
         }
