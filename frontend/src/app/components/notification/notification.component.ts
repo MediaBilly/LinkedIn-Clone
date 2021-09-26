@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, OnInit } from '@angular/core';
 import { Notification, NotificationType } from 'src/app/models/notification.model';
 import { ArticlesService } from 'src/app/services/articles.service';
 import { UserService } from 'src/app/services/user.service';
@@ -14,7 +14,7 @@ export class NotificationComponent implements OnInit {
   text = '';
   link = '';
 
-  constructor(private userService: UserService, private articlesService: ArticlesService) { }
+  constructor(private userService: UserService, private articlesService: ArticlesService, private selfRef: ElementRef<HTMLElement>) { }
 
   ngOnInit(): void {
     if (this.notification) {
@@ -27,13 +27,22 @@ export class NotificationComponent implements OnInit {
         if (this.notification.type === NotificationType.ARTICLE_REACTION) {
           this.articlesService.getReaction(this.notification.refererEntity).subscribe(reaction => {
             this.text = this.notification?.refererUser.firstname + ' ' + this.notification?.refererUser.lastname + ' reacted to your article.';
-            this.link = '/article/' + reaction.article.id.toString();
+            if (reaction) {
+              this.link = '/article/' + reaction.article.id.toString();
+            } else {
+              this.selfDestruct();
+            }
           });
         }
         if (this.notification.type === NotificationType.ARTICLE_COMMENT) {
           this.articlesService.getComment(this.notification.refererEntity).subscribe(comment => {
-            this.text = this.notification?.refererUser.firstname + ' ' + this.notification?.refererUser.lastname + ' commented on your article: ' + comment.text;
-            this.link = '/article/' + comment.article.id.toString();
+            this.text = this.notification?.refererUser.firstname + ' ' + this.notification?.refererUser.lastname + ' commented on your article';
+            if (comment) {
+              this.text += ': ' + comment.text;
+              this.link = '/article/' + comment.article.id.toString();
+            } else {
+              this.selfDestruct();
+            }
           })
         }
       }
@@ -47,6 +56,10 @@ export class NotificationComponent implements OnInit {
     if (this.notification) {
       this.userService.readNotification(this.notification?.id).subscribe();
     }
+  }
+
+  selfDestruct() {
+    this.selfRef.nativeElement.remove();
   }
 
 }

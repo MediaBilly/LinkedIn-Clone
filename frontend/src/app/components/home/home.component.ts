@@ -16,6 +16,7 @@ export class HomeComponent implements OnInit {
   currentUser?: User;
   profilePicPath?: string;
   totalConnections = 0;
+  connections?: User[];
   articles?: Article[];
   headline?: string;
 
@@ -48,6 +49,7 @@ export class HomeComponent implements OnInit {
         this.headline = this.usersService.getHeadline(user);
         this.usersService.getFriends().subscribe(friends => {
           this.totalConnections = friends.length;
+          this.connections = friends;
         })
       });
     } 

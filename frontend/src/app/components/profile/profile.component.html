@@ -1,43 +1,43 @@
 <div class="container" *ngIf="isLoggedIn; else loggedOut">
   <div *ngIf="requestUser; else profileNotFound">
-    <header class="jumbotron">
-      <div *ngIf="isMe" class="profile-pic">
-        <label class="-label" for="file">
-          <span class="fas fa-camera"></span>
-          <span>Change Image</span>
-        </label>
-        <input id="file" class="file-input" type="file" (change)="profilePicUpload($event)" accept="image/png, image/jpeg, image/jpg"/>
-        <img [src]="profilePicPath" id="output" width="200" />
-      </div>
-      <div *ngIf="!isMe" class="profile-pic-notme">
-        <img [src]="profilePicPath" id="output" width="200" />
-      </div>
-      <h3>
-        <strong>{{ requestUser.firstname }} {{ requestUser.lastname }}</strong>
-      </h3>
-    </header>
-    <p>
-      <strong>id:</strong>
-      {{ requestUser.id }}
-    </p>
-    <p>
-      <strong>Email:</strong>
-      {{ requestUser.email }}
-    </p>
-    <p>
-      <strong>Phone:</strong>
-      {{ requestUser.phone }}
-    </p>
-    <p *ngIf="friends">
-      <a style="text-decoration: none;" routerLink="/connections/{{ requestUser.id }}">{{ friends.length }} connections</a>
-    </p>
-    <div *ngIf="!isMe">
-      <div *ngIf="receivedRequest; else case2">
-        You have a friend request from this user.<br>
-        <button type="button" class="btn btn-primary" (click)="acceptRequest()">Accept</button>
-        <button type="button" class="btn btn-danger" (click)="declineRequest()">Decline</button>
+    <div class="card" style="width: 23rem;">
+      <div class="card-body">
+        <div *ngIf="isMe" class="profile-pic">
+          <label class="-label" for="file">
+            <span class="fas fa-camera"></span>
+            <span>Change Image</span>
+          </label>
+          <input id="file" class="file-input" type="file" (change)="profilePicUpload($event)" accept="image/png, image/jpeg, image/jpg"/>
+          <img [src]="profilePicPath" id="output" width="200" />
+        </div>
+        <div *ngIf="!isMe" class="profile-pic-notme">
+          <img [src]="profilePicPath" id="output" width="200" />
+        </div>
+        <h3>
+          <strong>{{ requestUser.firstname }} {{ requestUser.lastname }}</strong>
+        </h3>
+        <p>
+          <strong>Email:</strong>
+          {{ requestUser.email }}
+        </p>
+        <p>
+          <strong>Phone:</strong>
+          {{ requestUser.phone }}
+        </p>
+        <p *ngIf="friends">
+          <a style="text-decoration: none;" routerLink="/connections/{{ requestUser.id }}">{{ friends.length }} connections</a>
+        </p>
+        <div *ngIf="!isMe">
+          <div *ngIf="receivedRequest; else case2">
+            You have a friend request from this user.<br>
+            <button type="button" class="btn btn-primary" (click)="acceptRequest()">Accept</button>
+            <button type="button" class="btn btn-danger" (click)="declineRequest()">Decline</button>
+          </div>
+        </div>
       </div>
     </div>
+
+    <br>
 
     <ng-template #experienceModal let-modal>
       <div class="modal-header">

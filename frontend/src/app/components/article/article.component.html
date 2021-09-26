@@ -1,5 +1,9 @@
 <div *ngIf="article; else notFound" class="card gedf-card">
     <div class="card-body">
+        <div *ngIf="displayReactor">
+            <a class="link-dark h6 mb-2" routerLink="/user/{{ displayReactor.id }}">{{ displayReactor.firstname }} {{ displayReactor.lastname }}</a> likes this.
+            <hr>
+        </div>
         <div class="d-flex flex-row bd-highlight mb-1">
             <div class="p-1 bd-highlight">
                 <img class="rounded-circle" width="50" height="50" [src]="publisherPicPath" alt="">

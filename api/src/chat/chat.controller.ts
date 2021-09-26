@@ -13,11 +13,9 @@ export class ChatController {
     @Post('create/:otherUid')
     async createChat(@Request() req, @Param('otherUid') otherUid: string) {
         const chat = await this.chatService.createChat();
-        const reqUserPromise = this.chatService.addUserToChat(chat.id, +req.user.id);
-        const otherUserPromise = this.chatService.addUserToChat(chat.id, +otherUid);
-        return Promise.all([reqUserPromise, otherUserPromise]).then(_ => {
-            return chat;
-        });
+        await this.chatService.addUserToChat(chat.id, +req.user.id);
+        await this.chatService.addUserToChat(chat.id, +otherUid);
+        return chat;
     }
 
     @UseGuards(JwtAuthGuard)

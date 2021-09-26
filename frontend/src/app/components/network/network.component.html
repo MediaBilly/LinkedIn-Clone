@@ -10,7 +10,7 @@
             <img [src]="getProfilePicPath(friend)" alt="user" class="profile-photo-lg">
           </div>
           <div class="col-sm-9">
-            <h5><a routerLink="/user/{{ friend.id }}" class="profile-link">{{ friend.firstname }} {{ friend.lastname }}</a></h5>
+            <h5><a style="text-decoration: none;" routerLink="/user/{{ friend.id }}" class="profile-link">{{ friend.firstname }} {{ friend.lastname }}</a></h5>
           </div>
         </div>
       </div>

@@ -97,12 +97,23 @@ export class ArticlesService {
         .leftJoinAndSelect('A.videos','video')
         .leftJoinAndSelect('reaction.reactor','reactor')
         .leftJoinAndSelect('comment.commenter','commenter')
-        .where('A.publisherId = :uid', { uid: uid })
-        .orWhere(existsQuery(this.friendshipRepository.createQueryBuilder('F')
+        .where('A.publisherId = :uid', { uid: uid }) // Request user articles
+        .orWhere(existsQuery(this.friendshipRepository.createQueryBuilder('F') // Friend's articles
                             .where('F.user1Id = A.publisherId')
                             .andWhere('F.user2Id = :uid', { uid: uid })
                             .orWhere('F.user2Id = A.publisherId')
-                            .andWhere('F.user1Id = :uid', { uid: uid })))
+                            .andWhere('F.user1Id = :uid', { uid: uid })
+        ))
+        .orWhere(existsQuery(this.articleReactionsRepository.createQueryBuilder('R') // Articles that a friend reacted to
+                            .innerJoinAndSelect('R.reactor', 'reactor')
+                            .where('R.articleId = A.id')
+                            .andWhere(existsQuery(this.friendshipRepository.createQueryBuilder('F') 
+                                                    .where('F.user1Id = reactor.id')
+                                                    .andWhere('F.user2Id = :uid', { uid: uid })
+                                                    .orWhere('F.user2Id = reactor.id')
+                                                    .andWhere('F.user1Id = :uid', { uid: uid })
+                            ))
+        ))
         .orderBy('A.published_at','DESC').getMany();
     }
 

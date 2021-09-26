@@ -4,8 +4,8 @@
             <img [src]="profilePicPath" alt="user" class="profile-photo-lg">
         </div>
         <div class="col-sm-9">
-            <h5><a routerLink="/user/{{ request.sender.id }}" class="profile-link">{{ request.sender.firstname }} {{ request.sender.lastname }}</a></h5>
-            <p>Software Engineer</p>
+            <h5><a style="text-decoration: none;" routerLink="/user/{{ request.sender.id }}" class="profile-link">{{ request.sender.firstname }} {{ request.sender.lastname }}</a></h5>
+            <!-- <p>Software Engineer</p> -->
         </div>
         <div class="col-sm-2">
             <div *ngIf="!accepted && !declined" class="d-grid gap-2 d-md-flex">

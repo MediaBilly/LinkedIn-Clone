@@ -16,7 +16,9 @@ const API_URL = 'http://localhost:3000/';
   providedIn: 'root'
 })
 export class UserService {
+  // Frequently used personal info observables cached with shareReplay to avoid multiple http requests
   currentUser$: Observable<User> | null = null;
+  connections$: Observable<User[]> | null = null;
 
   constructor(private httpClient: HttpClient, private educationsSorterPipe: EducationsSorterPipe, private experiencesSorterPipe: ExperiencesSorterPipe) { }
 
@@ -99,7 +101,16 @@ export class UserService {
   // Friendships
 
   getFriends(uid?: number): Observable<User[]> {
-    return this.httpClient.get<User[]>(API_URL + 'users/friends/' + (uid ? uid?.toString() : 'mine'), { responseType: 'json' });
+    if (uid) {
+      return this.httpClient.get<User[]>(API_URL + 'users/friends/' + uid?.toString(), { responseType: 'json' });
+    } else {
+      if (!this.connections$) {
+        this.connections$ = this.httpClient.get<User[]>(API_URL + 'users/friends/mine', { responseType: 'json' }).pipe(
+          shareReplay()
+        );
+      }
+      return this.connections$;
+    }
   }
 
   removeFriend(fid: number): Observable<any> {

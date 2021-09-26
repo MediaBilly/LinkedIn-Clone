@@ -4,7 +4,7 @@
             <img class="notification-photo" [src]="imgPath" alt="">
         </div>
         <div class="col-sm-9">
-            <a routerLink="{{ link }}">{{ text }}</a>
+            <a style="text-decoration: none;" routerLink="{{ link }}">{{ text }}</a>
         </div>
         <div class="col-sm-2">
             {{ notification.receivedAt | dateAgo }}

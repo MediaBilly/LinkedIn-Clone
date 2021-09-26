@@ -32,6 +32,8 @@ export class ArticleComponent implements OnInit {
   isHomePage = false;
   isMine = false;
 
+  displayReactor?: User;
+
   constructor(private tokenStorageService: TokenStorageService, private usersService: UserService, private articlesService: ArticlesService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
@@ -66,6 +68,11 @@ export class ArticleComponent implements OnInit {
       this.videoPaths = this.articlesService.getVideoPaths(this.article);
       this.commentsSorted = this.article?.comments.sort((a, b) => new Date(a.commented_at).getTime() - new Date(b.commented_at).getTime());
       this.isMine = this.article.publisher.id === this.loggedInUser?.id;
+      this.usersService.getFriends().subscribe(connections => {
+        if (this.article?.publisher.id !== this.loggedInUser?.id && !connections.some(c => c.id === this.article?.publisher.id)) {
+          this.displayReactor = this.article?.reactions.find(r => r.id !== this.loggedInUser?.id && connections.some(c => c.id === r.reactor.id))?.reactor;
+        }
+      });
     }
   }
 

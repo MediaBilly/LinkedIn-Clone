@@ -115,10 +115,12 @@ export class ProfileComponent implements OnInit {
   setRequestUser(reqUser: User): void {
     this.requestUser = reqUser;
     this.profilePicPath = this.usersService.getProfilePicPath(reqUser);
-    this.usersService.getFriends(reqUser.id).subscribe(friends => {
-      this.friends = friends;
-    });
     this.setAttributes();
+    if (this.isMe || this.areFriends) {
+      this.usersService.getFriends(reqUser.id).subscribe(friends => {
+        this.friends = friends;
+      });
+    }
   }
 
   setAttributes(): void {
@@ -197,16 +199,20 @@ export class ProfileComponent implements OnInit {
       this.chatService.getChats().subscribe(chats => {
         let chatExists = false;
         for (let chat of chats) {
-          console.log(chat.users);
           if (chat.users.some(u => u.id === this.requestUser?.id)) {
             chatExists = true;
             break;
           }
         }
-        if (!chatExists && this.requestUser) {
-          this.chatService.createChat(this.requestUser?.id).subscribe();
+        if (this.requestUser) {
+          if (!chatExists) {
+            this.chatService.createChat(this.requestUser.id).subscribe(_ => {
+              window.location.replace('messaging');
+            });
+          } else {
+            window.location.replace('messaging');
+          }
         }
-        window.location.replace('messaging');
       });
     }
   }
