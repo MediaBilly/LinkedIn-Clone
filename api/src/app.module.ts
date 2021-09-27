@@ -9,11 +9,10 @@ import { ArticlesModule } from './articles/articles.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { ScheduleModule } from '@nestjs/schedule';
-import { RecommendationSystemService } from './recommendation-system/recommendation-system.service';
 import { RecommendationSystemModule } from './recommendation-system/recommendation-system.module';
-import { JobsService } from './jobs/jobs.service';
 import { JobsModule } from './jobs/jobs.module';
 import { ChatModule } from './chat/chat.module';
+import { CompaniesModule } from './companies/companies.module';
 
 @Module({
   imports: [
@@ -30,7 +29,8 @@ import { ChatModule } from './chat/chat.module';
     ArticlesModule,
     RecommendationSystemModule,
     JobsModule,
-    ChatModule],
+    ChatModule,
+    CompaniesModule],
   controllers: [AppController],
   providers: [AppService],
 })

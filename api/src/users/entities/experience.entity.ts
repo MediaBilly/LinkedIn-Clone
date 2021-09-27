@@ -1,5 +1,5 @@
 import { EmploymentType } from "src/enums/employment-type.enum";
-import { Company } from "src/jobs/entities/company.entity";
+import { Company } from "src/companies/entities/company.entity";
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./user.entity";
 
@@ -25,7 +25,7 @@ export class Experience {
     @ManyToOne(() => Company, company => company.userExperiences, { eager: true })
     company: Company;
 
-    @Column()
+    @Column({ nullable: true })
     location: string;
 
     @Column({ type: 'timestamp' })

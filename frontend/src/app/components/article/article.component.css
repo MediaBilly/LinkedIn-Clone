@@ -33,3 +33,11 @@ a {
     top: 45%;
     height: 10%;
 }
+
+.image {
+    display: block;
+    width: auto;
+    height: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}

@@ -27,17 +27,12 @@ export class ActiveChatComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if (this.chat) {
-      console.log('init');
       this.loggedInUid = this.tokenStorageService.getLoggedInId();
-      this.setChatInfo();
     }
   }
 
   ngOnChanges(): void {
-    console.log('change');
-    if (!this.chatInfo) {
-      this.setChatInfo();
-    }
+    this.setChatInfo();
     if (this.messagePoll) {
       this.messagePoll.unsubscribe();
     }
@@ -46,11 +41,11 @@ export class ActiveChatComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     if (this.messagePoll) {
-      console.log('destroy');
       this.messagePoll.unsubscribe();
     }
   }
-
+  
+  // Function to call an observable on fixed period. Used to refresh the active chat.
   poller$(myObs$: Observable<any>, period: number) {
     const pollStop = new Subject();
     return interval(period).pipe(
@@ -71,6 +66,7 @@ export class ActiveChatComponent implements OnInit, OnDestroy {
       const messageObs = this.chatService.getChatMessages(this.chat.id).pipe(tap((msgs) => {
         this.messages = msgs;
       }));
+      // Refresh the active chat every 2 seconds
       this.messagePoll = this.poller$(messageObs, 2000).subscribe();
     }
   }

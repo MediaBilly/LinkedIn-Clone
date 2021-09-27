@@ -12,6 +12,7 @@ import { Experience } from "./experience.entity";
 import { JobAlert } from "src/jobs/entities/job-alert.entity";
 import { Chat } from "src/chat/entities/chat.entity";
 import { Message } from "src/chat/entities/message.entity";
+import { JobApplication } from "src/jobs/entities/job-application.entity";
 
 export enum UserRole {
     ADMIN = 'a',
@@ -88,9 +89,8 @@ export class User {
     jobAlerts: JobAlert[];
 
     // Job alerts that the user applied to 
-    @ManyToMany(() => JobAlert, jobAlert => jobAlert.applicants)
-    @JoinTable()
-    jobApplications: JobAlert[];
+    @OneToMany(() => JobApplication, jobApplication => jobApplication.applicant)
+    jobApplications: JobApplication[];
 
     @ManyToMany(() => Chat, chat => chat.users)
     chats: Chat[];

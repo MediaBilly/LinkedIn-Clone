@@ -20,9 +20,9 @@ export class IsArticleCommenterGuard implements CanActivate {
             return true;
         }
 
-        const commnetId = params.id;
+        const commnetId = +params.id;
         return this.articlesService.findArticleComment(+commnetId).then((comment) => {
-            return comment.commenter.id === user.id;
+            return comment.commenter.id === +user.id;
         });
     }
 }

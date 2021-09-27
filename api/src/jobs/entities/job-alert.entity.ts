@@ -1,8 +1,9 @@
 import { EmploymentType } from "src/enums/employment-type.enum";
 import { Skill } from "src/users/entities/skill.entity";
 import { User } from "src/users/entities/user.entity";
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Company } from "./company.entity";
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Company } from "../../companies/entities/company.entity";
+import { JobApplication } from "./job-application.entity";
 
 @Entity()
 export class JobAlert {
@@ -17,6 +18,9 @@ export class JobAlert {
 
     @Column()
     title: string;
+    
+    @Column()
+    description: string;
 
     @Column({
         type: 'enum',
@@ -29,7 +33,7 @@ export class JobAlert {
     @JoinTable()
     requiredSkills: Skill[];
 
-    @ManyToMany(() => User, user => user.jobApplications)
-    applicants: User[];
+    @OneToMany(() => JobApplication, jobApplication => jobApplication.applicant)
+    applications: JobApplication[];
     
 }

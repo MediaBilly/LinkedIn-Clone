@@ -20,9 +20,9 @@ export class IsArticleCreatorGuard implements CanActivate {
             return true;
         }
 
-        const articleId = params.id;
+        const articleId = +params.id;
         return this.articlesService.findOne(+articleId).then((article) => {
-            return article.publisher.id === user.id;
+            return article.publisher.id === +user.id;
         });
     }
 }

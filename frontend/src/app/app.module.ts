@@ -29,6 +29,7 @@ import { ChatRowComponent } from './components/chat-row/chat-row.component';
 import { AdminPanelComponent } from './components/admin-panel/admin-panel.component';
 import { DataTablesModule } from 'angular-datatables';
 import { UserRoleFormatterPipe } from './pipes/user-role-formatter.pipe';
+import { JobsComponent } from './components/jobs/jobs.component';
 
 @NgModule({
   declarations: [
@@ -54,7 +55,8 @@ import { UserRoleFormatterPipe } from './pipes/user-role-formatter.pipe';
     ActiveChatComponent,
     ChatRowComponent,
     AdminPanelComponent,
-    UserRoleFormatterPipe
+    UserRoleFormatterPipe,
+    JobsComponent
   ],
   imports: [
     BrowserModule,

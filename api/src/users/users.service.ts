@@ -15,9 +15,8 @@ import { existsQuery } from 'src/helpers/existsQuery';
 import { EducationDto } from './dto/education.dto';
 import { Education } from './entities/education.entity';
 import { ExperienceDto } from './dto/experience.dto';
-import { JobsService } from 'src/jobs/jobs.service';
 import { Experience } from './entities/experience.entity';
-import { ExportUsersDto } from './dto/export-users.dto';
+import { CompaniesService } from 'src/companies/companies.service';
 
 @Injectable()
 export class UsersService {
@@ -29,7 +28,7 @@ export class UsersService {
         @InjectRepository(Skill) private skillsRepository: Repository<Skill>,
         @InjectRepository(Education) private educationRepository: Repository<Education>,
         @InjectRepository(Experience) private experienceRepository: Repository<Experience>,
-        private jobsService: JobsService
+        private companiesService: CompaniesService
     ) {}
 
     // Basic Functionality
@@ -193,7 +192,7 @@ export class UsersService {
 
     newFriendship(user1Id: number, user2Id: number) {
         const user1Promise: Promise<User> = this.usersRepository.findOneOrFail(user1Id);
-        const user2Promise : Promise<User> = this.usersRepository.findOneOrFail(user2Id);
+        const user2Promise: Promise<User> = this.usersRepository.findOneOrFail(user2Id);
         return Promise.all([user1Promise, user2Promise]).then(([user1, user2]) => {
             const newFriendship = this.friendshipsRepository.create();
             newFriendship.user1 = user1;
@@ -257,6 +256,11 @@ export class UsersService {
 
     // Skills
 
+    createSkill(name: string): Promise<Skill> {
+        const newSkill = this.skillsRepository.create({ name: name });
+        return this.skillsRepository.save(newSkill);
+    }
+
     findSkillWithName(name: string): Promise<Skill> {
         return this.skillsRepository.findOne({ where: { name: name } });
     }
@@ -316,9 +320,9 @@ export class UsersService {
     async addExperience(uid: number, experienceDto: ExperienceDto) {
         const { company, ...restExperienceData } = experienceDto;
         const user = await this.findOne(uid);
-        let companyObj = await this.jobsService.findCompanyByName(company);
+        let companyObj = await this.companiesService.findCompanyByName(company);
         if (!companyObj) {
-            companyObj = await this.jobsService.addCompany(company);
+            companyObj = await this.companiesService.addCompany(company);
         }
         const experience = this.experienceRepository.create({ ...restExperienceData, company: companyObj });
         return this.experienceRepository.save(experience).then(expr => {
@@ -329,9 +333,9 @@ export class UsersService {
 
     async updateExperience(id: number, experienceDto: ExperienceDto) {
         const { company, ...restExperienceData } = experienceDto;
-        let companyObj = await this.jobsService.findCompanyByName(company);
+        let companyObj = await this.companiesService.findCompanyByName(company);
         if (!companyObj) {
-            companyObj = await this.jobsService.addCompany(company);
+            companyObj = await this.companiesService.addCompany(company);
         }
         return this.experienceRepository.update(id, { ...restExperienceData, company: companyObj });
     }

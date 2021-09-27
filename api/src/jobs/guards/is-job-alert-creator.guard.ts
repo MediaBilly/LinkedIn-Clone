@@ -1,11 +1,13 @@
 import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
 import { Observable } from "rxjs";
 import { UserRole } from "src/users/entities/user.entity";
-import { ArticlesService } from "../articles.service";
+import { JobsService } from "../jobs.service";
+
+// Only allows access if the request user is the creator of the requested job application
 
 @Injectable()
-export class IsArticleReactorGuard implements CanActivate {
-    constructor(private articlesService: ArticlesService) {}
+export class IsJobAlertCreatorGuard implements CanActivate {
+    constructor(private jobsService: JobsService) {}
 
     canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
         const request = context.switchToHttp().getRequest();
@@ -20,9 +22,9 @@ export class IsArticleReactorGuard implements CanActivate {
             return true;
         }
 
-        const reactionId = +params.id;
-        return this.articlesService.findArticleReaction(+reactionId).then((reaction) => {
-            return reaction.reactor.id === +user.id;
+        const jobAlertId = +params.id;
+        return this.jobsService.findJobAlert(jobAlertId).then(jobAlert => {
+            return jobAlert.creator.id === +user.id;
         });
     }
 }
