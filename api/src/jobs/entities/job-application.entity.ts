@@ -13,9 +13,9 @@ export class JobApplication {
     @ManyToOne(() => JobAlert, jobAlert => jobAlert.applications, { eager: true, onDelete: 'CASCADE' })
     jobAlert: JobAlert;
 
-    @ManyToOne(() => User, user => user.jobApplications, { onDelete: 'CASCADE' })
+    @ManyToOne(() => User, user => user.jobApplications, { onDelete: 'CASCADE', eager: true })
     applicant: User;
 
-    @Column()
+    @Column({ nullable: true })
     coverLetter: string;
 }

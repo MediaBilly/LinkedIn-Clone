@@ -7,7 +7,10 @@ export class JobAlertDto {
 
     @IsString()
     title: string;
-    
+
+    @IsString()
+    location: string;
+
     @IsString()
     description: string;
 

@@ -115,15 +115,10 @@ export class ProfileComponent implements OnInit {
   setRequestUser(reqUser: User): void {
     this.requestUser = reqUser;
     this.profilePicPath = this.usersService.getProfilePicPath(reqUser);
-    this.setAttributes();
-    if (this.isMe || this.areFriends) {
-      this.usersService.getFriends(reqUser.id).subscribe(friends => {
-        this.friends = friends;
-      });
-    }
+    this.setAttributes(reqUser);
   }
 
-  setAttributes(): void {
+  setAttributes(reqUser: User): void {
     // isMe
     this.isMe =  this.requestUser?.id === this.myUser?.id;
     // receivedRequest
@@ -137,6 +132,11 @@ export class ProfileComponent implements OnInit {
     // areFriends
     this.usersService.getFriends().subscribe(friends => {
       this.areFriends = friends.some(f => f.id === this.requestUser?.id);
+      if (this.isMe || this.areFriends) {
+        this.usersService.getFriends(reqUser.id).subscribe(friends => {
+          this.friends = friends;
+        });
+      }
     });
   }
 

@@ -74,9 +74,7 @@ export class JobsService {
     // User applications
 
     getJobApplications(jobId: number) {
-        return this.jobAlertsRepository.findOneOrFail(jobId, { relations: ['applications'] }).then(job => {
-            return job.applications;
-        });
+        return this.jobApplicationsRepository.find({ where: { jobAlert: { id: jobId } }, order: { created_at: 'DESC' } })
     }
 
     findJobApplication(id: number) {
@@ -95,19 +93,19 @@ export class JobsService {
             application.applicant = user;
             application.jobAlert = job;
             return this.jobApplicationsRepository.save(application);
-        })
+        });
     }
 
     acceptUserApplication(id: number) {
         return this.findJobApplication(id).then(application => {
-            this.usersService.sendNotification(application.applicant, NotificationType.JOB_APPLICATION_ACCEPTED, application.jobAlert.creator, application.id);
+            this.usersService.sendNotification(application.applicant, NotificationType.JOB_APPLICATION_ACCEPTED, application.jobAlert.creator, application.jobAlert.id);
             return this.deleteJobApplication(application.id);
         });
     }
 
     declineUserApplication(id: number) {
         return this.findJobApplication(id).then(application => {
-            this.usersService.sendNotification(application.applicant, NotificationType.JOB_APPLICATION_DECLINED, application.jobAlert.creator, application.id);
+            this.usersService.sendNotification(application.applicant, NotificationType.JOB_APPLICATION_DECLINED, application.jobAlert.creator, application.jobAlert.id);
             return this.deleteJobApplication(application.id);
         });
     }

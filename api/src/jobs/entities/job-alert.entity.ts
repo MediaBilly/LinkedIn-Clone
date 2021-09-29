@@ -1,7 +1,7 @@
 import { EmploymentType } from "src/enums/employment-type.enum";
 import { Skill } from "src/users/entities/skill.entity";
 import { User } from "src/users/entities/user.entity";
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Company } from "../../companies/entities/company.entity";
 import { JobApplication } from "./job-application.entity";
 
@@ -16,8 +16,14 @@ export class JobAlert {
     @ManyToOne(() => Company, company => company.jobAlerts, { eager: true, onDelete: 'CASCADE' })
     company: Company;
 
+    @CreateDateColumn()
+    created_at: Date;
+
     @Column()
     title: string;
+
+    @Column()
+    location: string;
     
     @Column()
     description: string;
@@ -33,7 +39,7 @@ export class JobAlert {
     @JoinTable()
     requiredSkills: Skill[];
 
-    @OneToMany(() => JobApplication, jobApplication => jobApplication.applicant)
+    @OneToMany(() => JobApplication, jobApplication => jobApplication.jobAlert)
     applications: JobApplication[];
     
 }

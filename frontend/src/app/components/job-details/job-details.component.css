@@ -1,0 +1,12 @@
+.job-details {
+    height: 400px;
+    overflow-y: scroll;
+}
+
+.job-poster-link {
+    text-decoration: none;
+}
+
+.job-location-info {
+    --bs-breadcrumb-divider: '\00b7';
+}

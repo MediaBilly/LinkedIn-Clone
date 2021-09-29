@@ -1,6 +1,7 @@
 import { Component, ElementRef, Input, OnInit } from '@angular/core';
 import { Notification, NotificationType } from 'src/app/models/notification.model';
 import { ArticlesService } from 'src/app/services/articles.service';
+import { JobsService } from 'src/app/services/jobs.service';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
@@ -14,7 +15,11 @@ export class NotificationComponent implements OnInit {
   text = '';
   link = '';
 
-  constructor(private userService: UserService, private articlesService: ArticlesService, private selfRef: ElementRef<HTMLElement>) { }
+  constructor(private userService: UserService, 
+    private articlesService: ArticlesService,
+    private jobsService: JobsService,
+    private selfRef: ElementRef<HTMLElement>
+  ) { }
 
   ngOnInit(): void {
     if (this.notification) {
@@ -44,6 +49,28 @@ export class NotificationComponent implements OnInit {
               this.selfDestruct();
             }
           })
+        }
+        if (this.notification.type === NotificationType.JOB_APPLICATION_ACCEPTED) {
+          this.jobsService.getJobAlert(this.notification.refererEntity).subscribe(job => {
+            this.text = this.notification?.refererUser.firstname + ' ' + this.notification?.refererUser.lastname + ' accepted your application for the job';
+            if (job) {
+              this.text += ': ' + job.title + ' at ' + job.company.name + '. Check your email for more information about the interview process.';
+              this.link = '/jobs/' + job.id.toString();
+            } else {
+              this.selfDestruct();
+            }
+          });
+        }
+        if (this.notification.type === NotificationType.JOB_APPLICATION_DECLINED) {
+          this.jobsService.getJobAlert(this.notification.refererEntity).subscribe(job => {
+            this.text = this.notification?.refererUser.firstname + ' ' + this.notification?.refererUser.lastname + ' declined your application for the job';
+            if (job) {
+              this.text += ': ' + job.title + ' at ' + job.company.name + ', because you do not meet the requirements. Good luck with your career future.';
+              this.link = '/jobs/' + job.id.toString();
+            } else {
+              this.selfDestruct();
+            }
+          });
         }
       }
       if (!this.notification.read) {

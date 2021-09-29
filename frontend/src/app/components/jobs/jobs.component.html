@@ -1,1 +1,101 @@
-<p>jobs works!</p>
+<div *ngIf="isLoggedIn">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="list-group" role="tablist">
+                <a href="#recommended-jobs" class="list-group-item list-group-item-action active" id="recommended-jobs-list" data-bs-toggle="list" role="tab" aria-controls="recommended-jobs">Recommended Jobs</a>
+                <a href="#my-jobs" class="list-group-item list-group-item-action" id="my-jobs-list" data-bs-toggle="list" role="tab" aria-controls="my-jobs">My Jobs</a>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="tab-content">
+                <div class="tab-pane fade active show" id="recommended-jobs" role="tabpanel" aria-labelledby="recommended-jobs-list">
+                    <div class="card">
+                        <div class="card-body jobs-list">
+                            <div *ngFor="let job of recommendedJobs">
+                                <app-job-row [job]="job"></app-job-row>
+                                <hr>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="my-jobs" role="tabpanel" aria-labelledby="my-jobs-list">
+                    <div class="d-flex flex-row-reverse bd-highlight mb-2">
+                        <div class="bd-highlight">
+                            <button type="button" class="btn btn-success" (click)="openJobModal(jobModal)">Create Job Alert</button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body jobs-list">
+                            <div *ngFor="let job of myJobs">
+                                <app-job-row [job]="job"></app-job-row>
+                                <hr>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <ng-template #jobModal let-modal>
+        <div class="modal-header">
+            <h4 class="modal-title" id="create-job-alert">Create job alert</h4>
+            <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+        </div>
+        <div class="modal-body">
+            <form class="form-group" [formGroup]="newJobForm" (ngSubmit)="onNewJobFormSubmit()">
+                <div class="mb-3">
+                    <label for="titleInput" class="form-label">Title*</label>
+                    <input type="text" id="titleInput" formControlName="title" [ngClass]="{'form-control': true, 'is-invalid': jobFieldIsInvalid('title')}" aria-describedby="titleFeedback">
+                    <div *ngIf="jobFieldHasError('title','required')" id="titleFeedback" class="invalid-feedback">
+                        Title is required.
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="companyInput" class="form-label">Company* (Note: You can only create job alerts for companies you currently work or worked at in the past)</label>
+                    <select id="companyInput" formControlName="company" [ngClass]="{'form-select': true, 'is-invalid': jobFieldIsInvalid('company')}" aria-describedby="companyFeedback">
+                        <option value selected>Company</option>
+                        <option *ngFor="let comp of workedCompanies | keyvalue" [value]="comp.value">{{ comp.key }}</option>
+                    </select>
+                    <div *ngIf="jobFieldHasError('company','required')" id="companyFeedback" class="invalid-feedback">
+                        Company is required.
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="locationInput" class="form-label">Location*</label>
+                    <input type="text" id="locationInput" formControlName="location" [ngClass]="{'form-control': true, 'is-invalid': jobFieldIsInvalid('location')}" aria-describedby="locationFeedback">
+                    <div *ngIf="jobFieldHasError('location','required')" id="locationFeedback" class="invalid-feedback">
+                        Location is required.
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="employmentTypeInput" class="form-label">Employment type</label>
+                    <select id="employmentTypeInput" formControlName="type" [ngClass]="{'form-select': true, 'is-invalid': jobFieldIsInvalid('type')}" aria-describedby="typeFeedback">
+                        <option value selected>Employment Type</option>
+                        <option *ngFor="let type of employmentTypes | keyvalue" value="{{ type.value }}">{{ type.key }}</option>
+                    </select>
+                    <div *ngIf="jobFieldHasError('type','required')" id="typeFeedback" class="invalid-feedback">
+                        Employment type is required.
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="descriptionInput" class="form-label">Description</label>
+                    <textarea id="descriptionInput" rows="3" formControlName="description" [ngClass]="{'form-control': true, 'is-invalid': jobFieldIsInvalid('description')}" aria-describedby="descriptionFeedback"></textarea>
+                    <div *ngIf="jobFieldHasError('description','required')" id="descriptionFeedback" class="invalid-feedback">
+                        Description is required.
+                    </div>
+                </div>
+                <div formArrayName="requiredSkills" class="mb-3">
+                    <div *ngFor="let skill of jobSkills.controls; let i=index">
+                        <label for="skill-{{ i }}" class="form-label">Skills:</label>
+                        <input id="skill-{{ i }}" class="form-control" type="text" [formControlName]="i">
+                    </div>
+                </div>
+                <button type="button" class="btn btn-primary mb-3" (click)="addJobSkill()">+ Add another skill</button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="modal.close('Save click')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </ng-template>
+</div>

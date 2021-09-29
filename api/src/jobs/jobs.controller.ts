@@ -4,6 +4,7 @@ import { JobAlertDto } from './dto/job-alert.dto';
 import { JobApplicationDto } from './dto/job-application.dto';
 import { IsJobAlertCreatorGuard } from './guards/is-job-alert-creator.guard';
 import { IsJobApplicationsAlertCreatorGuard } from './guards/is-job-applications-alert-creator.guard';
+import { IsNotJobAlertCreatorGuard } from './guards/is-not-job-alert-creator.guard copy';
 import { JobsService } from './jobs.service';
 
 @Controller('jobs')
@@ -20,15 +21,15 @@ export class JobsController {
     }
 
     @UseGuards(JwtAuthGuard)
-    @Get(':id')
-    getJobAlert(@Param('id') id: string) {
-        return this.jobsService.findJobAlert(+id);
-    }
-
-    @UseGuards(JwtAuthGuard)
     @Get('mine')
     getMyJobAlerts(@Request() req) {
         return this.jobsService.getUserJobAlerts(+req.user.id);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get(':id')
+    getJobAlert(@Param('id') id: string) {
+        return this.jobsService.findJobAlert(+id);
     }
 
     @UseGuards(JwtAuthGuard)
@@ -63,9 +64,9 @@ export class JobsController {
         return this.jobsService.declineUserApplication(+id);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, IsNotJobAlertCreatorGuard)
     @Post(':id/applications')
-    userApply(@Request() req, @Param('id') id: string, jobApplicationDto: JobApplicationDto) {
+    userApply(@Request() req, @Param('id') id: string,@Body() jobApplicationDto: JobApplicationDto) {
         return this.jobsService.userApply(+req.user.id, +id, jobApplicationDto);
     }
 }

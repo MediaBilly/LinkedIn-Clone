@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { AdminPanelComponent } from './components/admin-panel/admin-panel.component';
 import { ArticleComponent } from './components/article/article.component';
 import { HomeComponent } from './components/home/home.component';
+import { JobDetailsComponent } from './components/job-details/job-details.component';
 import { JobsComponent } from './components/jobs/jobs.component';
 import { LoginComponent } from './components/login/login.component';
 import { MessagingComponent } from './components/messaging/messaging.component';
@@ -21,6 +22,7 @@ const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'profile', component: ProfileComponent },
   { path: 'jobs', component: JobsComponent },
+  { path: 'jobs/:id', component: JobDetailsComponent },
   { path: 'messaging', component: MessagingComponent },
   { path: 'network', component: NetworkComponent },
   { path: 'connections/:id', component: NetworkComponent },

@@ -1,0 +1,6 @@
+<div *ngIf="job">
+    <a href="/jobs/{{ job.id }}" class="job-link h5">{{ job.title }}</a>
+    <p class="my-0">{{ job.company.name }}</p>
+    <p class="my-0">{{ job.location }}</p>
+    {{ job.created_at | dateAgo }}
+</div>

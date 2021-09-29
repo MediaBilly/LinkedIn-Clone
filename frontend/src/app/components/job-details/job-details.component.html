@@ -1,0 +1,103 @@
+<div *ngIf="job" class="row">
+    <div class="col-md-12">
+        <div class="card job-details mb-4">
+            <div class="card-body m-2">
+                <div class="d-flex bd-highlight">
+                    <div class="bd-highlight">
+                        <h4>{{ job.title }}</h4>
+                    </div>
+                    <div *ngIf="isMine" class="ms-auto bd-highlight">
+                        <button class="btn btn-danger" (click)="delete()">Delete</button>
+                    </div>
+                </div>
+                <nav class="job-location-info" aria-label="breadcrumb">
+                    <ol class="breadcrumb my-0">
+                      <li class="breadcrumb-item">
+                        {{ job.company.name }}
+                      </li>
+                      <li class="breadcrumb-item">
+                        {{ job.location }}
+                      </li>
+                    </ol>
+                </nav>
+                <p class="text-muted">{{ job.created_at | dateAgo }}</p>
+                <div class="mb-3">
+                    <h6>Job Poster:</h6>
+                    <a href="/user/{{ job.creator.id }}" class="job-poster-link h6">{{ job.creator.firstname }} {{ job.creator.lastname }}</a>
+                </div>
+                <div class="mb-3">
+                    <h6>Job Type:</h6>
+                    {{ job.type | employmentTypeFormatter }}
+                </div>
+                <div class="mb-3">
+                    <h6>Job Description:</h6>
+                    {{ job.description }}
+                </div>
+                <div class="mb-3">
+                    <h6>Required Skills:</h6>
+                    <ul>
+                        <li *ngFor="let skill of job.requiredSkills">
+                            {{ skill.name }}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="!isMine" class="card">
+            <div class="card-body">
+                <h5 class="card-title">Application Form:</h5>
+                <form [formGroup]="myApplicationForm" (ngSubmit)="apply()">
+                    <div class="mb-3">
+                        <textarea class="form-control" id="coverLetter" rows="3" formControlName="coverLetter" placeholder="Cover letter"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Apply</button>
+                </form>
+            </div>
+        </div>
+        <div *ngIf="isMine" class="card">
+            <div class="card-header">Applications</div>
+            <div class="card-body">
+                <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Applicant</th>
+                            <th scope="col">Cover Letter</th>
+                            <th scope="col">Received At</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let app of applications">
+                            <td><a href="/user/{{ app.applicant.id }}" class="job-poster-link h6">{{ app.applicant.firstname }} {{ app.applicant.lastname }}</a></td>
+                            <td>
+                                <div *ngIf="app.coverLetter" class="d-flex flex-row bd-highlight">
+                                    <div class="bd-highlight">
+                                        <span class="d-inline-block text-truncate" style="max-width: 200px;">
+                                            {{ app.coverLetter }}
+                                        </span>
+                                    </div>
+                                    <div class="bd-highlight">
+                                        <a (click)="openCoverLetterDetail(app.coverLetter, coverLetterModal)" class="text-muted" style="cursor: pointer;">See more</a>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{ app.created_at | date:'short' }}</td>
+                            <td>
+                                <div class="d-grid gap-2 d-md-flex">
+                                    <button type="button" class="btn btn-primary" (click)="acceptApplication(app.id)">Accept</button>
+                                    <button type="button" class="btn btn-danger" (click)="declineApplication(app.id)">Decline</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #coverLetterModal let-modal>
+    <div class="modal-body">
+        <p class="text-break">{{ activeCoverLetter }}</p>
+    </div>
+</ng-template>

@@ -4,7 +4,9 @@ export enum NotificationType {
     ALERT = 'al',
     ACCEPTED_FRIEND_REQUEST = 'ac',
     ARTICLE_REACTION = 're',
-    ARTICLE_COMMENT = 'cm'
+    ARTICLE_COMMENT = 'cm',
+    JOB_APPLICATION_ACCEPTED = 'ja',
+    JOB_APPLICATION_DECLINED = 'jd'
 }
 
 export interface Notification {

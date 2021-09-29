@@ -30,6 +30,8 @@ import { AdminPanelComponent } from './components/admin-panel/admin-panel.compon
 import { DataTablesModule } from 'angular-datatables';
 import { UserRoleFormatterPipe } from './pipes/user-role-formatter.pipe';
 import { JobsComponent } from './components/jobs/jobs.component';
+import { JobRowComponent } from './components/job-row/job-row.component';
+import { JobDetailsComponent } from './components/job-details/job-details.component';
 
 @NgModule({
   declarations: [
@@ -56,7 +58,9 @@ import { JobsComponent } from './components/jobs/jobs.component';
     ChatRowComponent,
     AdminPanelComponent,
     UserRoleFormatterPipe,
-    JobsComponent
+    JobsComponent,
+    JobRowComponent,
+    JobDetailsComponent
   ],
   imports: [
     BrowserModule,
