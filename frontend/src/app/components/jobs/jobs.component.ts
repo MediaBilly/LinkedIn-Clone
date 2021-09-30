@@ -49,8 +49,9 @@ export class JobsComponent implements OnInit {
       this.jobsService.getMyJobAlerts().subscribe(jobs => {
         this.myJobs = jobs;
       });
-      this.usersService.getUserProfile().subscribe(user => {
+      this.usersService.getUserProfile(undefined, false).subscribe(user => {
         this.loggedInUser = user;
+        console.log(this.loggedInUser);
       });
     }
   }
@@ -61,7 +62,7 @@ export class JobsComponent implements OnInit {
   }
 
   // Returns a list of the companies that the logged in user worked
-  get workedCompanies() {
+  workedCompanies() {
     const companies = new Map<string, number>();
     this.loggedInUser?.experiences.forEach(e => {
       companies.set(e.company.name, e.company.id);

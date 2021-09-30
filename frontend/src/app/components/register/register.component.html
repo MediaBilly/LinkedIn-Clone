@@ -18,7 +18,7 @@
     </div>
 
     <div class="form-group">
-      <input type="tel" id="phone" formControlName="phone" [ngClass]="{'form-control': true, 'is-invalid': fieldIsInvalid('phone')}" placeholder="Phone" aria-describedby="registerPhoneFeedback" required>
+      <input type="text" id="phone" formControlName="phone" [ngClass]="{'form-control': true, 'is-invalid': fieldIsInvalid('phone')}" placeholder="Phone" aria-describedby="registerPhoneFeedback" required>
       <div *ngIf="fieldHasError('phone','required')" id="registerPhoneFeedback" class="invalid-feedback">
         Phone is required.
       </div>
@@ -41,10 +41,21 @@
       </div>
     </div>
 
+    <div class="form-group">
+      <input type="password" id="repeatPassword" formControlName="repeatPassword" [ngClass]="{'form-control': true, 'is-invalid': fieldIsInvalid('repeatPassword')}" placeholder="Repeat Password" aria-describedby="repeatPasswordFeedback" required>
+      <div *ngIf="fieldHasError('repeatPassword','required')" id="repeatPasswordFeedback" class="invalid-feedback">
+          Repeat password is required.
+      </div>
+    </div>
+
     <button class="w-100 btn btn-lg btn-primary" type="submit">Sign up</button>
 
     <div *ngIf="errorMessage" class="alert alert-danger">
       {{ errorMessage }}
+    </div>
+
+    <div *ngIf="registerFromInvalid && newUserForm.errors?.passwordsDoNotMatch" class="alert alert-danger">
+      Passwords do not match.
     </div>
 
     <p class="mt-5 mb-3 text-muted">&copy; 2021</p>

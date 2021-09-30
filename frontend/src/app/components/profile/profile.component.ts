@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { EmploymentType } from 'src/app/enums/employment-type.enum';
 import { Education } from 'src/app/models/education.model';
@@ -87,7 +87,8 @@ export class ProfileComponent implements OnInit {
     private tokenService: TokenStorageService, 
     private usersService: UserService, 
     private modalService: NgbModal,
-    private chatService: ChatService
+    private chatService: ChatService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -119,25 +120,27 @@ export class ProfileComponent implements OnInit {
   }
 
   setAttributes(reqUser: User): void {
-    // isMe
-    this.isMe =  this.requestUser?.id === this.myUser?.id;
-    // receivedRequest
-    this.usersService.getReceivedFriendRequests().subscribe(requests => {
-      this.receivedRequest = requests.find(r => r.sender.id === this.requestUser?.id);
-    });
-    // sentRequest
-    this.usersService.getSentFriendRequests().subscribe(requests => {
-      this.sentRequest = requests.find(r => r.receiver.id === this.requestUser?.id);
-    });
-    // areFriends
-    this.usersService.getFriends().subscribe(friends => {
-      this.areFriends = friends.some(f => f.id === this.requestUser?.id);
-      if (this.isMe || this.areFriends) {
-        this.usersService.getFriends(reqUser.id).subscribe(friends => {
-          this.friends = friends;
-        });
-      }
-    });
+    if (this.requestUser && this.myUser) {
+      // isMe
+      this.isMe =  this.requestUser.id === this.myUser.id;
+      // receivedRequest
+      this.usersService.getReceivedFriendRequests().subscribe(requests => {
+        this.receivedRequest = requests.find(r => r.sender.id === this.requestUser?.id);
+      });
+      // sentRequest
+      this.usersService.getSentFriendRequests().subscribe(requests => {
+        this.sentRequest = requests.find(r => r.receiver.id === this.requestUser?.id);
+      });
+      // areFriends
+      this.usersService.getFriends(undefined, false).subscribe(friends => {
+        this.areFriends = friends.some(f => f.id === this.requestUser?.id);
+        if (this.isMe || this.areFriends) {
+          this.usersService.getFriends(reqUser.id).subscribe(friends => {
+            this.friends = friends;
+          });
+        }
+      });
+    }
   }
 
   sendRequest(): void {
@@ -207,10 +210,10 @@ export class ProfileComponent implements OnInit {
         if (this.requestUser) {
           if (!chatExists) {
             this.chatService.createChat(this.requestUser.id).subscribe(_ => {
-              window.location.replace('messaging');
+              this.router.navigate(['/messaging']);
             });
           } else {
-            window.location.replace('messaging');
+            this.router.navigate(['/messaging']);
           }
         }
       });

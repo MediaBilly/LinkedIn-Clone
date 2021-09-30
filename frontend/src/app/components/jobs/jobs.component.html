@@ -13,7 +13,6 @@
                         <div class="card-body jobs-list">
                             <div *ngFor="let job of recommendedJobs">
                                 <app-job-row [job]="job"></app-job-row>
-                                <hr>
                             </div>
                         </div>
                     </div>
@@ -28,7 +27,6 @@
                         <div class="card-body jobs-list">
                             <div *ngFor="let job of myJobs">
                                 <app-job-row [job]="job"></app-job-row>
-                                <hr>
                             </div>
                         </div>
                     </div>
@@ -54,7 +52,7 @@
                     <label for="companyInput" class="form-label">Company* (Note: You can only create job alerts for companies you currently work or worked at in the past)</label>
                     <select id="companyInput" formControlName="company" [ngClass]="{'form-select': true, 'is-invalid': jobFieldIsInvalid('company')}" aria-describedby="companyFeedback">
                         <option value selected>Company</option>
-                        <option *ngFor="let comp of workedCompanies | keyvalue" [value]="comp.value">{{ comp.key }}</option>
+                        <option *ngFor="let comp of workedCompanies() | keyvalue" [value]="comp.value">{{ comp.key }}</option>
                     </select>
                     <div *ngIf="jobFieldHasError('company','required')" id="companyFeedback" class="invalid-feedback">
                         Company is required.

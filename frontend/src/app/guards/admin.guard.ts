@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot, UrlTree } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { Observable } from 'rxjs';
 import { UserRole } from '../models/user.model';
 import { TokenStorageService } from '../services/token-storage.service';
@@ -9,7 +9,7 @@ import { UserService } from '../services/user.service';
   providedIn: 'root'
 })
 export class AdminGuard implements CanActivate {
-  constructor(private tokenStorageService: TokenStorageService, private usersService: UserService) {}
+  constructor(private tokenStorageService: TokenStorageService, private usersService: UserService, private router: Router) {}
 
   canActivate(
     route: ActivatedRouteSnapshot,
@@ -20,7 +20,11 @@ export class AdminGuard implements CanActivate {
       }
 
       return this.usersService.getUserProfile().toPromise().then(loggedInUser => {
-        return loggedInUser.role === UserRole.Admin;
+        if (loggedInUser.role === UserRole.Admin) {
+          return true;
+        }
+        this.router.navigate(['']);
+        return false;
       });
   }
   

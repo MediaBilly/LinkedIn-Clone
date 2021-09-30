@@ -10,7 +10,7 @@ export class CreateUserDto {
     @IsEmail()
     email: string;
 
-    @IsPhoneNumber()
+    @IsString()
     phone: string;
     
     @IsString()

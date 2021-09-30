@@ -1,4 +1,4 @@
-import { IsAlpha, IsEmail, IsPhoneNumber } from "class-validator";
+import { IsAlpha, IsEmail, IsPhoneNumber, IsString } from "class-validator";
 
 export class UpdateUserDto {
     @IsAlpha()
@@ -10,6 +10,6 @@ export class UpdateUserDto {
     @IsEmail()
     email: string;
 
-    @IsPhoneNumber()
+    @IsString()
     phone: string;
 }

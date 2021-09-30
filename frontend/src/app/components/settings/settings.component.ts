@@ -4,7 +4,7 @@ import { UpdateUser } from 'src/app/models/updateUser.model';
 import { User } from 'src/app/models/user.model';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 import { UserService } from 'src/app/services/user.service';
-import { repeatPasswordMatchesValidator } from './form-validators/repeat-password-matches.directive';
+import { repeatPasswordMatchesValidator } from '../../form-validators/repeat-password-matches.directive';
 
 @Component({
   selector: 'app-settings',

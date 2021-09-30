@@ -25,11 +25,11 @@ export class UserService {
 
   // Basic Functionality
 
-  getUserProfile(uid?: number): Observable<User> {
+  getUserProfile(uid?: number, cached: boolean = true): Observable<User> {
     if (uid) {
       return this.httpClient.get<User>(API_URL + 'users/' + uid.toString(), { responseType: 'json' });
     } else {
-      if (!this.currentUser$) {
+      if (!this.currentUser$ || this.currentUser$ && !cached) {
         this.currentUser$ = this.httpClient.get<User>(API_URL + 'profile/', { responseType: 'json' }).pipe(
           shareReplay()
         );
@@ -113,11 +113,11 @@ export class UserService {
 
   // Friendships
 
-  getFriends(uid?: number): Observable<User[]> {
+  getFriends(uid?: number, cached: boolean = true): Observable<User[]> {
     if (uid) {
       return this.httpClient.get<User[]>(API_URL + 'users/friends/' + uid?.toString(), { responseType: 'json' });
     } else {
-      if (!this.connections$) {
+      if (!this.connections$ || this.connections$ && !cached) {
         this.connections$ = this.httpClient.get<User[]>(API_URL + 'users/friends/mine', { responseType: 'json' }).pipe(
           shareReplay()
         );

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { repeatPasswordMatchesValidator } from 'src/app/form-validators/repeat-password-matches.directive';
 import { NewUser } from 'src/app/models/newUser.model';
 import { AuthService } from '../../services/auth.service';
 import { TokenStorageService } from '../../services/token-storage.service';
@@ -13,15 +14,16 @@ export class RegisterComponent implements OnInit {
   errorMessage = '';
   registerFromInvalid = false;
 
-  newUserForm = this.fb.group({
-    firstname: ['', Validators.required],
-    lastname: ['', Validators.required],
-    email: ['', [Validators.required, Validators.email]],
-    phone: ['', [Validators.required]],
-    password: ['', Validators.required]
-  });
+  newUserForm = new FormGroup({
+    firstname: new FormControl('', Validators.required),
+    lastname: new FormControl('', Validators.required),
+    email: new FormControl('', [Validators.required, Validators.email]),
+    phone: new FormControl('', Validators.required),
+    password: new FormControl('', Validators.required),
+    repeatPassword: new FormControl('', Validators.required)
+  }, { validators: repeatPasswordMatchesValidator });
 
-  constructor(private authService: AuthService, private tokenService: TokenStorageService, private fb: FormBuilder) { }
+  constructor(private authService: AuthService, private tokenService: TokenStorageService) { }
 
   ngOnInit(): void {
   }
@@ -29,7 +31,8 @@ export class RegisterComponent implements OnInit {
   onSubmit(): void {
     if (this.newUserForm.valid) {
       this.registerFromInvalid = false;
-      const newUser: NewUser = this.newUserForm.value;
+      const { repeatPassword, ...newUserData } = this.newUserForm.value;
+      const newUser: NewUser = newUserData;
 
       this.authService.register(newUser).subscribe(
         data => {

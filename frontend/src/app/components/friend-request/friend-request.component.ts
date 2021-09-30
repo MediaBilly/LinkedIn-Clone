@@ -10,6 +10,7 @@ import { UserService } from 'src/app/services/user.service';
 export class FriendRequestComponent implements OnInit {
   @Input() request?: FriendRequest;
   profilePicPath?: string;
+  headline?: string;
   accepted = false;
   declined = false;
 
@@ -17,13 +18,14 @@ export class FriendRequestComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.request) {
-      this.profilePicPath = this.userService.getProfilePicPath(this.request?.sender);
+      this.profilePicPath = this.userService.getProfilePicPath(this.request.sender);
+      this.headline = this.userService.getHeadline(this.request.sender);
     }
   }
 
   accept(): void {
     if (this.request) {
-      this.userService.acceptFriendRequest(this.request?.id).subscribe(_ => {
+      this.userService.acceptFriendRequest(this.request.id).subscribe(_ => {
         this.accepted = true;
       });
     }

@@ -15,23 +15,24 @@ import { RegisterComponent } from './components/register/register.component';
 import { SearchComponent } from './components/search/search.component';
 import { SettingsComponent } from './components/settings/settings.component';
 import { AdminGuard } from './guards/admin.guard';
+import { IsLoggedInGuard } from './guards/is-logged-in.guard';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
-  { path: 'profile', component: ProfileComponent },
-  { path: 'jobs', component: JobsComponent },
-  { path: 'jobs/:id', component: JobDetailsComponent },
-  { path: 'messaging', component: MessagingComponent },
-  { path: 'network', component: NetworkComponent },
-  { path: 'connections/:id', component: NetworkComponent },
-  { path: 'notifications', component: NotificationsComponent },
-  { path: 'settings', component: SettingsComponent },
-  { path: 'user/:id', component: ProfileComponent },
-  { path: 'article/:id', component: ArticleComponent },
-  { path: 'search', component: SearchComponent },
-  { path: 'admin', component: AdminPanelComponent, canActivate: [AdminGuard] },
+  { path: 'profile', component: ProfileComponent, canActivate: [IsLoggedInGuard] },
+  { path: 'jobs', component: JobsComponent, canActivate: [IsLoggedInGuard] },
+  { path: 'jobs/:id', component: JobDetailsComponent, canActivate: [IsLoggedInGuard] },
+  { path: 'messaging', component: MessagingComponent, canActivate: [IsLoggedInGuard] },
+  { path: 'network', component: NetworkComponent, canActivate: [IsLoggedInGuard] },
+  { path: 'connections/:id', component: NetworkComponent, canActivate: [IsLoggedInGuard] },
+  { path: 'notifications', component: NotificationsComponent, canActivate: [IsLoggedInGuard] },
+  { path: 'settings', component: SettingsComponent, canActivate: [IsLoggedInGuard] },
+  { path: 'user/:id', component: ProfileComponent, canActivate: [IsLoggedInGuard] },
+  { path: 'article/:id', component: ArticleComponent, canActivate: [IsLoggedInGuard] },
+  { path: 'search', component: SearchComponent, canActivate: [IsLoggedInGuard] },
+  { path: 'admin', component: AdminPanelComponent, canActivate: [IsLoggedInGuard, AdminGuard] },
   { path: '**', pathMatch: 'full', component: PageNotFoundComponent }
 ];
 
