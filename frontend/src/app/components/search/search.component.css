@@ -1,0 +1,4 @@
+.list {
+    max-height: 800px;
+    overflow-y: scroll;
+}

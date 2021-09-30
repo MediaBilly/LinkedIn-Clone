@@ -1,0 +1,9 @@
+<div *ngIf="user" class="d-flex flex-row bd-highlight user-row">
+  <div class="px-2 bd-highlight">
+    <img [src]="profilePicPath" alt="user" class="profile-photo-lg">
+  </div>
+  <div class="px-2 bd-highlight">
+    <h5><a style="text-decoration: none;" routerLink="/user/{{ user.id }}">{{ user.firstname }} {{ user.lastname }}</a></h5>
+    <h6 class="text-muted">{{ headline }}</h6>
+  </div>
+</div>

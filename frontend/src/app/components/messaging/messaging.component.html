@@ -1,14 +1,6 @@
 <div *ngIf="isLoggedIn" class="card">
     <div class="row g-0">
         <div class="col-12 col-lg-5 col-xl-3 border-right">
-            <div class="py-3 px-4 d-none d-md-block">
-                <div class="d-flex align-items-center">
-                    <div class="flex-grow-1">
-                        <input type="text" class="form-control" placeholder="Search...">
-                    </div>
-                </div>
-            </div>
-
             <div class="chat-list p-1">
                 <a *ngFor="let chat of chats" (click)="setActiveChat(chat)" class="list-group-item list-group-item-action border-0" style="cursor: pointer;">
                     <app-chat-row [chat]="chat"></app-chat-row>
@@ -21,7 +13,6 @@
             <div *ngIf="activeChat">
                 <app-active-chat [chat]="activeChat"></app-active-chat>
             </div>
-
         </div>
     </div>
 </div>

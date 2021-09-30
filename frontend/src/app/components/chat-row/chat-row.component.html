@@ -1,6 +1,8 @@
-<div *ngIf="info" class="d-flex align-items-start">
-    <img [src]="info.picPath" class="rounded-circle mr-1"  width="40" height="40">
-    <div class="flex-grow-1 ml-3">
+<div *ngIf="info" class="d-flex flex-row bd-highligh align-items-start">
+    <div class="bd-highlight">
+        <img [src]="info.picPath" class="rounded-circle"  width="40" height="40">
+    </div>
+    <div class="flex-grow-1 bd-highlight px-2">
         {{ info.name }}
     </div>
 </div>

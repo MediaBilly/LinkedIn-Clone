@@ -15,4 +15,5 @@ export interface JobAlert {
     type: EmploymentType;
     requiredSkills: Skill[];
     applications: JobApplication[];
+    commonSkills: number;
 }

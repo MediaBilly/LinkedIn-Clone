@@ -1,20 +1,9 @@
-<div *ngIf="friends" class="card connection-list">
+<div *ngIf="friends" class="card">
   <div class="card-header">
     {{ friends.length }} connections
   </div>
-  <div class="card-body">
-    <div *ngFor="let friend of friends">
-      <div class="connection-row">
-        <div class="row">
-          <div class="col-sm-1">
-            <img [src]="getProfilePicPath(friend)" alt="user" class="profile-photo-lg">
-          </div>
-          <div class="col-sm-9">
-            <h5><a style="text-decoration: none;" routerLink="/user/{{ friend.id }}" class="profile-link">{{ friend.firstname }} {{ friend.lastname }}</a></h5>
-          </div>
-        </div>
-      </div>
-    </div>
+  <div class="card-body connection-list">
+    <app-user-row *ngFor="let friend of friends" [user]="friend"></app-user-row>
   </div>
 </div>
 {{ errorMsg }}

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, UseGuards, UseInterceptors, Request, Delete, ForbiddenException, Patch, UploadedFile, BadRequestException, Response } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, UseGuards, UseInterceptors, Request, Delete, ForbiddenException, Patch, UploadedFile, BadRequestException, Query } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { EducationDto } from './dto/education.dto';
@@ -18,6 +18,8 @@ import { EducationOwnerGuard } from './guards/education-owner.guard';
 import { ExperienceDto } from './dto/experience.dto';
 import { ExperienceOwnerGuard } from './guards/experience-owner.guard';
 import { ExportUsersDto } from './dto/export-users.dto';
+import { VisibilitySettingsDto } from './dto/visibility-settings.dto';
+import { UserInfoVisibilityIntercepretor } from './interceptors/user-info-visibility.intercepretor';
 
 @UseInterceptors(HidePasswordInterceptor)
 @Controller('users')
@@ -26,10 +28,11 @@ export class UsersController {
 
     // Basic Functionality
 
-    @UseGuards(JwtAuthGuard, OnlyAdminsGuard)
+    @UseGuards(JwtAuthGuard)
+    @UseInterceptors(UserInfoVisibilityIntercepretor)
     @Get()
-    findAll() {
-        return this.usersService.findAll();
+    findAll(@Query('q') q: string) {
+        return this.usersService.find(q);
     }
 
     @UseGuards(JwtAuthGuard, OnlyAdminsGuard)
@@ -38,7 +41,21 @@ export class UsersController {
         return this.usersService.findSome(exportUsersDto.ids);
     }
 
+    
     @UseGuards(JwtAuthGuard)
+    @Get('visibilitySettings')
+    getVisibilitySettings(@Request() req) {
+        return this.usersService.getVisibilitySettings(+req.user.id);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post('visibilitySettings')
+    updateVisibilitySettings(@Request() req, @Body() visibilitySettingsDto: VisibilitySettingsDto) {
+        return this.usersService.updateVisibilitySettings(+req.user.id, visibilitySettingsDto);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @UseInterceptors(UserInfoVisibilityIntercepretor)
     @Get(':id')
     findOne(@Param('id') id: string) {
         return this.usersService.findOne(+id);
@@ -150,6 +167,7 @@ export class UsersController {
     }
 
     @UseGuards(JwtAuthGuard, OnlyFriendsGuard)
+    @UseInterceptors(UserInfoVisibilityIntercepretor)
     @Get('friends/:id')
     getFriends(@Param('id') id: string) {
         return this.usersService.getFriends(+id);

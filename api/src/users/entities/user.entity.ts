@@ -1,4 +1,4 @@
-import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Exclude } from "class-transformer";
 import { FriendRequest } from "./friend-request.entity";
 import { Friendship } from "./friendship.entity";
@@ -13,6 +13,7 @@ import { JobAlert } from "src/jobs/entities/job-alert.entity";
 import { Chat } from "src/chat/entities/chat.entity";
 import { Message } from "src/chat/entities/message.entity";
 import { JobApplication } from "src/jobs/entities/job-application.entity";
+import { VisibilitySettings } from "./visibility-settings.entity";
 
 export enum UserRole {
     ADMIN = 'a',
@@ -97,6 +98,9 @@ export class User {
 
     @OneToMany(() => Message, message => message.sender)
     messages: Message[];
+
+    @OneToOne(() => VisibilitySettings, visibilitySettings => visibilitySettings.user)
+    visibilitySettings: VisibilitySettings;
 
     connections: User[];
 }

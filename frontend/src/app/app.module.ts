@@ -32,6 +32,7 @@ import { UserRoleFormatterPipe } from './pipes/user-role-formatter.pipe';
 import { JobsComponent } from './components/jobs/jobs.component';
 import { JobRowComponent } from './components/job-row/job-row.component';
 import { JobDetailsComponent } from './components/job-details/job-details.component';
+import { UserRowComponent } from './components/user-row/user-row.component';
 
 @NgModule({
   declarations: [
@@ -60,7 +61,8 @@ import { JobDetailsComponent } from './components/job-details/job-details.compon
     UserRoleFormatterPipe,
     JobsComponent,
     JobRowComponent,
-    JobDetailsComponent
+    JobDetailsComponent,
+    UserRowComponent
   ],
   imports: [
     BrowserModule,

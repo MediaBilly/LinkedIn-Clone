@@ -1,6 +1,6 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, SelectQueryBuilder } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
@@ -17,6 +17,8 @@ import { Education } from './entities/education.entity';
 import { ExperienceDto } from './dto/experience.dto';
 import { Experience } from './entities/experience.entity';
 import { CompaniesService } from 'src/companies/companies.service';
+import { VisibilitySettings } from './entities/visibility-settings.entity';
+import { VisibilitySettingsDto } from './dto/visibility-settings.dto';
 
 @Injectable()
 export class UsersService {
@@ -28,6 +30,7 @@ export class UsersService {
         @InjectRepository(Skill) private skillsRepository: Repository<Skill>,
         @InjectRepository(Education) private educationRepository: Repository<Education>,
         @InjectRepository(Experience) private experienceRepository: Repository<Experience>,
+        @InjectRepository(VisibilitySettings) private visibilitySettingsRepository: Repository<VisibilitySettings>,
         private companiesService: CompaniesService
     ) {}
 
@@ -39,8 +42,12 @@ export class UsersService {
         return await this.usersRepository.save(newUser);
     }
 
-    findAll(): Promise<User[]> {
-        return this.usersRepository.find();
+    find(query?: string): Promise<User[]> {
+        if (query) {
+            return this.usersRepository.find({ where: [{ firstname: Like(`%${query}%`) }, { lastname: Like(`%${query}%`) }] });
+        } else {
+            return this.usersRepository.find();
+        }
     }
 
     async findSome(ids: number[]): Promise<User[]> {
@@ -131,6 +138,31 @@ export class UsersService {
         });
     }
 
+    async getVisibilitySettings(uid: number) {
+        const user = await this.usersRepository.findOneOrFail(uid, { relations: ['visibilitySettings'] });
+        if (!user.visibilitySettings) {
+            let visSettings = this.visibilitySettingsRepository.create();
+            visSettings.user = user;
+            return this.visibilitySettingsRepository.save(visSettings);
+        } else {
+            return user.visibilitySettings;
+        }
+    }
+
+    updateVisibilitySettings(uid: number, visibilitySettingsDto: VisibilitySettingsDto) {
+        const userPromise = this.findOne(uid);
+        const visibilitySettingsPromise = this.visibilitySettingsRepository.findOne({ where: { user: { id: uid } } });
+        return Promise.all([userPromise, visibilitySettingsPromise]).then(([user, visibilitySettings]) => {
+            if (!visibilitySettings) {
+                visibilitySettings = this.visibilitySettingsRepository.create(visibilitySettingsDto);
+                visibilitySettings.user = user;
+                return this.visibilitySettingsRepository.save(visibilitySettings);
+            } else {
+                return this.visibilitySettingsRepository.save({ id: visibilitySettings.id, ...visibilitySettingsDto });
+            }
+        })
+    }
+
     // Friend Requests
 
     getFrinedRequest(id: number) {
@@ -205,7 +237,8 @@ export class UsersService {
     async getFriends(uid: number) {
         return this.usersRepository.createQueryBuilder('U').where('U.id <> :uid', { uid: uid })
         .andWhere(existsQuery(this.friendshipsRepository.createQueryBuilder('F').where('F.user1Id = :uid', { uid: uid }).andWhere('F.user2Id = U.id')
-        .orWhere('F.user2Id = :uid', { uid: uid }).andWhere('F.user1Id = U.id'))).getMany();
+        .orWhere('F.user2Id = :uid', { uid: uid }).andWhere('F.user1Id = U.id')))
+        .leftJoinAndSelect('U.experiences','experience').leftJoinAndSelect('experience.company','company').leftJoinAndSelect('U.educations','education').getMany();
     }
 
     async getFriendship(uid: number, withId: number) {

@@ -1,7 +1,7 @@
 <div class="text-center">
   <form class="form-signin" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
     <img class="mb-4" src="https://play-lh.googleusercontent.com/kMofEFLjobZy_bCuaiDogzBcUT-dz3BBbOrIEjJ-hqOabjK8ieuevGe6wlTD15QzOqw" alt="" width="72" height="72">
-    <h1 class="h3 mb-3 fw-normal">Sign in</h1>
+    <h1 class="h3 mb-3 fw-normal">Login</h1>
 
     <div class="form-group">
       <input type="email" id="email" formControlName="email" [ngClass]="{'form-control': true, 'is-invalid': fieldIsInvalid('email')}" placeholder="Email address" aria-describedby="loginEmailFeedback" required>

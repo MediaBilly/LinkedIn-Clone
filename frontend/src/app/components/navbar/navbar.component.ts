@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { filter } from 'rxjs/operators';
 import { User } from 'src/app/models/user.model';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 import { UserService } from 'src/app/services/user.service';
@@ -17,9 +19,16 @@ export class NavbarComponent implements OnInit {
 
   notificationsCount = 0;
 
-  constructor(private tokenStorageService: TokenStorageService, private usersService: UserService) { }
+  constructor(private tokenStorageService: TokenStorageService, private usersService: UserService, private router: Router) {
+    this.router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe(e => {
+      this.init();
+    });
+  }
 
   ngOnInit(): void {
+  }
+
+  init() {
     this.isLoggedIn = this.tokenStorageService.loggedIn();
     this.getUser();
     this.getBadgeCounts();
@@ -35,6 +44,7 @@ export class NavbarComponent implements OnInit {
   }
 
   getBadgeCounts(): void {
+    this.notificationsCount = 0;
     if (this.isLoggedIn) {
       this.usersService.getReceivedFriendRequests().subscribe(requests => {
         this.notificationsCount += requests.length;
@@ -47,7 +57,7 @@ export class NavbarComponent implements OnInit {
 
   search(): void {
     if (this.searchBox.value) {
-      window.location.replace('search?q=' + this.searchBox.value);
+      this.router.navigate(['/search'], { queryParams: { q: this.searchBox.value } });
     }
   }
 

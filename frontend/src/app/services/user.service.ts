@@ -9,6 +9,7 @@ import { shareReplay } from 'rxjs/operators/';
 import { EducationsSorterPipe } from '../pipes/educations-sorter.pipe';
 import { ExperiencesSorterPipe } from '../pipes/experiences-sorter.pipe';
 import { UserExport } from '../models/user-export.model';
+import { VisibilitySettings } from '../models/visibility-settings.model';
 
 const API_URL = 'http://localhost:3000/';
 
@@ -37,6 +38,10 @@ export class UserService {
     }
   }
 
+  query(q: string): Observable<User[]> {
+    return this.httpClient.get<User[]>(API_URL + 'users?q=' + q, { responseType: 'json' });
+  }
+
   getProfilePicPath(user?: User): string {
     if (user && user.profilePicName) {
       return API_URL + '/images/profile_pics/' + user.profilePicName;
@@ -60,11 +65,19 @@ export class UserService {
     return this.httpClient.post<User>(API_URL + 'users/profile-pic', formData);
   }
 
+  getVisibilitySettings(): Observable<VisibilitySettings> {
+    return this.httpClient.get<VisibilitySettings>(API_URL + 'users/visibilitySettings', { responseType: 'json' });
+  }
+
+  updateVisibilitySettings(newVisibilitySettings: VisibilitySettings): Observable<VisibilitySettings> {
+    return this.httpClient.post<VisibilitySettings>(API_URL + 'users/visibilitySettings', newVisibilitySettings, { responseType: 'json' });
+  }
+
   getHeadline(user: User): string {
-    if (user.experiences.length > 0) {
+    if (user.experiences && user.experiences.length > 0) {
       const exp0 = this.experiencesSorterPipe.transform(user.experiences)[0];
       return exp0.title + ' @ ' + exp0.company.name;
-    } else if (user.educations.length > 0) {
+    } else if (user.educations && user.educations.length > 0) {
       const edu0 = this.educationsSorterPipe.transform(user.educations)[0];
       return 'Student @ ' + edu0.school;
     } else {

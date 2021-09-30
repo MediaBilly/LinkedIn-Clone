@@ -36,10 +36,6 @@ export class NetworkComponent implements OnInit {
     }
   }
 
-  getProfilePicPath(user: User) {
-    return this.userService.getProfilePicPath(user);
-  }
-
   handleError(err: any): void {
     if (err.status === 403) {
       this.errorMsg = "Connection list of not connected professionals not available."

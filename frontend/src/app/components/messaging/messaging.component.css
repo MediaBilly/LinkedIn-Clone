@@ -5,7 +5,7 @@
 .chat-list {
     display: flex;
     flex-direction: column;
-    height: 720px;
+    height: 790px;
     overflow-y: scroll;
 }
 .border-top {

@@ -1,12 +1,10 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CompaniesService } from 'src/companies/companies.service';
-import { existsQuery } from 'src/helpers/existsQuery';
-import { Friendship } from 'src/users/entities/friendship.entity';
 import { NotificationType } from 'src/users/entities/notification.entity';
 import { Skill } from 'src/users/entities/skill.entity';
 import { UsersService } from 'src/users/users.service';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { JobAlertDto } from './dto/job-alert.dto';
 import { JobApplicationDto } from './dto/job-application.dto';
 import { JobAlert } from './entities/job-alert.entity';
@@ -18,7 +16,6 @@ export class JobsService {
     constructor(
         @InjectRepository(JobAlert) private jobAlertsRepository: Repository<JobAlert>,
         @InjectRepository(JobApplication) private jobApplicationsRepository: Repository<JobApplication>,
-        @InjectRepository(Friendship) private friendshipsRepository: Repository<Friendship>,
         private companiesService: CompaniesService,
         private usersService: UsersService
     ) {}
@@ -29,19 +26,36 @@ export class JobsService {
         return this.jobAlertsRepository.findOneOrFail(id);
     }
 
+    find(query: string) {
+        return this.jobAlertsRepository.find({ where: [
+            { title: Like(`%${query}%`) }, 
+            { description: Like(`%${query}%`) }
+        ] });
+    }
+
     getUserJobAlerts(uid: number) {
         return this.jobAlertsRepository.find({ where: { creator: { id: uid } } });
     }
 
     getRecommendedJobAlerts(uid: number) {
-        return this.jobAlertsRepository.createQueryBuilder('J')
+        const userPromise = this.usersService.findOne(uid);
+        const resultPromise = this.jobAlertsRepository.createQueryBuilder('J')
         .innerJoinAndSelect('J.creator', 'creator')
         .innerJoinAndSelect('J.company', 'company')
         .leftJoinAndSelect('J.requiredSkills', 'requiredSkills')
         .where('J.creatorId <> :uid', { uid: uid })
-        .andWhere(existsQuery(this.friendshipsRepository.createQueryBuilder('F').where('F.user1Id = :uid', { uid: uid }).andWhere('F.user2Id = J.creator.id')
-        .orWhere('F.user2Id = :uid', { uid: uid }).andWhere('F.user1Id = J.creator.id')))
         .getMany();
+        return Promise.all([userPromise, resultPromise]).then(([user, result]) => {
+            result.forEach(job => {
+                job.commonSkills = 0;
+                for (let userSkill of user.skills) {
+                    if (job.requiredSkills.some(s => s.id === userSkill.id)) {
+                        job.commonSkills++;
+                    }
+                }
+            });
+            return result.filter(job => job.commonSkills > 0);
+        });
     }
 
     async createJobAlert(creatorId: number, jobAlertDto: JobAlertDto) {

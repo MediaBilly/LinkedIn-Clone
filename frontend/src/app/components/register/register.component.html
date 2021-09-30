@@ -1,7 +1,7 @@
 <div class="text-center">
   <form class="form-signup" [formGroup]="newUserForm" (ngSubmit)="onSubmit()">
     <img class="mb-4" src="https://play-lh.googleusercontent.com/kMofEFLjobZy_bCuaiDogzBcUT-dz3BBbOrIEjJ-hqOabjK8ieuevGe6wlTD15QzOqw" alt="" width="72" height="72">
-    <h1 class="h3 mb-3 fw-normal">Sign up</h1>
+    <h1 class="h3 mb-3 fw-normal">Register</h1>
 
     <div class="form-group">
       <input type="text" id="firstname" formControlName="firstname" [ngClass]="{'form-control': true, 'is-invalid': fieldIsInvalid('firstname')}" placeholder="First Name" aria-describedby="registerFnameFeedback" required>

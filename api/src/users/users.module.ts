@@ -10,9 +10,10 @@ import { Skill } from './entities/skill.entity';
 import { Education } from './entities/education.entity';
 import { Experience } from './entities/experience.entity';
 import { CompaniesModule } from 'src/companies/companies.module';
+import { VisibilitySettings } from './entities/visibility-settings.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, FriendRequest, Friendship, Notification, Skill, Education, Experience]), CompaniesModule],
+  imports: [TypeOrmModule.forFeature([User, FriendRequest, Friendship, Notification, Skill, Education, Experience, VisibilitySettings]), CompaniesModule],
   providers: [UsersService],
   exports: [UsersService, TypeOrmModule],
   controllers: [UsersController]

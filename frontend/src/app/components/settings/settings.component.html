@@ -1,10 +1,11 @@
-<div class="light-style flex-grow-1 container-p-y">
+<div class="flex-grow-1 container-p-y">
     <div class="card overflow-hidden">
-        <div class="row no-gutters row-bordered row-border-light">
+        <div class="row no-gutters row-border-light">
             <div class="col-md-3 pt-0">
-                <div class="list-group list-group-flush account-settings-links" role="tablist">
+                <div class="list-group list-group-flush" role="tablist">
                     <a class="list-group-item list-group-item-action active" id="account-general-list" data-bs-toggle="list" href="#account-general" role="tab" aria-controls="account-general">General</a>
                     <a class="list-group-item list-group-item-action" id="account-change-password-list" data-bs-toggle="list" href="#account-change-password" role="tab" aria-controls="account-change-password">Change password</a>
+                    <a class="list-group-item list-group-item-action" id="account-visibility-list" data-bs-toggle="list" href="#account-visibility" role="tab" aria-controls="account-visibility">Visibility</a>
                 </div>
             </div>
             <div class="col-md-9">
@@ -43,6 +44,7 @@
                                         Phone is required.
                                     </div>
                                 </div>
+                                <br>
                                 <div class="form-group">
                                     <button type="submit" class="btn btn-primary">Save changes</button>
                                 </div>
@@ -65,7 +67,6 @@
                                         Current password is required.
                                     </div>
                                 </div>
-    
                                 <div class="form-group">
                                     <label class="form-label">New password</label>
                                     <input type="password" id="newPassword" formControlName="newPassword" [ngClass]="{'form-control': true, 'is-invalid': changePasswordFieldIsInvalid('newPassword')}" aria-describedby="newPasswordFeedback">
@@ -73,7 +74,6 @@
                                         New password is required.
                                     </div>
                                 </div>
-    
                                 <div class="form-group">
                                     <label class="form-label">Repeat new password</label>
                                     <input type="password" id="repeatPassword" formControlName="repeatPassword" [ngClass]="{'form-control': true, 'is-invalid': changePasswordFieldIsInvalid('repeatPassword')}" aria-describedby="repeatPasswordFeedback">
@@ -81,7 +81,7 @@
                                         Repeat new password is required.
                                     </div>
                                 </div>
-    
+                                <br>
                                 <div class="form-group">
                                     <button type="submit" class="btn btn-primary">Submit</button>
                                 </div>
@@ -94,6 +94,32 @@
                             </div>
                             <div *ngIf="changePasswordError" class="alert alert-danger">
                                 {{ changePasswordError }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="account-visibility" role="tabpanel" aria-labelledby="account-visibility-list">
+                        <div class="card-body">
+                            <form [formGroup]="visibilitySettingsForm" (ngSubmit)="onVisibilitySettingsUpdate()">
+                                <p>Select the information that you want to be visible from people that are not in your connection list:</p>
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" formControlName="experienceVisible" class="form-check-input" id="experienceVisible">
+                                    <label class="form-check-label" for="experienceVisible">Experience</label>
+                                </div>
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" formControlName="educationVisible" class="form-check-input" id="educationVisible">
+                                    <label class="form-check-label" for="educationVisible">Education</label>
+                                </div>
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" formControlName="skillsVisible" class="form-check-input" id="skillsVisible">
+                                    <label class="form-check-label" for="skillsVisible">Skills</label>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Save changes</button>
+                            </form>
+                            <div *ngIf="successfullyChangedVisibilitySettings" class="alert alert-success">
+                                Visibility settings updated successfully.
+                            </div>
+                            <div *ngIf="changeVisibilitySettingsError" class="alert alert-danger">
+                                {{ changeVisibilitySettingsError }}
                             </div>
                         </div>
                     </div>

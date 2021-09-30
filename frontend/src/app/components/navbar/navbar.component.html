@@ -80,17 +80,17 @@
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
             <li><a class="dropdown-item" routerLink="profile">Profile</a></li>
             <li><a class="dropdown-item" routerLink="settings">Settings</a></li>
-            <li><a class="dropdown-item" (click)="logout()">LogOut</a></li>
+            <li><a class="dropdown-item" style="cursor: pointer;" (click)="logout()">LogOut</a></li>
           </ul>
         </li>
       </ul>
       
       <ul class="navbar-nav ml-auto" *ngIf="!currentUser">
         <li class="nav-item">
-          <a href="/login" class="nav-link" routerLink="login">Sign In</a>
+          <a href="/login" class="nav-link" routerLink="login">Login</a>
         </li>
         <li class="nav-item">
-          <a href="/register" class="nav-link" routerLink="register">Sign Up</a>
+          <a href="/register" class="nav-link" routerLink="register">Register</a>
         </li>
       </ul>
     </div>

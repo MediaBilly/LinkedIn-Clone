@@ -23,6 +23,10 @@ export class JobsService {
     return this.httpClient.get<JobAlert>(API_URL + 'jobs/' + id.toString(), { responseType: 'json' });
   }
 
+  query(q: string): Observable<JobAlert[]> {
+    return this.httpClient.get<JobAlert[]>(API_URL + 'jobs?q=' + q, { responseType: 'json' });
+  }
+
   getMyJobAlerts(): Observable<JobAlert[]> {
     return this.httpClient.get<JobAlert[]>(API_URL + 'jobs/mine', { responseType: 'json' });
   }

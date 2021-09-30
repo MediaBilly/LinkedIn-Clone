@@ -38,6 +38,15 @@ export class SettingsComponent implements OnInit {
   successfullyChangedPassword?: boolean;
   changePasswordError = '';
 
+  visibilitySettingsForm = new FormGroup({
+    experienceVisible: new FormControl(true),
+    educationVisible: new FormControl(true),
+    skillsVisible: new FormControl(true)
+  });
+  
+  successfullyChangedVisibilitySettings?: boolean;
+  changeVisibilitySettingsError = '';
+
   ngOnInit(): void {
     this.isLoggedIn = this.tokenStorageService.loggedIn();
     this.getUser();
@@ -53,6 +62,10 @@ export class SettingsComponent implements OnInit {
           email: user.email,
           phone: user.phone
         });
+      });
+      this.userService.getVisibilitySettings().subscribe(visSettings => {
+        const { id, user,  ...value } = visSettings;
+        this.visibilitySettingsForm.setValue(value);
       });
     }
   }
@@ -107,6 +120,19 @@ export class SettingsComponent implements OnInit {
 
   public changePasswordFieldHasError = (field: string, error: string) => {
     return this.changePasswordForm.controls[field].hasError(error);
+  }
+
+  onVisibilitySettingsUpdate() {
+    if (this.visibilitySettingsForm.valid) {
+      console.log(this.visibilitySettingsForm.value);
+      this.userService.updateVisibilitySettings(this.visibilitySettingsForm.value).subscribe(_ => {
+        this.successfullyChangedVisibilitySettings = true;
+      },
+      err => {
+        this.changeVisibilitySettingsError = err.message;
+        this.successfullyChangedVisibilitySettings = false;
+      });
+    }
   }
 
 }

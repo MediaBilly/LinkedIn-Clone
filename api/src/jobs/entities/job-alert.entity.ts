@@ -41,5 +41,8 @@ export class JobAlert {
 
     @OneToMany(() => JobApplication, jobApplication => jobApplication.jobAlert)
     applications: JobApplication[];
+
+    // Number of common skills with the request user. Calculated on queries and used to order the jobs to the user.
+    commonSkills: number;
     
 }

@@ -1,1 +1,29 @@
-<p>Query: {{ query }}</p>
+<div *ngIf="isLoggedIn">
+    <p>Results for {{ query }}:</p>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="list-group" role="tablist">
+                <a href="#people" class="list-group-item list-group-item-action active" id="people-list" data-bs-toggle="list" role="tab" aria-controls="people">People</a>
+                <a href="#jobs" class="list-group-item list-group-item-action" id="jobs-list" data-bs-toggle="list" role="tab" aria-controls="jobs">Jobs</a>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="tab-content">
+                <div class="tab-pane fade active show" id="people" role="tabpanel" aria-labelledby="people-list">
+                    <div class="card">
+                        <div class="card-body list">
+                            <app-user-row *ngFor="let user of users" [user]='user'></app-user-row>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="jobs" role="tabpanel" aria-labelledby="jobs-list">
+                    <div class="card">
+                        <div class="card-body list">
+                            <app-job-row *ngFor="let job of jobs" [job]='job'></app-job-row>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

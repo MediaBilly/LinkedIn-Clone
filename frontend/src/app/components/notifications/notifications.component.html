@@ -1,11 +1,11 @@
 <div class="d-grid gap-4">
   <div class="row">
     <div class="col-lg-12">
-      <div class="card connection-requests">
+      <div class="card">
         <div class="card-header">
           Connection Requests
         </div>
-        <div class="card-body">
+        <div class="card-body connection-requests">
           <div *ngFor="let fr of friendRequests">
             <app-friend-request [request]="fr"></app-friend-request>
           </div>
@@ -15,11 +15,11 @@
   </div>
   <div class="row">
     <div class="col-lg-12">
-      <div class="card notifications-list">
+      <div class="card">
         <div class="card-header">
           Notifications
         </div>
-        <div class="card-body">
+        <div class="card-body notifications-list">
           <div *ngFor="let n of notifications">
             <app-notification [notification]="n"></app-notification>
           </div>

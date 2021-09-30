@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Request, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { JobAlertDto } from './dto/job-alert.dto';
 import { JobApplicationDto } from './dto/job-application.dto';
@@ -16,8 +16,12 @@ export class JobsController {
 
     @UseGuards(JwtAuthGuard)
     @Get()
-    getRecommendedJobAlerts(@Request() req) {
-        return this.jobsService.getRecommendedJobAlerts(+req.user.id);
+    getRecommendedJobAlerts(@Request() req, @Query('q') q: string) {
+        if (q) {
+            return this.jobsService.find(q);
+        } else {
+            return this.jobsService.getRecommendedJobAlerts(+req.user.id);
+        }
     }
 
     @UseGuards(JwtAuthGuard)

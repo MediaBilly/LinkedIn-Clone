@@ -44,7 +44,7 @@ export class JobsComponent implements OnInit {
     this.isLoggedIn = this.tokenStorageService.loggedIn();
     if (this.isLoggedIn) {
       this.jobsService.getRecommndedJobAlerts().subscribe(jobs => {
-        this.recommendedJobs = jobs;
+        this.recommendedJobs = jobs.sort((a, b) => b.commonSkills - a.commonSkills);
       });
       this.jobsService.getMyJobAlerts().subscribe(jobs => {
         this.myJobs = jobs;

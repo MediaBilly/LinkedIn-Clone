@@ -1,0 +1,12 @@
+.user-row {
+    padding: 10px 0;
+    border-top: 1px solid #f1f2f2;
+    border-bottom: 1px solid #f1f2f2;
+    margin-bottom: 5px;
+}
+
+img.profile-photo-lg{
+    height: 80px;
+    width: 80px;
+    border-radius: 50%;
+}
