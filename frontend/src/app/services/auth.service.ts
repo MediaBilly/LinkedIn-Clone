@@ -9,7 +9,7 @@ const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 };
 
-const AUTH_API = 'http://localhost:3000/auth/';
+const AUTH_API = 'https://localhost:3000/auth/';
 
 @Injectable({
   providedIn: 'root'

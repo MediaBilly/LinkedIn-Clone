@@ -1,5 +1,5 @@
-<div *ngIf="currentUser; else loggedOut" class="gedf-wrapper">
-    <div class="row">
+<div *ngIf="isLoggedIn; else loggedOut" class="gedf-wrapper">
+    <div *ngIf="currentUser" class="row">
         <div class="col-md-2">
             <div class="card text-center">
                 <div class="card-body">
@@ -75,6 +75,6 @@
         <h1 class="hero__headline hero__headline--basic">
           Welcome to your professional community
         </h1>
-        <img class="hero__illustration--desktop flip-rtl lazy-loaded" alt="Welcome to your professional community" src="https://static-exp1.licdn.com/sc/h/dxf91zhqd2z6b0bwg85ktm5s4">
+        <img class="hero__illustration--desktop flip-rtl lazy-loaded" alt="Welcome to your professional community" src="assets/welcome.svg">
     </div>
 </ng-template>

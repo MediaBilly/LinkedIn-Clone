@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { JobAlert } from '../models/job-alert.model';
 import { JobApplication } from '../models/job-application.model';
 
-const API_URL = 'http://localhost:3000/';
+const API_URL = 'https://localhost:3000/';
 
 @Injectable({
   providedIn: 'root'

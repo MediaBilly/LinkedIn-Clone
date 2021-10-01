@@ -5,7 +5,7 @@ import { Article } from '../models/article.model';
 import { ArticleComment } from '../models/articleComment.model';
 import { ArticleReaction, ReactionType } from '../models/articleReaction.model';
 
-const API_URL = 'http://localhost:3000/';
+const API_URL = 'https://localhost:3000/';
 
 @Injectable({
   providedIn: 'root'

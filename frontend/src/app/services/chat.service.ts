@@ -7,7 +7,7 @@ import { Message } from '../models/message.model';
 import { TokenStorageService } from './token-storage.service';
 import { UserService } from './user.service';
 
-const API_URL = 'http://localhost:3000/';
+const API_URL = 'https://localhost:3000/';
 
 @Injectable({
   providedIn: 'root'

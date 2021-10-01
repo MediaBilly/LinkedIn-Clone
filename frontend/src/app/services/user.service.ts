@@ -11,7 +11,7 @@ import { ExperiencesSorterPipe } from '../pipes/experiences-sorter.pipe';
 import { UserExport } from '../models/user-export.model';
 import { VisibilitySettings } from '../models/visibility-settings.model';
 
-const API_URL = 'http://localhost:3000/';
+const API_URL = 'https://localhost:3000/';
 
 @Injectable({
   providedIn: 'root'
