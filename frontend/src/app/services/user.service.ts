@@ -65,6 +65,10 @@ export class UserService {
     return this.httpClient.post<User>(API_URL + 'users/profile-pic', formData);
   }
 
+  deleteMyAccount(): Observable<any> {
+    return this.httpClient.delete(API_URL + 'users', { responseType: 'json' });
+  }
+
   getVisibilitySettings(): Observable<VisibilitySettings> {
     return this.httpClient.get<VisibilitySettings>(API_URL + 'users/visibilitySettings', { responseType: 'json' });
   }

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { UpdateUser } from 'src/app/models/updateUser.model';
 import { User } from 'src/app/models/user.model';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
@@ -12,7 +13,7 @@ import { repeatPasswordMatchesValidator } from '../../form-validators/repeat-pas
   styleUrls: ['./settings.component.css']
 })
 export class SettingsComponent implements OnInit {
-  constructor(private tokenStorageService: TokenStorageService, private userService: UserService) { }
+  constructor(private tokenStorageService: TokenStorageService, private userService: UserService, private router: Router) { }
 
   isLoggedIn = false;
   currentUser?: User;
@@ -133,6 +134,13 @@ export class SettingsComponent implements OnInit {
         this.successfullyChangedVisibilitySettings = false;
       });
     }
+  }
+
+  deleteMyAccount() {
+    this.userService.deleteMyAccount().subscribe(_ => {
+      this.tokenStorageService.signOut();
+      this.router.navigate(['']);
+    });
   }
 
 }

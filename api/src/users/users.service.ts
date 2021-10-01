@@ -1,8 +1,8 @@
-import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Like, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
-import { User } from './entities/user.entity';
+import { User, UserRole } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FriendRequest } from './entities/friend-request.entity';
@@ -21,7 +21,7 @@ import { VisibilitySettings } from './entities/visibility-settings.entity';
 import { VisibilitySettingsDto } from './dto/visibility-settings.dto';
 
 @Injectable()
-export class UsersService {
+export class UsersService implements OnModuleInit {
     constructor(
         @InjectRepository(User) private usersRepository: Repository<User>,
         @InjectRepository(FriendRequest) private friendRequestsRepository: Repository<FriendRequest>,
@@ -34,11 +34,25 @@ export class UsersService {
         private companiesService: CompaniesService
     ) {}
 
+    // If the database is empty, it creates an admin user with email admin@admin.com and password linkedin123 which of course can be changed later.
+    async onModuleInit() {
+        const users = await this.usersRepository.find();
+        if (users.length === 0) {
+            const firstAdminData: CreateUserDto = { firstname: 'admin', lastname: 'admin', email: 'admin@admin.com', phone: '6900000000', password: 'linkedin123' };
+            this.create(firstAdminData, true);
+            console.log('Created an admin account with email: admin@admin.com and password: linkedin123');
+            console.log('Please login and change the password before deploying the application online!!!');
+        }
+    }
+
     // Basic Functionality
 
-    async create(createUserDto: CreateUserDto): Promise<User> {
+    async create(createUserDto: CreateUserDto, admin = false): Promise<User> {
         const newUser = this.usersRepository.create(createUserDto);
         newUser.password = await bcrypt.hash(newUser.password, parseInt(process.env.PASSWORD_HASH_ROUNDS));
+        if (admin) {
+            newUser.role = UserRole.ADMIN;
+        }
         return await this.usersRepository.save(newUser);
     }
 

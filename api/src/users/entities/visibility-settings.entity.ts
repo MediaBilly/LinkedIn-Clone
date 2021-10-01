@@ -15,7 +15,7 @@ export class VisibilitySettings {
     @Column({type: 'boolean', default: true})
     skillsVisible: boolean;
 
-    @OneToOne(() => User, user => user.visibilitySettings)
+    @OneToOne(() => User, user => user.visibilitySettings, { onDelete: 'CASCADE' })
     @JoinColumn()
     user: User;
 }

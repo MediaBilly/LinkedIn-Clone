@@ -15,7 +15,7 @@
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <form class="d-flex justify-content-start card card-sm" *ngIf="currentUser">
+    <form class="d-flex justify-content-start card card-sm" *ngIf="isLoggedIn">
       <div class="card-body row no-gutters align-items-center mx-0 p-0">
         <div class="col-sm-2">
           <i class="fas fa-search h6 text-secondary"></i>
@@ -27,7 +27,7 @@
     </form>
 
     <div class=" d-flex justify-content-end collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ml-auto" *ngIf="currentUser">
+      <ul class="navbar-nav ml-auto" *ngIf="isLoggedIn">
         <li class="nav-item">
           <a class="nav-link" routerLink="">
             <svg class="bi d-block mx-auto mb-1" height="24" width="24">
@@ -85,7 +85,7 @@
         </li>
       </ul>
       
-      <ul class="navbar-nav ml-auto" *ngIf="!currentUser">
+      <ul class="navbar-nav ml-auto" *ngIf="!isLoggedIn">
         <li class="nav-item">
           <a href="/login" class="nav-link" routerLink="login">Login</a>
         </li>
