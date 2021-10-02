@@ -9,7 +9,6 @@ import { ArticlesModule } from './articles/articles.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { ScheduleModule } from '@nestjs/schedule';
-import { RecommendationSystemModule } from './recommendation-system/recommendation-system.module';
 import { JobsModule } from './jobs/jobs.module';
 import { ChatModule } from './chat/chat.module';
 import { CompaniesModule } from './companies/companies.module';
@@ -27,7 +26,6 @@ import { CompaniesModule } from './companies/companies.module';
     AuthModule,
     UsersModule,
     ArticlesModule,
-    RecommendationSystemModule,
     JobsModule,
     ChatModule,
     CompaniesModule],

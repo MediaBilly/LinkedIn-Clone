@@ -67,7 +67,7 @@ export class ActiveChatComponent implements OnInit, OnDestroy {
         this.messages = msgs;
       }));
       // Refresh the active chat every 2 seconds
-      this.messagePoll = this.poller$(messageObs, 2000000000).subscribe();
+      this.messagePoll = this.poller$(messageObs, 4000).subscribe();
     }
   }
 

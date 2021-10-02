@@ -4,7 +4,7 @@
             <div class="card text-center">
                 <div class="card-body">
                     <img src="{{ profilePicPath }}" alt="mdo" width="80" height="80" class="bi d-block mx-auto mb-1 rounded-circle">
-                    <div class="h5">{{ currentUser.firstname }} {{ currentUser.lastname }}</div>
+                    <a routerLink="profile" class="link-dark h5" style="text-decoration: none; cursor: pointer;">{{ currentUser.firstname }} {{ currentUser.lastname }}</a>
                     <div class="h7">{{ headline }}</div>
                 </div>
                 <ul class="list-group list-group-flush">
